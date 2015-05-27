@@ -1,0 +1,14 @@
+	ul
+		li
+			a(href="javascript:add()") aggiungi elemento
+	
+	ul#menu
+		li vecchio elemento0
+		li vecchio elemento1
+		
+	script.
+		var num=1;
+		function add() {
+			$("#menu").append("<li> nuovo elemento "+num+" </li>");
+			num++;
+		}

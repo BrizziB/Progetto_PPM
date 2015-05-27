@@ -1,0 +1,56 @@
+extends layout
+
+block head
+	title Wait
+	script(type='text/javascript' src='http://localhost:3000/socket.io/socket.io.js')
+
+block content
+
+	div
+		h1 Attendere prego!
+		h2 rappresentazione in corso
+	div
+		h2 Falli:
+		p redFauls :
+			p(id='redFaul') /
+			p redPenality :
+				p(id='redPen') /
+		p blueFauls :
+			p(id='blueFaul') /
+			p bluePenality :
+				p(id='bluePen') /
+
+	script.
+		var socket=io();
+		var blueFauls;
+		var redFauls;
+		var bluePenality;
+		var redPenality;
+		
+		
+		function addFaul(teamName, faulNum, penPt){
+			if (teamName==='red'){
+				document.getElementById("redFaul").innerHTML=faulNum;
+				document.getElementById("redPen").innerHTML=penPt;
+			}
+			else {
+				document.getElementById("blueFaul").innerHTML=faulNum;
+				document.getElementById("bluePen").innerHTML=penPt;
+			}
+		}
+		
+		socket.on('welcomeWait', function(blueF, redF, blueP, redP){
+			blueFauls=blueF;
+			bluePenality=blueP;
+			redFauls=redF;
+			redPenality=redP;
+			document.getElementById("redFaul").innerHTML=redFauls;
+			document.getElementById("blueFaul").innerHTML=blueFauls;
+			document.getElementById("redPen").innerHTML=redPenality;
+			document.getElementById("bluePen").innerHTML=bluePenality;
+		});
+		
+		socket.on('faul', function(name, num, pen){
+			addFaul(name, num, pen);
+
+		});

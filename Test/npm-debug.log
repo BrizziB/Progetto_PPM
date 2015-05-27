@@ -1,0 +1,207 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   '--save' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.35
+4 verbose node symlink C:\Program Files\nodejs\\node.exe
+5 verbose readDependencies using package.json deps
+6 verbose install where, deps [ 'C:\\Users\\BorisNote\\workspace2\\Test',
+6 verbose install   [ 'body-parser',
+6 verbose install     'cookie-parser',
+6 verbose install     'method-ovveride',
+6 verbose install     'debug',
+6 verbose install     'express',
+6 verbose install     'express-session',
+6 verbose install     'jade',
+6 verbose install     'morgan',
+6 verbose install     'serve-favicon',
+6 verbose install     'session.socket.io',
+6 verbose install     'session-file-store',
+6 verbose install     'socket.io' ] ]
+7 info preinstall Test@0.0.0
+8 warn package.json package.json@0.0.0 No repository field.
+9 warn package.json package.json@0.0.0 No README data
+10 verbose readDependencies using package.json deps
+11 verbose already installed skipping body-parser@~1.12.0 C:\Users\BorisNote\workspace2\Test
+12 verbose already installed skipping cookie-parser@~1.3.4 C:\Users\BorisNote\workspace2\Test
+13 verbose cache add [ 'method-ovveride@*', null ]
+14 verbose cache add name=undefined spec="method-ovveride@*" args=["method-ovveride@*",null]
+15 verbose parsed url { protocol: null,
+15 verbose parsed url   slashes: null,
+15 verbose parsed url   auth: null,
+15 verbose parsed url   host: null,
+15 verbose parsed url   port: null,
+15 verbose parsed url   hostname: null,
+15 verbose parsed url   hash: null,
+15 verbose parsed url   search: null,
+15 verbose parsed url   query: null,
+15 verbose parsed url   pathname: 'method-ovveride@*',
+15 verbose parsed url   path: 'method-ovveride@*',
+15 verbose parsed url   href: 'method-ovveride@*' }
+16 verbose already installed skipping debug@~2.1.1 C:\Users\BorisNote\workspace2\Test
+17 verbose already installed skipping express@~4.12.2 C:\Users\BorisNote\workspace2\Test
+18 verbose already installed skipping express-session@* C:\Users\BorisNote\workspace2\Test
+19 verbose already installed skipping jade@~1.9.2 C:\Users\BorisNote\workspace2\Test
+20 verbose already installed skipping morgan@~1.5.1 C:\Users\BorisNote\workspace2\Test
+21 verbose already installed skipping serve-favicon@~2.2.0 C:\Users\BorisNote\workspace2\Test
+22 verbose cache add [ 'session.socket.io@*', null ]
+23 verbose cache add name=undefined spec="session.socket.io@*" args=["session.socket.io@*",null]
+24 verbose parsed url { protocol: null,
+24 verbose parsed url   slashes: null,
+24 verbose parsed url   auth: null,
+24 verbose parsed url   host: null,
+24 verbose parsed url   port: null,
+24 verbose parsed url   hostname: null,
+24 verbose parsed url   hash: null,
+24 verbose parsed url   search: null,
+24 verbose parsed url   query: null,
+24 verbose parsed url   pathname: 'session.socket.io@*',
+24 verbose parsed url   path: 'session.socket.io@*',
+24 verbose parsed url   href: 'session.socket.io@*' }
+25 verbose already installed skipping session-file-store@0.0.8 C:\Users\BorisNote\workspace2\Test
+26 verbose already installed skipping socket.io@^1.3.5 C:\Users\BorisNote\workspace2\Test
+27 verbose cache add name="method-ovveride" spec="*" args=["method-ovveride","*"]
+28 verbose parsed url { protocol: null,
+28 verbose parsed url   slashes: null,
+28 verbose parsed url   auth: null,
+28 verbose parsed url   host: null,
+28 verbose parsed url   port: null,
+28 verbose parsed url   hostname: null,
+28 verbose parsed url   hash: null,
+28 verbose parsed url   search: null,
+28 verbose parsed url   query: null,
+28 verbose parsed url   pathname: '*',
+28 verbose parsed url   path: '*',
+28 verbose parsed url   href: '*' }
+29 verbose addNamed [ 'method-ovveride', '*' ]
+30 verbose addNamed [ null, '*' ]
+31 verbose cache add name="session.socket.io" spec="*" args=["session.socket.io","*"]
+32 verbose parsed url { protocol: null,
+32 verbose parsed url   slashes: null,
+32 verbose parsed url   auth: null,
+32 verbose parsed url   host: null,
+32 verbose parsed url   port: null,
+32 verbose parsed url   hostname: null,
+32 verbose parsed url   hash: null,
+32 verbose parsed url   search: null,
+32 verbose parsed url   query: null,
+32 verbose parsed url   pathname: '*',
+32 verbose parsed url   path: '*',
+32 verbose parsed url   href: '*' }
+33 verbose addNamed [ 'session.socket.io', '*' ]
+34 verbose addNamed [ null, '*' ]
+35 silly lockFile 8ab2fd00-method-ovveride method-ovveride@*
+36 verbose lock method-ovveride@* C:\Users\BorisNote\AppData\Roaming\npm-cache\8ab2fd00-method-ovveride.lock
+37 silly lockFile 1d8b11c3-session-socket-io session.socket.io@*
+38 verbose lock session.socket.io@* C:\Users\BorisNote\AppData\Roaming\npm-cache\1d8b11c3-session-socket-io.lock
+39 silly addNameRange { name: 'method-ovveride', range: '*', hasData: false }
+40 silly addNameRange { name: 'session.socket.io', range: '*', hasData: false }
+41 verbose request where is /method-ovveride
+42 verbose request registry https://registry.npmjs.org/
+43 verbose request id da218312c6f127c5
+44 verbose url raw /method-ovveride
+45 verbose url resolving [ 'https://registry.npmjs.org/', './method-ovveride' ]
+46 verbose url resolved https://registry.npmjs.org/method-ovveride
+47 verbose request where is https://registry.npmjs.org/method-ovveride
+48 info trying registry request attempt 1 at 19:18:09
+49 http GET https://registry.npmjs.org/method-ovveride
+50 verbose request where is /session.socket.io
+51 verbose request registry https://registry.npmjs.org/
+52 verbose url raw /session.socket.io
+53 verbose url resolving [ 'https://registry.npmjs.org/', './session.socket.io' ]
+54 verbose url resolved https://registry.npmjs.org/session.socket.io
+55 verbose request where is https://registry.npmjs.org/session.socket.io
+56 info trying registry request attempt 1 at 19:18:09
+57 http GET https://registry.npmjs.org/session.socket.io
+58 http 404 https://registry.npmjs.org/method-ovveride
+59 verbose headers { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+59 verbose headers   'content-type': 'application/json',
+59 verbose headers   'cache-control': 'max-age=0',
+59 verbose headers   'content-length': '51',
+59 verbose headers   'accept-ranges': 'bytes',
+59 verbose headers   date: 'Sun, 10 May 2015 17:18:10 GMT',
+59 verbose headers   via: '1.1 varnish',
+59 verbose headers   age: '0',
+59 verbose headers   connection: 'keep-alive',
+59 verbose headers   'x-served-by': 'cache-fra1243-FRA',
+59 verbose headers   'x-cache': 'MISS',
+59 verbose headers   'x-cache-hits': '0',
+59 verbose headers   'x-timer': 'S1431278290.320291,VS0,VE181' }
+60 silly registry.get cb [ 404,
+60 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+60 silly registry.get     'content-type': 'application/json',
+60 silly registry.get     'cache-control': 'max-age=0',
+60 silly registry.get     'content-length': '51',
+60 silly registry.get     'accept-ranges': 'bytes',
+60 silly registry.get     date: 'Sun, 10 May 2015 17:18:10 GMT',
+60 silly registry.get     via: '1.1 varnish',
+60 silly registry.get     age: '0',
+60 silly registry.get     connection: 'keep-alive',
+60 silly registry.get     'x-served-by': 'cache-fra1243-FRA',
+60 silly registry.get     'x-cache': 'MISS',
+60 silly registry.get     'x-cache-hits': '0',
+60 silly registry.get     'x-timer': 'S1431278290.320291,VS0,VE181' } ]
+61 silly lockFile 8ab2fd00-method-ovveride method-ovveride@*
+62 silly lockFile 8ab2fd00-method-ovveride method-ovveride@*
+63 http 200 https://registry.npmjs.org/session.socket.io
+64 silly registry.get cb [ 200,
+64 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+64 silly registry.get     etag: '"BZ1GMI7Y638N3SB8H06Q5KFU0"',
+64 silly registry.get     'content-type': 'application/json',
+64 silly registry.get     'cache-control': 'max-age=60',
+64 silly registry.get     'content-length': '15200',
+64 silly registry.get     'accept-ranges': 'bytes',
+64 silly registry.get     date: 'Sun, 10 May 2015 17:18:10 GMT',
+64 silly registry.get     via: '1.1 varnish',
+64 silly registry.get     age: '0',
+64 silly registry.get     connection: 'keep-alive',
+64 silly registry.get     'x-served-by': 'cache-fra1228-FRA',
+64 silly registry.get     'x-cache': 'MISS',
+64 silly registry.get     'x-cache-hits': '0',
+64 silly registry.get     'x-timer': 'S1431278290.320355,VS0,VE343',
+64 silly registry.get     vary: 'Accept' } ]
+65 silly addNameRange number 2 { name: 'session.socket.io', range: '*', hasData: true }
+66 silly addNameRange versions [ 'session.socket.io',
+66 silly addNameRange   [ '0.1.0',
+66 silly addNameRange     '0.1.1',
+66 silly addNameRange     '0.1.2',
+66 silly addNameRange     '0.1.3',
+66 silly addNameRange     '0.1.4',
+66 silly addNameRange     '0.1.5',
+66 silly addNameRange     '0.1.6',
+66 silly addNameRange     '0.2.0' ] ]
+67 verbose addNamed [ 'session.socket.io', '0.2.0' ]
+68 verbose addNamed [ '0.2.0', '0.2.0' ]
+69 silly lockFile 3729ea8c-session-socket-io-0-2-0 session.socket.io@0.2.0
+70 verbose lock session.socket.io@0.2.0 C:\Users\BorisNote\AppData\Roaming\npm-cache\3729ea8c-session-socket-io-0-2-0.lock
+71 silly lockFile aca27a67-t-io-session-socket-io-0-2-0-tgz https://registry.npmjs.org/session.socket.io/-/session.socket.io-0.2.0.tgz
+72 verbose lock https://registry.npmjs.org/session.socket.io/-/session.socket.io-0.2.0.tgz C:\Users\BorisNote\AppData\Roaming\npm-cache\aca27a67-t-io-session-socket-io-0-2-0-tgz.lock
+73 verbose addRemoteTarball [ 'https://registry.npmjs.org/session.socket.io/-/session.socket.io-0.2.0.tgz',
+73 verbose addRemoteTarball   '6c67ccabbd2994e965cb5efd83d42590ccd5e759' ]
+74 info retry fetch attempt 1 at 19:18:10
+75 verbose fetch to= C:\Users\BORISN~1\AppData\Local\Temp\npm-3716-v5ksc6vU\registry.npmjs.org\session.socket.io\-\session.socket.io-0.2.0.tgz
+76 http GET https://registry.npmjs.org/session.socket.io/-/session.socket.io-0.2.0.tgz
+77 http 200 https://registry.npmjs.org/session.socket.io/-/session.socket.io-0.2.0.tgz
+78 silly lockFile aca27a67-t-io-session-socket-io-0-2-0-tgz https://registry.npmjs.org/session.socket.io/-/session.socket.io-0.2.0.tgz
+79 silly lockFile aca27a67-t-io-session-socket-io-0-2-0-tgz https://registry.npmjs.org/session.socket.io/-/session.socket.io-0.2.0.tgz
+80 silly lockFile 3729ea8c-session-socket-io-0-2-0 session.socket.io@0.2.0
+81 silly lockFile 3729ea8c-session-socket-io-0-2-0 session.socket.io@0.2.0
+82 silly lockFile 1d8b11c3-session-socket-io session.socket.io@*
+83 silly lockFile 1d8b11c3-session-socket-io session.socket.io@*
+84 error 404 404 Not Found: method-ovveride
+84 error 404
+84 error 404 'method-ovveride' is not in the npm registry.
+84 error 404 You should bug the author to publish it
+84 error 404 It was specified as a dependency of 'Test'
+84 error 404
+84 error 404 Note that you can also install from a
+84 error 404 tarball, folder, or http url, or git url.
+85 error System Windows_NT 6.1.7601
+86 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "--save"
+87 error cwd C:\Users\BorisNote\workspace2\Test
+88 error node -v v0.10.35
+89 error npm -v 1.4.28
+90 error code E404
+91 verbose exit [ 1, true ]
