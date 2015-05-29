@@ -350,7 +350,7 @@ io.on('connection', function(socket){
 		}
 		else
 			{
-				//TO DO: aggiungere logica di voto
+				//TODO: aggiungere logica di voto
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
