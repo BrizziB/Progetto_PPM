@@ -178,11 +178,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleWare);
 
-//TODO:TOGLIERE VARIABILE!!!!!!!!
-var test= {title : 'Voto', aggiungiTitolo : true};
+//TODO:TOGLIERE VARIABILI TEST!!!!!!!!
+//var test= {title : 'Voto', aggiungiTitolo : true};
 
 app.use('/',function(req,res,next){
-	req.session.test=test;
+	//req.session.test=test;
 	if (req.session.utente === undefined){
 		req.session.utente=new Utente();
 		req.session.utente.sessionID=req.sessionID;

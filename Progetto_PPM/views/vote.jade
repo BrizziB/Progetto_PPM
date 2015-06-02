@@ -10,18 +10,19 @@ block content
         script var votato = true;
     #Votazione('data-role'= 'page')
         .ui-content('role' = 'main')
-        p Seleziona un titolo
+        p#titoloLista= titoloLista
         ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti')
            script(type='text/javascript', src='/scripts/custom/voteLista.js')  
                         
         if aggiungiTitolo
-            p.nuovoTitolo Oppure inserisci un nuovo titolo
-                form.nuovoTitolo
-                    div             
-                        label(for='CasellaTesto')
-                        //- Oppure inserisci un titolo 
-                        input(type='text', name='CasellaTesto', id='CasellaTesto', placeholder='Inserisci titolo', data-clear-btn="true", data-count-theme='b')
-                        input(type='submit', value = 'Invia', id='InviaTesto')
+            #nuovoTitolo     
+                p Oppure inserisci un nuovo titolo
+                    form
+                        div             
+                            label(for='CasellaTesto')
+                            //- Oppure inserisci un titolo 
+                            input(type='text', name='CasellaTesto', id='CasellaTesto', placeholder='Inserisci titolo', data-clear-btn="true", data-count-theme='b')
+                            input(type='submit', value = 'Invia', id='InviaTesto')
             script(type='text/javascript', src='/scripts/custom/voteForm.js')               
         if dev
             button#resetValori(type='reset') Reset
@@ -35,5 +36,5 @@ block content
                     
      #risposta('data-role'= 'page')
         .ui-content('role'='main')
-            p Grazie per avermi cliccato!
+            p Grazie per avere votato!
             p #[a(href='#main', data-rel='back', class='ui-btn ui-icon-back ui-btn-icon-left') Torna alla pagina principale ]
