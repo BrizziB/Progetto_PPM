@@ -50,14 +50,14 @@ function disabilitaVoto(){
 	$("#nuovoTitolo").remove();                     
 	$(".contatoreVoto").show();
 	$("#titoloLista").text('Ecco i risultati in tempo reale');
-	$(document).prop('title', 'Attendi la fine della votazione...');
+	$(document).prop("title", "Attendi la fine della votazione...");
 	//window.location.reload(true);
 }   
 
+//FIXME: dopo aver cliccato, quando torno alla pagina principale il titolo non è cambiato!
 $("#listaVoti").on("click","li",function(event){
 	var elem = $(this);
 	var testo = elem.find("span.testo").text();
-	//console.log("testo: "+testo);
 	socket.emit('voto',testo);
 }); 
 
