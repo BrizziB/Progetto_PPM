@@ -161,7 +161,7 @@ function listaOggettiVoti(){
 		else{
 			id=idGenerator();
 			sostituto=nVoti;
-			contenitoreOggetti.set(nomeOggetti,nVoti);
+			contenitoreOggetti.set(nomeOggetto,nVoti);
 		}
 		contenitoreVoti.set(id,sostituto);
 		//console.log(nomeOggetto);
@@ -419,7 +419,8 @@ io.on('connection', function(socket){
 		}
 		else
 			{
-				//TODO: aggiungere logica di voto
+				//TODO: controllare!!!
+				listaTitoli.aggiungiVoto(testo);
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
