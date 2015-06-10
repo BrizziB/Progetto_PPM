@@ -53,19 +53,21 @@ block content
 			voteBlue(myChart, blue);
 			voteRed(myChart, red);
 			if (voted){
-				$("#blueB").remove();
-				$("#redB").remove();
+				$("#blueB").hide();
+				$("#redB").hide();
 			}
 		});
 		
 		$("#blueButton").click(function(){
-			location.reload();
 			socket.emit('blueClick');
+			$('#blueButton').hide();
+			$('#redButton').hide();
 		});
 	
 		$("#redButton").click(function(){
 			socket.emit('redClick');
-			location.reload();
+			$('#blueButton').hide();
+			$('#redButton').hide();
 		});
 		
 		socket.on('blueVote', function(blue){

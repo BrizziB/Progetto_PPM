@@ -11,7 +11,7 @@ var HashMap = require('hashmap');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var wait = require('./routes/wait');
-var admin = require('./routes/admin');
+var administrator = require('./routes/administrator');
 var vote = require('./routes/vote');
 var vote2 = require('./routes/vote2');
 
@@ -20,12 +20,46 @@ var Utente = function(){
 	this.aggiungiTitolo = true;
 };
 
-var team = function (teamName){
-	this.teamName=teamName;
-	this.numFauls=0;
-	this.numPen=0;
-	this.points=0;
-};
+function team (teamName){
+	var nFoulsBeforePenalty =5;
+	var penalties=0;
+	var numFouls=0;//infrazione
+	var points=0;  //PUNTI TOTALI
+	this.getTeamName=function(){
+		return teamName;
+	};
+	this.getFouls=function(){
+		return numFouls;
+	};
+	this.getPenalty=function(){
+		return penalties;
+	};
+	this.setFouls=function(nFouls){
+		numFouls=nFouls%nFoulsBeforePenalty;
+		penalties=(nFouls-numFouls)/nFoulsBeforePenalty;
+	};
+	this.addFoul=function(){
+		numFouls=(numFouls+1)%nFoulsBeforePenalty;
+		if (numFouls===0){
+			penalties++;
+		}
+	};
+	this.removeFouls=function(){
+		numFouls=(numFouls-1+nFoulsBeforePenalty)%nFoulsBeforePenalty;
+		if (numFouls===0){
+			penalties--;
+		}
+	};
+	this.setPoints=function(nPoints){
+		points=nPoints;
+	};
+	this.getPoints=function(){
+		return points;
+	};
+	this.addPoint=function(){
+		points++;
+	};
+}
 
 function contenitoreVoti(nomeOggetto, numeroVoti){
 	if(!numeroVoti)
@@ -147,6 +181,21 @@ function listaOggettiVoti(){
 	};
 }
 
+function Admin(){
+	var blueTeam = new team("blue");
+	var redTeam = new team("red");	
+	this.blueTeam=function(){
+		return blueTeam;
+	};
+	this.redTeam=function(){
+		return redTeam;
+	};
+}
+
+var admin = new Admin();
+var red = new contenitoreVoti("red", 0);
+var blue = new contenitoreVoti("blue", 0);
+
 var sessionMiddleWare = session({
 	secret: 'progettoPPM', 
 	resave: false,
@@ -155,11 +204,6 @@ var sessionMiddleWare = session({
 var app = express();
 var io = new socketServer();
 app.io = io;
-
-var red = new contenitoreVoti("red", 0);
-var blue = new contenitoreVoti("blue", 0);
-var blueTeam=new team("blue");
-var redTeam=new team("red");
 
 io.use(function(socket, next){
 	sessionMiddleWare(socket.request, socket.request.res, next);
@@ -193,7 +237,7 @@ app.use('/',function(req,res,next){
 app.use('/users', users);
 app.use('/users', users);
 app.use('/wait', wait);
-app.use('/admin', admin);
+app.use('/administrator', administrator);
 app.use('/vote',vote);
 app.use('/vote2',vote2);
 
@@ -243,7 +287,6 @@ function comparabile(stringa){
 		}
 	}
 } */
-
 function aggiornaSessioneDopoVoto(socket){
 	var sess = socket.request.session;
 	sess.utente.aggiungiTitolo = false;
@@ -265,7 +308,7 @@ io.on('connection', function(socket){
 	// ---- Boris -----
 	console.log("Connessione ! ");
 	socket.emit('welcomeVote', blue.getVoti(), red.getVoti());
-	socket.emit('welcomeWait', blueTeam.numFauls, redTeam.numFauls, blueTeam.numPen, redTeam.numPen);
+	socket.emit('welcomeWait', admin.blueTeam().getFouls(), admin.redTeam().getFouls(), admin.blueTeam().getPenalty(), admin.redTeam().getPenalty());
 	socket.on('blueClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
@@ -284,17 +327,17 @@ io.on('connection', function(socket){
 	socket.on('stopVoting', function(){
 		if(red.getVoti()>blue.getVoti()){
 			console.log("evento STOP VOTING rosso rilevato");
-			redTeam.points++;
+			admin.redTeam().addPoint();
 			red.setVoti(0);
 			blue.setVoti(0);
-			io.emit('stopVote', 'red', redTeam.points, blueTeam.points);
+			io.emit('stopVote', 'red', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
 		}
 		if(blue.getVoti()>red.getVoti()){
 			console.log("evento STOP VOTING blu rilevato");
-			blueTeam.points++;
+			admin.blueTeam().addPoint();
 			red.setVoti(0);
 			blue.setVoti(0);
-			io.emit('stopVote', 'blue', redTeam.points, blueTeam.points);
+			io.emit('stopVote', 'blue', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
 		}
 		else{
 			io.emit('stopVote', 'PARI');
@@ -302,23 +345,15 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('redFaul', function(){
-		redTeam.numFauls++;
-		console.log("falli dei red: "+redTeam.numFauls+" ! ");
-		if(redTeam.numFauls===5){
-			redTeam.numPen++;
-			redTeam.numFauls=0;
-		}
-		io.emit('faul', redTeam.teamName, redTeam.numFauls, redTeam.numPen);
+		admin.redTeam().addFoul();
+		console.log("falli dei red: "+admin.redTeam().getFouls()+" ! ");
+		io.emit('faul', admin.redTeam().getTeamName(), admin.redTeam().getFouls(), admin.redTeam().getPenalty());
 	});
 	
 	socket.on('blueFaul', function(){
-		blueTeam.numFauls++;
-		console.log("falli dei blue: "+blueTeam.numFauls+" ! ");
-		if(blueTeam.numFauls===5){
-			blueTeam.numPen++;
-			blueTeam.numFauls=0;
-		}
-		io.emit('faul', blueTeam.teamName, blueTeam.numFauls, blueTeam.numPen);
+		admin.blueTeam().addFoul();
+		console.log("falli dei blue: "+admin.blueTeam().getFouls()+" ! ");
+		io.emit('faul', admin.blueTeam().getTeamName(), admin.blueTeam().getFouls(), admin.blueTeam().getPenalty());
 	});
 	socket.on('goToWait1', function(){
 		io.emit('goToWait');
@@ -371,7 +406,7 @@ io.on('connection', function(socket){
 	}
 	
 	// ---- Pitti -----FINE
-	
+	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
 });
 
 module.exports = app;
