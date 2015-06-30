@@ -21,6 +21,7 @@ var Utente = function(){
 };
 
 function team (teamName){
+	punteggi = new Array();
 	var nFoulsBeforePenalty =5;
 	var penalties=0;
 	var numFouls=0;//infrazione
@@ -89,86 +90,48 @@ function contenitoreVoti(nomeOggetto, numeroVoti){
 	};
 }
 
-/*questo oggetto contiene la lista degli oggetti da votare.
- * E' fatta da due mappe hash. Entrambe utilizzano un ID univoco per ciascun oggetto
- * e una contiene l'oggetto, l'altro il numero di voti
- */
-var idGenerator= (function(){
-	var baseID=0;
-	return function(){
-		return baseID++;
-	};
-})();
-
 function listaOggettiVoti(){
-	var id;
-	var contenitoreVoti=new HashMap();
-	var contenitoreOggetti = new HashMap();
+	var contenitore=new HashMap();
 	if (arguments.length!==0){
 		for(var i=0,l=arguments.length;i<l;i++){
-			id=idGenerator();
-			contenitoreOggetti.set(arguments[i],id);
-			contenitoreVoti.set(id,0);
+			contenitore.set(arguments[i],0);
 		}
 	}	
 	this.aggiungiOggetto=function(nomeOggetto,nVoti){
-		if (contenitoreOggetti.has(nomeOggetto)){
+		if (contenitore.has(nomeOggetto)){
 			return false;
 		}
 		if (nVoti===undefined){
 			nVoti=0;
 		}
-		id =idGenerator();
-		contenitoreOggetti.set(nomeOggetto,id);
-		contenitoreVoti.set(id,nVoti);
+		contenitore.set(nomeOggetto,nVoti);
 		return true;
 	};
 	this.rimuoviOggetto=function(nomeOggetto){
-		if (contenitoreOggetti.has(nomeOggetto)){
-			id = contenitoreOggetti.get(nomeOggetto);
-			contenitoreOggetti.remove(nomeOggetto);
-			contenitoreVoti.remove(id);
-			return true;		
-		}
-		return false;
+		contenitore.remove(nomeOggetto);
 	};
 	
 	this.prendiVoti=function(nomeOggetto){
-		if (contenitoreOggetti.has(nomeOggetto)){
-			id = contenitoreOggetti.get(nomeOggetto);
-			return contenitoreVoti.get(id);
-		}
-		return null;
+		return contenitore.get(nomeOggetto);
 	};
-
 	this.impostaVoto=function(nomeOggetto,nVoti){
-		if(contenitoreOggetti.has(nomeOggetto)){
-			id=contenitoreOggetti.get(nomeOggetto);
-		}
-		else{
-			id=idGenerator();
-			contenitoreOggetti.set(nomeOggetto,id);
-		}
-		contenitoreVoti.set(id,nVoti);
+		contenitore.set(nomeOggetto,nVoti);
 	};
 	
-	var incrementaVoto=function(nomeOggetto,nVoti){
+	var cambiaVoto=function(nomeOggetto,nVoti){
 		var sostituto;
-		if(contenitoreOggetti.has(nomeOggetto)){
-			id = contenitoreOggetti.get(nomeOggetto);
-			sostituto= nVoti+contenitoreVoti.get(id);
+		if(contenitore.has(nomeOggetto)){
+			sostituto= nVoti+contenitore.get(nomeOggetto);
 		}
 		else{
-			id=idGenerator();
 			sostituto=nVoti;
-			contenitoreOggetti.set(nomeOggetto,nVoti);
 		}
-		contenitoreVoti.set(id,sostituto);
-		//console.log(nomeOggetto);
+		contenitore.set(nomeOggetto,sostituto);
+		console.log(nomeOggetto);
 	};
 	
 	this.modificaVoto=function(nomeOggetto,nVoti){
-		incrementaVoto(nomeOggetto,nVoti);
+		cambiaVoto(nomeOggetto,nVoti);
 	};
 	this.aggiungiVoto=function(nomeOggetto,nVoti){
 		if (nVoti===undefined){
@@ -177,7 +140,7 @@ function listaOggettiVoti(){
 		else if (nVoti <= 0){
 			return false;
 		}
-		incrementaVoto(nomeOggetto,nVoti);
+		cambiaVoto(nomeOggetto,nVoti);
 		return true;
 	};
 	this.rimuoviVoto=function(nomeOggetto,nVoti){
@@ -187,35 +150,65 @@ function listaOggettiVoti(){
 		else if (nVoti <= 0){
 			return false;
 		}
-		incrementaVoto(nomeOggetto,0-nVoti);
+		cambiaVoto(nomeOggetto,0-nVoti);
 		return true;
 	};
 	
 	this.listaOggetti=function(){
-		return contenitoreOggetti.keys();
+		return contenitore.keys();
 	};
 	this.numeroOggetti=function(){
-		return contenitoreOggetti.count();
-	};
-	this.listaVoti=function(){
-		return contenitoreVoti.clone();
-	};
-	this.oggettoDaID=function(idOggetto){
-		return contenitoreOggetti.search(idOggetto);
+		return contenitore.count();
 	};
 	this.listaOrdinataPerNome=function(){
-		return contenitoreOggetti.keys().sort();
+		return contenitore.keys().sort();
 	};
-	//doppio ciclo necessario per unire oggetto al voto
-	this.ciclaLista=function(funzione){
-	contenitoreOggetti.forEach(function(id,nomeOggetto){
-			funzione(contenitoreVoti.get(id),nomeOggetto);
+	/*this.listaOrdinataPerVoti=function(descending){
+		var compara;
+		if(descending){
+			compara=function(a,b){return b-a;};
+		}else{
+			compara=function(a,b){return a-b;};
+		}
+		var listaValoriVoti = contenitore.values().sort(compara());
+		var listaOrdinata=[];
+		var contTemp=contenitore.clone();
+		contTemp.forEach(function(value,key){
+			
 		});
+	};*/
+	this.ciclaLista=function(funzione){
+		contenitore.forEach(funzione);
 	};
-	id = null;
+}
+
+function Settings(){
+	var titleTimer;
+	var catTimer;
+	var waitTimer;
+	var winnerTimer;
+	function setTitleTimer(time){
+		titleTimer=time;
+	}
+	function setCatTimer(time){
+		catTimer=time;
+	}
+	function setWaitTimer(time){
+		waitTimer=time;
+	}
+	function setWinnerTimer(time){
+		winnerTimer=time;
+	}
+	
+	
 }
 
 function Admin(){
+	var currentMatchNum;
+	var currentTitle;
+	var currentCategory;
+	var matchSettings = new Settings();
+	var currentPage;
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");	
 	this.blueTeam=function(){
@@ -269,11 +262,10 @@ app.use('/',function(req,res,next){
 }
 , routes);
 app.use('/users', users);
-app.use('/users', users);
 app.use('/wait', wait);
 app.use('/administrator', administrator);
 app.use('/vote',vote);
-app.use('/vote2',vote2);
+app.use('/vote/matchwinner',vote2);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -335,7 +327,7 @@ function disabilitaVotoUtente(sess,sockAttuali){
 		}
 	}	
 }
-//TODO: i voti devono essere mantenuti dall'admin
+
 var listaTitoli = new listaOggettiVoti('Test1','Test2','Test3');
 
 io.on('connection', function(socket){
@@ -362,6 +354,8 @@ io.on('connection', function(socket){
 		if(red.getVoti()>blue.getVoti()){
 			console.log("evento STOP VOTING rosso rilevato");
 			admin.redTeam().addPoint();
+			admin.redTeam().punteggi[admin.CurrentMatchNum]=red.getVoti();
+			admin.blueTeam().punteggi[admin.CurrentMatchNum]=blue.getVoti();
 			red.setVoti(0);
 			blue.setVoti(0);
 			io.emit('stopVote', 'red', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
@@ -369,6 +363,8 @@ io.on('connection', function(socket){
 		if(blue.getVoti()>red.getVoti()){
 			console.log("evento STOP VOTING blu rilevato");
 			admin.blueTeam().addPoint();
+			admin.redTeam().punteggi[admin.CurrentMatchNum]=red.getVoti();
+			admin.blueTeam().punteggi[admin.CurrentMatchNum]=blue.getVoti();
 			red.setVoti(0);
 			blue.setVoti(0);
 			io.emit('stopVote', 'blue', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
@@ -419,8 +415,7 @@ io.on('connection', function(socket){
 		}
 		else
 			{
-				//TODO: controllare!!!
-				listaTitoli.aggiungiVoto(testo);
+				//TODO: aggiungere logica di voto
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
@@ -443,5 +438,5 @@ io.on('connection', function(socket){
 	// ---- Pitti -----FINE
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
 });
-
+//  [  ]
 module.exports = app;
