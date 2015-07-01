@@ -182,7 +182,7 @@ function listaOggettiVoti(){
 	};
 }
 
-function Settings(){
+function Settings(){//fai getters
 	var titleTimer;
 	var catTimer;
 	var waitTimer;
