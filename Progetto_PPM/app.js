@@ -90,48 +90,86 @@ function contenitoreVoti(nomeOggetto, numeroVoti){
 	};
 }
 
+/*questo oggetto contiene la lista degli oggetti da votare.
+ * E' fatta da due mappe hash. Entrambe utilizzano un ID univoco per ciascun oggetto
+ * e una contiene l'oggetto, l'altro il numero di voti
+ */
+var idGenerator= (function(){
+	var baseID=0;
+	return function(){
+		return baseID++;
+	};
+})();
+
 function listaOggettiVoti(){
-	var contenitore=new HashMap();
+	var id;
+	var contenitoreVoti=new HashMap();
+	var contenitoreOggetti = new HashMap();
 	if (arguments.length!==0){
 		for(var i=0,l=arguments.length;i<l;i++){
-			contenitore.set(arguments[i],0);
+			id=idGenerator();
+			contenitoreOggetti.set(arguments[i],id);
+			contenitoreVoti.set(id,0);
 		}
 	}	
 	this.aggiungiOggetto=function(nomeOggetto,nVoti){
-		if (contenitore.has(nomeOggetto)){
+		if (contenitoreOggetti.has(nomeOggetto)){
 			return false;
 		}
 		if (nVoti===undefined){
 			nVoti=0;
 		}
-		contenitore.set(nomeOggetto,nVoti);
+		id =idGenerator();
+		contenitoreOggetti.set(nomeOggetto,id);
+		contenitoreVoti.set(id,nVoti);
 		return true;
 	};
 	this.rimuoviOggetto=function(nomeOggetto){
-		contenitore.remove(nomeOggetto);
+		if (contenitoreOggetti.has(nomeOggetto)){
+			id = contenitoreOggetti.get(nomeOggetto);
+			contenitoreOggetti.remove(nomeOggetto);
+			contenitoreVoti.remove(id);
+			return true;		
+		}
+		return false;
 	};
 	
 	this.prendiVoti=function(nomeOggetto){
-		return contenitore.get(nomeOggetto);
+		if (contenitoreOggetti.has(nomeOggetto)){
+			id = contenitoreOggetti.get(nomeOggetto);
+			return contenitoreVoti.get(id);
+		}
+		return null;
 	};
+
 	this.impostaVoto=function(nomeOggetto,nVoti){
-		contenitore.set(nomeOggetto,nVoti);
-	};
-	
-	var cambiaVoto=function(nomeOggetto,nVoti){
-		var sostituto;
-		if(contenitore.has(nomeOggetto)){
-			sostituto= nVoti+contenitore.get(nomeOggetto);
+		if(contenitoreOggetti.has(nomeOggetto)){
+			id=contenitoreOggetti.get(nomeOggetto);
 		}
 		else{
-			sostituto=nVoti;
+			id=idGenerator();
+			contenitoreOggetti.set(nomeOggetto,id);
 		}
-		contenitore.set(nomeOggetto,sostituto);
-		console.log(nomeOggetto);
+		contenitoreVoti.set(id,nVoti);
+	};
+	
+	var incrementaVoto=function(nomeOggetto,nVoti){
+		var sostituto;
+		if(contenitoreOggetti.has(nomeOggetto)){
+			id = contenitoreOggetti.get(nomeOggetto);
+			sostituto= nVoti+contenitoreVoti.get(id);
+		}
+		else{
+			id=idGenerator();
+			sostituto=nVoti;
+			contenitoreOggetti.set(nomeOggetto,nVoti);
+		}
+		contenitoreVoti.set(id,sostituto);
+		//console.log(nomeOggetto);
 	};
 	
 	this.modificaVoto=function(nomeOggetto,nVoti){
-		cambiaVoto(nomeOggetto,nVoti);
+		incrementaVoto(nomeOggetto,nVoti);
 	};
 	this.aggiungiVoto=function(nomeOggetto,nVoti){
 		if (nVoti===undefined){
@@ -140,7 +178,7 @@ function listaOggettiVoti(){
 		else if (nVoti <= 0){
 			return false;
 		}
-		cambiaVoto(nomeOggetto,nVoti);
+		incrementaVoto(nomeOggetto,nVoti);
 		return true;
 	};
 	this.rimuoviVoto=function(nomeOggetto,nVoti){
@@ -150,36 +188,32 @@ function listaOggettiVoti(){
 		else if (nVoti <= 0){
 			return false;
 		}
-		cambiaVoto(nomeOggetto,0-nVoti);
+		incrementaVoto(nomeOggetto,0-nVoti);
 		return true;
 	};
 	
 	this.listaOggetti=function(){
-		return contenitore.keys();
+		return contenitoreOggetti.keys();
 	};
 	this.numeroOggetti=function(){
-		return contenitore.count();
+		return contenitoreOggetti.count();
+	};
+	this.listaVoti=function(){
+		return contenitoreVoti.clone();
+	};
+	this.oggettoDaID=function(idOggetto){
+		return contenitoreOggetti.search(idOggetto);
 	};
 	this.listaOrdinataPerNome=function(){
-		return contenitore.keys().sort();
+		return contenitoreOggetti.keys().sort();
 	};
-	/*this.listaOrdinataPerVoti=function(descending){
-		var compara;
-		if(descending){
-			compara=function(a,b){return b-a;};
-		}else{
-			compara=function(a,b){return a-b;};
-		}
-		var listaValoriVoti = contenitore.values().sort(compara());
-		var listaOrdinata=[];
-		var contTemp=contenitore.clone();
-		contTemp.forEach(function(value,key){
-			
-		});
-	};*/
+	//doppio ciclo necessario per unire oggetto al voto
 	this.ciclaLista=function(funzione){
-		contenitore.forEach(funzione);
+	contenitoreOggetti.forEach(function(id,nomeOggetto){
+			funzione(contenitoreVoti.get(id),nomeOggetto);
+		});
 	};
+	id = null;
 }
 
 function Settings(){//fai getters
@@ -327,7 +361,7 @@ function disabilitaVotoUtente(sess,sockAttuali){
 		}
 	}	
 }
-
+//TODO: i voti devono essere mantenuti dall'admin
 var listaTitoli = new listaOggettiVoti('Test1','Test2','Test3');
 
 io.on('connection', function(socket){
@@ -415,7 +449,8 @@ io.on('connection', function(socket){
 		}
 		else
 			{
-				//TODO: aggiungere logica di voto
+				//TODO: controllare!!!
+				listaTitoli.aggiungiVoto(testo);
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
