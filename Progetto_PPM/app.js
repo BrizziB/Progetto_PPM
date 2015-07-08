@@ -314,6 +314,36 @@ function Admin(){
 		io.emit('redirect', getCurrentPage());
 	};
 	
+	var isStopped=false;
+	var timer;
+	this.stopVotazione=function(){
+		clearTimeout(timer);
+		isStopped=true;
+	};
+	
+	var theBeast = function(timerArray){ //BElla oh..
+		if (timerArray.length==0)
+			return;
+		var element = timerArray.pop();
+		var next = element.page;
+		var delay = element.delay;
+		setTimeOut(function (){
+			setCurrentPage(next);
+			theBeast(timerArray);
+		}, delay);
+	};
+	
+	var phase1 = function(){
+		var timerArray = [ ];		
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait"  });
+		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait/result"  });
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
+		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait/result"  });
+		
+		setCurrentPage("/vote/title");
+		theBeast(timerArray);
+		
+	};
 	
 }
 
