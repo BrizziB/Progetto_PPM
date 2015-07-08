@@ -20,9 +20,11 @@ var Utente = function(){
 	this.aggiungiTitolo = true;
 };
 
-function team (teamName){
+function team (teamName, nFoulsBeforePenalty){
 	punteggi = new Array();
-	var nFoulsBeforePenalty =5;
+	if(nFoulsBeforePenalty==undefined){
+		nFoulsBeforePenalty=5;
+	}
 	var penalties=0;
 	var numFouls=0;//infrazione
 	var points=0;  //PUNTI TOTALI
@@ -216,26 +218,71 @@ function listaOggettiVoti(){
 	id = null;
 }
 
-function Settings(){//fai getters
+
+function Settings(){
+	var nFoulsBeforePenalty;
 	var titleTimer;
 	var catTimer;
 	var waitTimer;
 	var winnerTimer;
-	function setTitleTimer(time){
+//TODO vanno scritte..
+	var titleFunction;
+	var catFunction;
+	var waitFunction;
+	var winnerFunction;
+//fin qui son da scrivere
+	
+	this.setNFoulsBeforePenalty=function(num){
+		nFoulsBeforePenalty=num;
+	};
+	
+	this.setTitleTimer=function(time){
 		titleTimer=time;
-	}
-	function setCatTimer(time){
+	};
+	this.setCatTimer=function(time){
 		catTimer=time;
-	}
-	function setWaitTimer(time){
+	};
+	this.setWaitTimer=function(time){
 		waitTimer=time;
-	}
-	function setWinnerTimer(time){
+	};
+	this.setWinnerTimer=function(time){
 		winnerTimer=time;
-	}
+	};
 	
+	this.getNFoulsBeforePenalty=function(){
+		return nFoulsBeforePenalty;
+	};
 	
-}
+	this.getTitleTimer=function(){
+		return titleTimer;
+	};
+	this.getCatTimer=function(){
+		return catTimer;
+	};
+	this.getWaitTimer=function(){
+		return waitTimer;
+	};
+	this.getWinnerTimer=function(){
+		return winnerTimer;
+	};
+	
+	this.getTitleFunction=fucntion(){
+		return titleFunction;
+	};
+	
+	this.getCatFunction=fucntion(){
+		return catFunction;
+	};
+	
+	this.getWaitFunction=fucntion(){
+		return waitFunction;
+	};
+	
+	this.getWinnerFunction=fucntion(){
+		return winnerFunction;
+	};
+	
+};
 
 function Admin(){
 	var currentMatchNum;
@@ -244,13 +291,30 @@ function Admin(){
 	var matchSettings = new Settings();
 	var currentPage;
 	var blueTeam = new team("blue");
-	var redTeam = new team("red");	
+	var redTeam = new team("red");
+	
 	this.blueTeam=function(){
 		return blueTeam;
+		
 	};
 	this.redTeam=function(){
 		return redTeam;
 	};
+	
+	this.getCurrentPage = function(){
+		return currentPage;
+	};
+	
+	var setCurrentPage = function(page){
+		currentPage=page;
+	};
+	
+	//invariante: stiamo inviando la pagina corrente dopo la modifica
+	var clientRedirect = function (){
+		io.emit('redirect', getCurrentPage());
+	};
+	
+	
 }
 
 var admin = new Admin();
@@ -265,6 +329,7 @@ var sessionMiddleWare = session({
 var app = express();
 var io = new socketServer();
 var winVote = io.of("/winVote");
+var votoTitoloCategoria = io.of("/votoTitoloCategoria");
 app.io = io;
 
 io.use(function(socket, next){

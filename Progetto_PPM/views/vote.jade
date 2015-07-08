@@ -3,7 +3,7 @@ block head
     script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
 
 block content
-    script var socket=io();
+    script var socket=io();//(":3000/votoTitoloCategoria");
     if votoAbilitato
         script var votato = false;
     else
