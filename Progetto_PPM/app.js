@@ -225,12 +225,6 @@ function Settings(){
 	var catTimer;
 	var waitTimer;
 	var winnerTimer;
-//TODO vanno scritte..
-	var titleFunction;
-	var catFunction;
-	var waitFunction;
-	var winnerFunction;
-//fin qui son da scrivere
 	
 	this.setNFoulsBeforePenalty=function(num){
 		nFoulsBeforePenalty=num;
@@ -320,8 +314,8 @@ function Admin(){
 		clearTimeout(timer);
 		isStopped=true;
 	};
-	
-	var theBeast = function(timerArray){ //BElla oh..
+	//funzione cattiva !
+	var theBeast = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
 		if (timerArray.length==0)
 			return;
 		var element = timerArray.pop();
@@ -329,20 +323,27 @@ function Admin(){
 		var delay = element.delay;
 		setTimeOut(function (){
 			setCurrentPage(next);
+			clientRedirect();
 			theBeast(timerArray);
 		}, delay);
 	};
 	
-	var phase1 = function(){
-		var timerArray = [ ];		
+	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
+		var timerArray = [];		
 		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait"  });
 		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait/result"  });
 		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
 		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait/result"  });
 		
 		setCurrentPage("/vote/title");
+		theBeast(timerArray);		
+	};
+	
+	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
+		var timerArray = [];
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait"  });
+		setCurrentPage("/vote/matchwinner");
 		theBeast(timerArray);
-		
 	};
 	
 }
