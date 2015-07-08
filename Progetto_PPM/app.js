@@ -264,6 +264,7 @@ var sessionMiddleWare = session({
 
 var app = express();
 var io = new socketServer();
+var winVote = io.of("/winVote");
 app.io = io;
 
 io.use(function(socket, next){
@@ -364,7 +365,7 @@ function disabilitaVotoUtente(sess,sockAttuali){
 //TODO: i voti devono essere mantenuti dall'admin
 var listaTitoli = new listaOggettiVoti('Test1','Test2','Test3');
 
-io.on('connection', function(socket){
+winVote.on('connection', function(socket){
 	// ---- Boris -----
 	console.log("Connessione ! ");
 	socket.emit('welcomeVote', blue.getVoti(), red.getVoti());
@@ -374,14 +375,14 @@ io.on('connection', function(socket){
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		blue.aggiungiVoti(1);
 		console.log("hanno votato blu");		
-		io.emit('blueVote', blue.getVoti());
+		winVote.emit('blueVote', blue.getVoti());
 	});
 	socket.on('redClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		red.aggiungiVoti(1);
 		console.log("hanno votato rosso");
-		io.emit('redVote', red.getVoti());
+		winVote.emit('redVote', red.getVoti());
 	});
 	
 	socket.on('stopVoting', function(){
@@ -392,7 +393,7 @@ io.on('connection', function(socket){
 			admin.blueTeam().punteggi[admin.CurrentMatchNum]=blue.getVoti();
 			red.setVoti(0);
 			blue.setVoti(0);
-			io.emit('stopVote', 'red', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
+			winVote.emit('stopVote', 'red', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
 		}
 		if(blue.getVoti()>red.getVoti()){
 			console.log("evento STOP VOTING blu rilevato");
@@ -401,13 +402,16 @@ io.on('connection', function(socket){
 			admin.blueTeam().punteggi[admin.CurrentMatchNum]=blue.getVoti();
 			red.setVoti(0);
 			blue.setVoti(0);
-			io.emit('stopVote', 'blue', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
+			winVote.emit('stopVote', 'blue', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
 		}
 		else{
-			io.emit('stopVote', 'PARI');
+			winVote.emit('stopVote', 'PARI');
 		}
 	});
 	
+});
+
+io.on('connection', function(socket){
 	socket.on('redFaul', function(){
 		admin.redTeam().addFoul();
 		console.log("falli dei red: "+admin.redTeam().getFouls()+" ! ");
@@ -422,9 +426,11 @@ io.on('connection', function(socket){
 	socket.on('goToWait1', function(){
 		io.emit('goToWait');
 	});
+});
 	// ---- Boris -----FINE
 	
 	// ---- Pitti -----
+io.on('connection', function(socket){
 	socket.emit('aggiornaListaVoto', listaTitoli.listaOggetti(), listaTitoli.numeroOggetti());
 	//console.log(listaTitoli);
 	socket.on('nuovoElemento',function(testo){

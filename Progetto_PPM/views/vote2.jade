@@ -20,7 +20,7 @@ block content
 		var red=0;
 		var blue=0;
 		var myChart;
-		var socket=io();
+		var socket=io(":3000/winVote");
 		var ctx=document.getElementById("myChart").getContext("2d");
 		var data= {
 			labels : [],
