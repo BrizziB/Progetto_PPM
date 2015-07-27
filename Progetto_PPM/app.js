@@ -303,12 +303,12 @@ function Admin(){
 	};
 	//funzione cattiva !
 	var theBeast = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
-		if (timerArray.length==0)
-			return;
+		if (timerArray.length===0){
+			return;}
 		var element = timerArray.pop();
 		var next = element.page;
 		var delay = element.delay;
-		setTimeOut(function (){
+		setTimeout(function (){
 			setCurrentPage(next);
 			clientRedirect();
 			theBeast(timerArray);
