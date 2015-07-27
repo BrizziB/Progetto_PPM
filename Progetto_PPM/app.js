@@ -544,12 +544,18 @@ io.on('connection', function(socket){
 			}
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		socket.emit('aggiornaVoti',listaTitoli.listaVoti);
 	});
 	socket.on('voto',function(voto){
 		aggiornaSessioneDopoVoto(socket);
 		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+	});
+
+	socket.on('richiediElementoMancante',function(idOggetto){
+		var oggetto =listaTitoli.oggettoDaID(idOggetto);
+		socket.emit('riceviElementoMancante',oggetto ,idOggetto,listaTitoli.prendiVoti(oggetto));
 	});
 	if (app.get('env') === 'development') {
 		socket.on('reset',function(){
