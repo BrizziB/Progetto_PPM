@@ -203,6 +203,9 @@ function listaOggettiVoti(){
 	this.listaVoti=function(){
 		return contenitoreVoti.clone();
 	};
+	this.iDDaOggetto=function(nomeOggetto){
+		return contenitoreOggetti.get(nomeOggetto);
+	};
 	this.oggettoDaID=function(idOggetto){
 		return contenitoreOggetti.search(idOggetto);
 	};
@@ -420,17 +423,6 @@ function comparabile(stringa){
     return stringa.toLowerCase().replace(/ /g,"");
 }
 
-/*function aggiungiVoti(elemento, lista, nVoti){
-	if (nVoti === undefined){
-		nVoti = 1;
-	}
-	for (var i=0, l=lista.length;i<l;i++){
-		if (lista[i].prendiNomeOggetto()===elemento){
-			lista[i].aggiungiVoti(nVoti);
-			return;
-		}
-	}
-} */
 function aggiornaSessioneDopoVoto(socket){
 	var sess = socket.request.session;
 	sess.utente.aggiungiTitolo = false;
@@ -514,27 +506,29 @@ io.on('connection', function(socket){
 	
 	// ---- Pitti -----
 io.on('connection', function(socket){
-	socket.emit('aggiornaListaVoto', listaTitoli.listaOggetti(), listaTitoli.numeroOggetti());
+	var listaOggetti = [];
+	var listaOggettiID = [];
+	(function(){
+		listaOggetti =listaTitoli.listaOggetti();
+		var indice;
+		for (indice in listaOggetti ){
+			listaOggettiID.push(listaTitoli.iDDaOggetto(listaOggetti[indice]));
+		}
+	}());
+	socket.emit('aggiornaListaVoto',listaOggetti, listaOggettiID, listaTitoli.numeroOggetti());
 	//console.log(listaTitoli);
 	socket.on('nuovoElemento',function(testo){
 		var esistente = false;
 		var testoDaComparare = comparabile(testo);
-		/*for(var indice=0, lunghezza =listaTitoli.length; indice<lunghezza; indice++){
-			if (comparabile(listaTitoli[indice])===testoDaComparare){
-				esistente=true;
-				break;
-			}			
-		}*/
 		listaTitoli.ciclaLista(function(nVoti,titolo){
 			if (!esistente && comparabile(titolo)===testoDaComparare){
 				esistente= true;
 			}
 		});
+		//TODO: in realtà non va messo qui e va temporizzato		
 		if (esistente===false){
 			listaTitoli.aggiungiOggetto(testo,1);
-			/*listaTitoliContenitori[listaTitoliContenitori.length]=new contenitoreVoti(testo,1);
-			listaTitoli[listaTitoli.length]=testo;*/
-			io.emit('aggiornaListaVoto',[testo],listaTitoli.numeroOggetti());		
+			io.emit('aggiornaListaVoto',[testo],[listaTitoli.iDDaOggetto(testo)],listaTitoli.numeroOggetti());
 		}
 		else
 			{
@@ -544,18 +538,19 @@ io.on('connection', function(socket){
 			}
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		socket.emit('aggiornaVoti',listaTitoli.listaVoti);
+		io.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 	socket.on('voto',function(voto){
 		aggiornaSessioneDopoVoto(socket);
 		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		socket.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 
 	socket.on('richiediElementoMancante',function(idOggetto){
 		var oggetto =listaTitoli.oggettoDaID(idOggetto);
-		socket.emit('riceviElementoMancante',oggetto ,idOggetto,listaTitoli.prendiVoti(oggetto));
+		socket.emit('riceviElementoMancante',oggetto, idOggetto,listaTitoli.prendiVoti(oggetto));
 	});
 	if (app.get('env') === 'development') {
 		socket.on('reset',function(){

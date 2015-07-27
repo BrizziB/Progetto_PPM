@@ -1,5 +1,6 @@
-function aggiornaNumeroVoti(listaNumeroVoti){
+function aggiornaNumeroVoti(listaVoti){
 	var aggiunte = false;
+	var listaNumeroVoti =new HashMap(listaVoti);
 	var listaAggiunte = new HashMap();
 	listaNumeroVoti.forEach(function(value,key){
 		var elem = $("#listavoti li[id='"+key+"']");
@@ -18,7 +19,7 @@ function aggiornaNumeroVoti(listaNumeroVoti){
 }
 
 socket.on('riceviElementoMancante',function(nomeOggetto, idOggetto, nVoti){
-	var openLi = "<li id=" + idOggetto + ">";
+	var openLi = "<li id='" + idOggetto + "'>";
 	var openA = '<a href="#risposta" data-rel="dialog" class="ui-btn ui-corner-all ui-shadow">';
 	var htmlTesto = "<span class=\"testo\">" + nomeOggetto + "</span>";
 	var htmlConta = "<span class=\"ui-li-count contatoreVoto\">"+nVoti+"</span>";
@@ -44,7 +45,7 @@ socket.on('aggiornaListaVoto',function(lista,listaID,lunghezzaListaServer){
 		return;                         
 	}
 	$.each(lista, function(key, value){
-		var openLi = "<li id=" + listaID[key] + ">";
+		var openLi = "<li id='" + listaID[key] + "'>";
 		var openA = '<a href="#risposta" data-rel="dialog" class="ui-btn ui-corner-all ui-shadow">';
 		var htmlTesto = "<span class=\"testo\">" + value + "</span>";
 		var htmlConta = "<span class=\"ui-li-count contatoreVoto\">"+key+"</span>";
