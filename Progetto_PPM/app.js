@@ -21,8 +21,8 @@ var Utente = function(){
 };
 
 function team (teamName, nFoulsBeforePenalty){
-	punteggi = new Array();
-	if(nFoulsBeforePenalty==undefined){
+	var punteggi = new Array();
+	if(nFoulsBeforePenalty === undefined){
 		nFoulsBeforePenalty=5;
 	}
 	var penalties=0;
@@ -259,24 +259,7 @@ function Settings(){
 	this.getWinnerTimer=function(){
 		return winnerTimer;
 	};
-	
-	this.getTitleFunction=fucntion(){
-		return titleFunction;
-	};
-	
-	this.getCatFunction=fucntion(){
-		return catFunction;
-	};
-	
-	this.getWaitFunction=fucntion(){
-		return waitFunction;
-	};
-	
-	this.getWinnerFunction=fucntion(){
-		return winnerFunction;
-	};
-	
-};
+}
 
 function Admin(){
 	var currentMatchNum;
@@ -295,8 +278,12 @@ function Admin(){
 		return redTeam;
 	};
 	
-	this.getCurrentPage = function(){
+	var getCurrentPageInternal= function(){
 		return currentPage;
+	};
+	
+	this.getCurrentPage = function(){
+		return getCurrentPageInternal();
 	};
 	
 	var setCurrentPage = function(page){
@@ -305,7 +292,7 @@ function Admin(){
 	
 	//invariante: stiamo inviando la pagina corrente dopo la modifica
 	var clientRedirect = function (){
-		io.emit('redirect', getCurrentPage());
+		io.emit('redirect', getCurrentPageInternal());
 	};
 	
 	var isStopped=false;
