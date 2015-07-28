@@ -12,7 +12,7 @@ block content
     #Votazione('data-role'= 'page')
         .ui-content('role' = 'main')
         p#titoloLista= titoloLista
-        ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti')
+        ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti' style ='diplay:inline')
            script(type='text/javascript', src='/scripts/custom/voteLista.js')  
                         
         if aggiungiTitolo

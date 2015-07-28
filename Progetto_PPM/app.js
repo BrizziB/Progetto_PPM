@@ -201,7 +201,11 @@ function listaOggettiVoti(){
 		return contenitoreOggetti.count();
 	};
 	this.listaVoti=function(){
-		return contenitoreVoti.clone();
+		var arrayVoti = [];
+		contenitoreVoti.forEach(function(nVoti,IDNumber){
+			arrayVoti.push({ID:IDNumber,Voti:nVoti});
+		});
+		return arrayVoti;
 	};
 	this.iDDaOggetto=function(nomeOggetto){
 		return contenitoreOggetti.get(nomeOggetto);
@@ -545,7 +549,7 @@ io.on('connection', function(socket){
 		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		socket.emit('aggiornaVoti',listaTitoli.listaVoti());
+		io.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 
 	socket.on('richiediElementoMancante',function(idOggetto){
