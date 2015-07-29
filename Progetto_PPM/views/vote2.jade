@@ -52,9 +52,9 @@ block content
 		socket.on('welcomeVote', function(blue, red){
 			voteBlue(myChart, blue);
 			voteRed(myChart, red);
-			if (voted){
-				$("#blueB").hide();
-				$("#redB").hide();
+			if (voted===true){
+				$("#blueButton").hide();
+				$("#redButton").hide();
 			}
 		});
 		
