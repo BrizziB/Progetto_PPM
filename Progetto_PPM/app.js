@@ -7,6 +7,10 @@ var bodyParser = require('body-parser');
 var socketServer = require('socket.io');
 var session = require('express-session');
 var HashMap = require('hashmap');
+var mongoose = require('mongoose');
+//inizializzazione passport e strategie
+var passport = require('passport');
+var LocalStrategy = require('passport.local').Strategy;
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -339,10 +343,19 @@ var admin = new Admin();
 var red = new contenitoreVoti("red", 0);
 var blue = new contenitoreVoti("blue", 0);
 
+var FileStore = require('session-file-store')(session);
+var fileStore = new FileStore({
+	ttl: 60 * 60 * 5
+});
+
 var sessionMiddleWare = session({
 	secret: 'progettoPPM', 
 	resave: false,
-    saveUninitialized: true});
+    saveUninitialized: true,
+    store: fileStore
+});
+
+var User = require('./models/User.js');
 
 var app = express();
 var io = new socketServer();
@@ -366,12 +379,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleWare);
+app.use(passport.initialize());
+app.use(passport.session());
 
-//TODO:TOGLIERE VARIABILI TEST!!!!!!!!
-//var test= {title : 'Voto', aggiungiTitolo : true};
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use('/',function(req,res,next){
-	//req.session.test=test;
 	if (req.session.utente === undefined){
 		req.session.utente=new Utente();
 		req.session.utente.sessionID=req.sessionID;
