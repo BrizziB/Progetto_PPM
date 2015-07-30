@@ -392,19 +392,28 @@ passport.deserializeUser(User.deserializeUser());
 
 mongoose.connect('mongodb://localhost/superPPM');
 
-app.use('/',function(req,res,next){
-	if (req.session.utente === undefined){
-		req.session.utente=new Utente();
-		req.session.utente.sessionID=req.sessionID;
-	}
-	next();
-}
-, routes);
-app.use('/login', login);
+app.use('/', routes);
+app.use('/login',login);
 app.use('/registrazione', registrazione);
 app.get('/logout', function(req, res) {
     req.logout();
+    req.session.utente=null;
     res.redirect('/');
+});
+
+app.all('*', function(req,res,next){
+	if(req.isAuthenticated() === true){
+		console.log(req.user);
+		if (req.session.utente === null || req.session.utente === undefined){
+			req.session.utente=new Utente();
+		}
+		req.session.utente.sessionID=req.user._id;
+		req.session.utente.votato=req.user.votato;
+		next();
+		}
+	else{
+		res.redirect('/login');
+		}
 });
 app.use('/users', users);
 app.use('/wait', wait);
@@ -462,8 +471,12 @@ function aggiornaSessioneDopoVoto(socket){
 	var sess = socket.request.session;
 	sess.utente.aggiungiTitolo = false;
 	sess.utente.votato = true;
-	sess.save();	
+	sess.save();
+	var db = mongoose.connection;
+	var User = mongoose.model('User', User);
+	User.update({_id : sess.utente.sessionID},{votato: true});
 }
+
 function disabilitaVotoUtente(sess,sockAttuali){
 	var sessID = sess.utente.sessionID;
 	for(var i=0, l=sockAttuali.length; i<l; i++){
