@@ -10,14 +10,17 @@ var HashMap = require('hashmap');
 var mongoose = require('mongoose');
 //inizializzazione passport e strategie
 var passport = require('passport');
-var LocalStrategy = require('passport.local').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
 
+//definizione routes
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var wait = require('./routes/wait');
 var administrator = require('./routes/administrator');
 var vote = require('./routes/vote');
 var vote2 = require('./routes/vote2');
+var login = require('./routes/login');
+var registrazione = require('./routes/registrazione');
 
 var Utente = function(){
 	this.votato =  false;
@@ -383,8 +386,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new LocalStrategy(User.authenticate()));
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+mongoose.connect('mongodb://localhost/superPPM');
 
 app.use('/',function(req,res,next){
 	if (req.session.utente === undefined){
@@ -394,6 +400,12 @@ app.use('/',function(req,res,next){
 	next();
 }
 , routes);
+app.use('/login', login);
+app.use('/registrazione', registrazione);
+app.get('/logout', function(req, res) {
+    req.logout();
+    res.redirect('/');
+});
 app.use('/users', users);
 app.use('/wait', wait);
 app.use('/administrator', administrator);
