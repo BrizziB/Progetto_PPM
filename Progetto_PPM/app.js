@@ -407,7 +407,7 @@ app.all('*', function(req,res,next){
 		if (req.session.utente === null || req.session.utente === undefined){
 			req.session.utente=new Utente();
 		}
-		req.session.utente.sessionID=req.user._id;
+		req.session.utente.sessionID=req.user.username;
 		req.session.utente.votato=req.user.votato;
 		next();
 		}
@@ -472,9 +472,12 @@ function aggiornaSessioneDopoVoto(socket){
 	sess.utente.aggiungiTitolo = false;
 	sess.utente.votato = true;
 	sess.save();
-	var db = mongoose.connection;
-	var User = mongoose.model('User', User);
-	User.update({_id : sess.utente.sessionID},{votato: true});
+	var User = require('./models/User');
+	console.log(sess.utente.sessionID);
+	console.log(User);
+	User.update({username: sess.utente.sessionID},{ $set:{votato: true}},function (err, numberAffected, raw) {
+		  if (err) return handleError(err);
+		});	
 }
 
 function disabilitaVotoUtente(sess,sockAttuali){

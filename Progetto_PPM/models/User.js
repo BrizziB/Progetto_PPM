@@ -7,7 +7,8 @@ var User = new Schema({
 	password: String,
 	admin : { type: Boolean, default: false},
 	votato : {type: Boolean, default: false}
-});
+
+},{collection: 'User'});
 
 User.plugin(passportLocalMongoose);
 
