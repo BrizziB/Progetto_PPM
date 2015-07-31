@@ -273,9 +273,10 @@ function Admin(){
 	var currentTitle;
 	var currentCategory;
 	var matchSettings = new Settings();
-	var currentPage;
+	var currentPage = '/wait';
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
+	var startVote = false;
 	
 	this.blueTeam=function(){
 		return blueTeam;
@@ -340,6 +341,8 @@ function Admin(){
 		theBeast(timerArray);
 	};
 	
+	
+	
 }
 
 var admin = new Admin();
@@ -392,7 +395,8 @@ passport.deserializeUser(User.deserializeUser());
 
 mongoose.connect('mongodb://localhost/superPPM');
 
-app.use('/', routes);
+
+//app.use('/',routes);
 app.use('/login',login);
 app.use('/registrazione', registrazione);
 app.get('/logout', function(req, res) {
@@ -412,7 +416,7 @@ app.all('*', function(req,res,next){
 		next();
 		}
 	else{
-		res.redirect('/login');
+		res.redirect('/');
 		}
 });
 app.use('/users', users);
@@ -420,6 +424,18 @@ app.use('/wait', wait);
 app.use('/administrator', administrator);
 app.use('/vote',vote);
 app.use('/vote/matchwinner',vote2);
+
+app.use('/', function(req, res, next){
+	if(req.isAuthenticated() === true){
+		res.redirect(admin.getCurrentPage());
+		}
+	else{
+	next();
+	}
+	},
+routes);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
