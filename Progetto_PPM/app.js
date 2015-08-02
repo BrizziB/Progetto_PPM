@@ -8,6 +8,8 @@ var socketServer = require('socket.io');
 var session = require('express-session');
 var HashMap = require('hashmap');
 var mongoose = require('mongoose');
+var FileStore = require('session-file-store')(session);
+
 //inizializzazione passport e strategie
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -21,6 +23,9 @@ var vote = require('./routes/vote');
 var vote2 = require('./routes/vote2');
 var login = require('./routes/login');
 var registrazione = require('./routes/registrazione');
+
+//modelli mongoose
+var User = require('./models/User.js');
 
 var Utente = function(){
 	this.votato =  false;
@@ -225,7 +230,6 @@ function listaOggettiVoti(){
 	id = null;
 }
 
-
 function Settings(){
 	var nFoulsBeforePenalty;
 	var titleTimer;
@@ -345,15 +349,9 @@ function Admin(){
 	
 }
 
-var admin = new Admin();
-var red = new contenitoreVoti("red", 0);
-var blue = new contenitoreVoti("blue", 0);
-
-var FileStore = require('session-file-store')(session);
 var fileStore = new FileStore({
 	ttl: 60 * 60 * 5
 });
-
 var sessionMiddleWare = session({
 	secret: 'progettoPPM', 
 	resave: false,
@@ -361,17 +359,18 @@ var sessionMiddleWare = session({
     store: fileStore
 });
 
-var User = require('./models/User.js');
-
 var app = express();
 var io = new socketServer();
 var winVote = io.of("/winVote");
 var votoTitoloCategoria = io.of("/votoTitoloCategoria");
 app.io = io;
-
 io.use(function(socket, next){
 	sessionMiddleWare(socket.request, socket.request.res, next);
 });
+
+var admin = new Admin();
+var red = new contenitoreVoti("red", 0);
+var blue = new contenitoreVoti("blue", 0);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
