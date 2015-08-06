@@ -13,6 +13,8 @@ var FileStore = require('session-file-store')(session);
 //inizializzazione passport e strategie
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google').Strategy;
+var FacebookStrategy =require('passport-facebook').Strategy;
 
 //definizione routes
 var routes = require('./routes/index');
@@ -371,6 +373,7 @@ io.use(function(socket, next){
 var admin = new Admin();
 var red = new contenitoreVoti("red", 0);
 var blue = new contenitoreVoti("blue", 0);
+app.set('admin',admin);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -388,22 +391,91 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new LocalStrategy(User.authenticate()));
+passport.use(new GoogleStrategy({
+	returnURL: 'http://localhost:3000/auth/google/return',
+	realm: 'http://localhost:3000'
+},function(identifier, profile, done){
+	User.findOne({'profileID': identifier},function(err,user){
+		if(err){
+			return done(err);
+		}
+		if (!user){
+			user = new User({
+				username: profile.username,
+				provider:'google',
+				profileID: identifier
+			});
+			user.save(function(err){
+				if (err){
+					console.log(err);
+				}
+				return done(err,user);
+			});
+		}else{
+			return done(err,user);
+		}
+	});	
+}));
+
+passport.use(new FacebookStrategy({
+    clientID: 'nunsesa',
+    clientSecret: 'nunsesa',
+    callbackURL: 'http://localhost:3000/auth/facebook/callback'
+},
+function(accessToken, refreshToken, profile, done) {
+    User.findOne({
+        'profileID': profile.id 
+    }, function(err, user) {
+        if (err) {
+            return done(err);
+        }
+        if (!user) {
+            user = new User({
+                username: profile.username,
+                provider: 'facebook',
+                profileID: profile.id
+            });
+            user.save(function(err) {
+                if (err) {
+                	console.log(err);
+                	}
+                return done(err, user);
+            });
+        } else {
+            return done(err, user);
+        }
+    });
+}
+));
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 mongoose.connect('mongodb://localhost/superPPM');
 
+//controlla se sei autenticato (middleware)
+function ensureAuthenticated(req, res, next) {
+	  if (req.isAuthenticated()) { return next(); }
+	  res.redirect('/login');
+	}
 
-//app.use('/',routes);
-app.use('/login',login);
-app.use('/registrazione', registrazione);
+
 app.get('/logout', function(req, res) {
     req.logout();
     req.session.utente=null;
     res.redirect('/');
 });
-
+app.all('*',function(req, res, next){
+	if(req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
+		res.redirect(admin.getCurrentPage());
+		}
+	else{
+	return next();
+	}
+	});
+app.use('/',routes);
+app.use('/login',login);
+app.use('/registrazione', registrazione);
 app.all('*', function(req,res,next){
 	if(req.isAuthenticated() === true){
 		console.log(req.user);
@@ -412,7 +484,7 @@ app.all('*', function(req,res,next){
 		}
 		req.session.utente.sessionID=req.user.username;
 		req.session.utente.votato=req.user.votato;
-		next();
+		return next();
 		}
 	else{
 		res.redirect('/');
@@ -424,15 +496,7 @@ app.use('/administrator', administrator);
 app.use('/vote',vote);
 app.use('/vote/matchwinner',vote2);
 
-app.use('/', function(req, res, next){
-	if(req.isAuthenticated() === true){
-		res.redirect(admin.getCurrentPage());
-		}
-	else{
-	next();
-	}
-	},
-routes);
+
 
 
 
@@ -487,7 +551,7 @@ function aggiornaSessioneDopoVoto(socket){
 	sess.utente.aggiungiTitolo = false;
 	sess.utente.votato = true;
 	sess.save();
-	var User = require('./models/User');
+	//var User = require('./models/User');
 	console.log(sess.utente.sessionID);
 	console.log(User);
 	User.update({username: sess.utente.sessionID},{ $set:{votato: true}},function (err, numberAffected, raw) {
