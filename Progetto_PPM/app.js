@@ -20,6 +20,7 @@ var FacebookStrategy =require('passport-facebook').Strategy;
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var wait = require('./routes/wait');
+var waitResult = require('./routes/waitResult');
 var administrator = require('./routes/administrator');
 var vote = require('./routes/vote');
 var vote2 = require('./routes/vote2');
@@ -35,13 +36,18 @@ var Utente = function(){
 };
 
 function team (teamName, nFoulsBeforePenalty){
-	var punteggi = new Array();
+	var punteggi = []; //va aggiornato dopo ogni improvvisazione
 	if(nFoulsBeforePenalty === undefined){
 		nFoulsBeforePenalty=5;
 	}
 	var penalties=0;
 	var numFouls=0;//infrazione
 	var points=0;  //PUNTI TOTALI
+	
+	this.setPunteggi=function(index, score){
+		punteggi[index] = score;
+	};
+	
 	this.getTeamName=function(){
 		return teamName;
 	};
@@ -309,6 +315,10 @@ function Admin(){
 		io.emit('redirect', getCurrentPageInternal());
 	};
 	
+	this.assegnaPunteggi=function(){
+		
+	};
+	
 	var isStopped=false;
 	var timer;
 	this.stopVotazione=function(){
@@ -331,10 +341,10 @@ function Admin(){
 	
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];		
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait"  });
-		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait/result"  });
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait? type=play"  });
+		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait? type=category"  });
 		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
-		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait/result"  });
+		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait? type=title"  });
 		
 		setCurrentPage("/vote/title");
 		theBeast(timerArray);		
@@ -342,11 +352,17 @@ function Admin(){
 	
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait"  });
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait?type=result"  });
 		setCurrentPage("/vote/matchwinner");
 		theBeast(timerArray);
 	};
 	
+	this.getCurrentTitle=function(){
+		return currentTitle;
+	}
+	this.getCurrentCategory=function(){
+		return currentCategory;
+	}
 	
 	
 }
@@ -492,6 +508,7 @@ app.all('*', function(req,res,next){
 });
 app.use('/users', users);
 app.use('/wait', wait);
+app.use('/waitResult', waitResult);
 app.use('/administrator', administrator);
 app.use('/vote',vote);
 app.use('/vote/matchwinner',vote2);
