@@ -482,7 +482,7 @@ app.get('/logout', function(req, res) {
     res.redirect('/');
 });
 app.all('*',function(req, res, next){
-	if(req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
+	if(false && req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
 		res.redirect(admin.getCurrentPage());
 		}
 	else{
