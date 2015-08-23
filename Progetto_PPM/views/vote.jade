@@ -4,7 +4,7 @@ block head
     script(type='text/javascript', src='/scripts/hashmap.js')
 
 block content
-    script var socket=io();//(":3000/votoTitoloCategoria");
+    script var socket=io(":3000/votoTitoloCategoria");
     if votoAbilitato
         script var votato = false;
     else
