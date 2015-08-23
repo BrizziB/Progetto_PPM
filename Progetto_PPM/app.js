@@ -213,6 +213,10 @@ function listaOggettiVoti(){
 		incrementaVoto(nomeOggetto,0-nVoti);
 		return true;
 	};
+	this.rimuoviLista = function(){
+		contenitoreOggetti.clear();
+		contenitoreVoti.clear();
+	};
 	
 	this.listaOggetti=function(){
 		return contenitoreOggetti.keys();
@@ -289,10 +293,17 @@ function Admin(){
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
 	var startVote = false;
+	var titlesCatsList;
 	
+	this.getTitlesCats= function(){
+		return titlesCatsList;
+	};
+	this.setTitlesCats= function(titlesCats){
+		titlesCatsList=titlesCats;
+	}; 
+
 	this.blueTeam=function(){
-		return blueTeam;
-		
+		return blueTeam;		
 	};
 	this.redTeam=function(){
 		return redTeam;
@@ -332,9 +343,13 @@ function Admin(){
 		var element = timerArray.pop();
 		var next = element.page;
 		var delay = element.delay;
+		var funct = element.funct;
 		setTimeout(function (){
 			setCurrentPage(next);
 			clientRedirect();
+			if (funct){
+				funct();
+			}
 			theBeast(timerArray);
 		}, delay);
 	};
