@@ -509,7 +509,8 @@ io.on('connection', function(socket){
 	// ---- Boris -----FINE
 	
 	// ---- Pitti -----
-io.on('connection', function(socket){
+votoTitoloCategoria.on('connection', function(socket){
+	console.log('Connessione!');
 	var listaOggetti = [];
 	var listaOggettiID = [];
 	(function(){
@@ -520,6 +521,7 @@ io.on('connection', function(socket){
 		}
 	}());
 	socket.emit('aggiornaListaVoto',listaOggetti, listaOggettiID, listaTitoli.numeroOggetti());
+	socket.emit('aggiornaVoti',listaTitoli.listaVoti());
 	//console.log(listaTitoli);
 	socket.on('nuovoElemento',function(testo){
 		var esistente = false;
@@ -532,7 +534,7 @@ io.on('connection', function(socket){
 		//TODO: in realtà non va messo qui e va temporizzato		
 		if (esistente===false){
 			listaTitoli.aggiungiOggetto(testo,1);
-			io.emit('aggiornaListaVoto',[testo],[listaTitoli.iDDaOggetto(testo)],listaTitoli.numeroOggetti());
+			votoTitoloCategoria.emit('aggiornaListaVoto',[testo],[listaTitoli.iDDaOggetto(testo)],listaTitoli.numeroOggetti());
 		}
 		else
 			{
@@ -542,14 +544,14 @@ io.on('connection', function(socket){
 			}
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		io.emit('aggiornaVoti',listaTitoli.listaVoti());
+		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 	socket.on('voto',function(voto){
 		aggiornaSessioneDopoVoto(socket);
 		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		io.emit('aggiornaVoti',listaTitoli.listaVoti());
+		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 
 	socket.on('richiediElementoMancante',function(idOggetto){
@@ -560,7 +562,7 @@ io.on('connection', function(socket){
 		socket.on('reset',function(){
 			delete socket.request.session.utente;
 			socket.request.session.save();
-			io.emit('refresh');
+			votoTitoloCategoria.emit('refresh');
 		});
 	}
 	
