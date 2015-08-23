@@ -1,0 +1,11 @@
+extends layout
+
+block content
+    #testoTitolo
+        p.testoPre Il titolo dell'improvvisazione sarà:
+        p.testoTitCat = titolo
+    if(categoria)
+        br
+        #testoCategoria
+            p.testoPre La categoria dell'improvvisazione sarà:
+            p.testoTitCat = categoria

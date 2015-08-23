@@ -359,12 +359,12 @@ function Admin(){
 	
 	this.getCurrentTitle=function(){
 		return currentTitle;
-	}
+	};
 	this.getCurrentCategory=function(){
 		return currentCategory;
-	}
+	};
 	
-	
+//TODO: aggiungere funzioni per impostare titolo e categoria vincente
 }
 
 var fileStore = new FileStore({
@@ -482,7 +482,7 @@ app.get('/logout', function(req, res) {
     res.redirect('/');
 });
 app.all('*',function(req, res, next){
-	if(false && req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
+	if(req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
 		res.redirect(admin.getCurrentPage());
 		}
 	else{
