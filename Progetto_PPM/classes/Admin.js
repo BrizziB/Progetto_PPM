@@ -1,13 +1,24 @@
-//var ListaOggettiVoti=require('./classes/ListaOggettiVoti.js');
-
 exports.team = function (teamName, nFoulsBeforePenalty){
 	var punteggi = []; //va aggiornato dopo ogni improvvisazione
 	if(nFoulsBeforePenalty === undefined){
 		nFoulsBeforePenalty=5;
 	}
-	var penalties=0;
-	var numFouls=0;//infrazione
-	var points=0;  //PUNTI TOTALI
+	var penalties;
+	var numFouls;//infrazione
+	var votes; //numero di voti per ogni match
+	var points;  //PUNTI TOTALI
+	
+	this.addVote=function(){
+		votes++;
+	};
+	
+	this.getVotes=function(){
+		return votes;
+	}
+	
+	this.setVotes=function(nvotes){
+		votes=votes+nvotes;
+	}
 	
 	this.setPunteggi=function(index, score){
 		punteggi[index] = score;
@@ -154,11 +165,11 @@ exports.Admin = function(){
 		var delay = element.delay;
 		var funct = element.funct;
 		setTimeout(function (){
-			setCurrentPage(next);
-			clientRedirect();
 			if (funct){
 				funct();
 			}
+			setCurrentPage(next);
+			clientRedirect();
 			theBeast(timerArray);
 		}, delay);
 	};
@@ -176,7 +187,7 @@ exports.Admin = function(){
 	
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait?type=result"  });
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });
 		setCurrentPage("/vote/matchwinner");
 		theBeast(timerArray);
 	};
@@ -186,7 +197,25 @@ exports.Admin = function(){
 	};
 	this.getCurrentCategory=function(){
 		return currentCategory;
+	};	
+	
+	
+	this.setWinner = function(){
+		redTeam().setPunteggi(getCurrentMatchNum(), redTeam.getVotes() );
+		blueTeam().setPunteggi(getCurrentMatchNum(), blueTeam.getVotes() );
+		if(blueTeam.getVotes()>redTeam.getVotes()){	
+			blueTeam.addPoint();
+		}		
+		if(blueTeam.getVotes()<redTeam.getVotes()){	
+			redTeam.addPoint();
+		}
+		if(admin.blueTeam.getVotes()==admin.redTeam.getVotes()){	
+			admin.redTeam.addPoint();
+			admin.blueTeam.addPoint();
+
+		}
+		
 	};
+	
 }
 
-console.log(module.exports);

@@ -42,35 +42,6 @@ var Utente = function(){
 
 
 
-function contenitoreVoti(nomeOggetto, numeroVoti){
-	if(!numeroVoti)
-		{numeroVoti=0;}
-	var nome=nomeOggetto;
-	var voti=numeroVoti;
-	this.aggiungiVoti=function(nVoti){
-		if(!nVoti){
-			nVoti=1;
-		}
-		voti+=nVoti;
-	};
-	this.rimuoviVoti=function(nVoti){
-		if(!nVoti){
-			nVoti=1;
-		}
-		voti-=nVoti;
-	};	
-	this.setVoti=function(nVoti){
-		voti=nVoti;
-	};
-	this.getVoti=function(){
-		return voti;
-	};	
-	this.getNome=function(){
-		return nome;
-	};
-}
-
-
 
 
 var fileStore = new FileStore({
@@ -95,8 +66,6 @@ io.use(function(socket, next){
 });
 
 var admin = new Admin();
-var red = new contenitoreVoti("red", 0);
-var blue = new contenitoreVoti("blue", 0);
 app.set('admin',admin);
 
 // view engine setup
@@ -221,10 +190,6 @@ app.use('/administrator', administrator);
 app.use('/vote',vote);
 app.use('/vote/matchwinner',vote2);
 
-
-
-
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -260,17 +225,6 @@ function comparabile(stringa){
     return stringa.toLowerCase().replace(/ /g,"");
 }
 
-/*function aggiungiVoti(elemento, lista, nVoti){
-	if (nVoti === undefined){
-		nVoti = 1;
-	}
-	for (var i=0, l=lista.length;i<l;i++){
-		if (lista[i].prendiNomeOggetto()===elemento){
-			lista[i].aggiungiVoti(nVoti);
-			return;
-		}
-	}
-} */
 function aggiornaSessioneDopoVoto(socket){
 	var sess = socket.request.session;
 	sess.utente.aggiungiTitolo = false;
@@ -314,30 +268,29 @@ whilePlay.on('connection', function(socket){
 });
 winVote.on('connection', function(socket){
 	console.log("Connessione a winVote ! ");
-	socket.emit('welcomeVote', blue.getVoti(), red.getVoti());
+	socket.emit('welcomeVote', admin.blueTeam.getVotes(), admin.redTeam.getVotes());
 	
 	socket.on('blueClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		blue.aggiungiVoti(1);
+		admin.blueTeam.addVote();
 		console.log("hanno votato blu");		
-		winVote.emit('blueVote', blue.getVoti());
+		winVote.emit('blueVote', admin.blueTeam.getVotes());
 	});
 	socket.on('redClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		red.aggiungiVoti(1);
-		console.log("hanno votato rosso");
-		winVote.emit('redVote', red.getVoti());
-	});
-	
+		admin.redTeam.addVote();
+		console.log("hanno votato blu");		
+		winVote.emit('redVote', admin.redTeam.getVotes());
+	});	
 	
 });
 matchResult.on('connection', function(socket){
 	console.log("connessione a matchResult");
 	blueT=admin.blueTeam();
 	redT=admin.redTeam();
-	socket.emit('welcomeResult', blue.getVoti(), red.getVoti(), blueT.getPunteggi(), redT.getPunteggi(), admin.getCurrentMatchNum());	
+	socket.emit('welcomeResult', blueT.getVotes(), redT.getVotes(), blueT.getPunteggi(), redT.getPunteggi(), admin.getCurrentMatchNum());	
 });
 
 	// ---- Boris -----FINE
