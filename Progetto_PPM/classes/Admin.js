@@ -19,6 +19,9 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 	this.setVotes=function(nvotes){
 		votes=votes+nvotes;
 	}
+	this.getPunteggi=function(){
+		return punteggi;
+	};
 	
 	this.setPunteggi=function(index, score){
 		punteggi[index] = score;
@@ -199,6 +202,10 @@ exports.Admin = function(){
 		return currentCategory;
 	};	
 	
+	this.getCurrentMatchNum=function(){
+		return currentMatchNum;
+	}
+	
 	
 	this.setWinner = function(){
 		redTeam().setPunteggi(getCurrentMatchNum(), redTeam.getVotes() );
@@ -212,10 +219,7 @@ exports.Admin = function(){
 		if(admin.blueTeam.getVotes()==admin.redTeam.getVotes()){	
 			admin.redTeam.addPoint();
 			admin.blueTeam.addPoint();
-
 		}
-		
 	};
-	
 }
 

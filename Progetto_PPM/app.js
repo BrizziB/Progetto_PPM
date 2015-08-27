@@ -158,14 +158,14 @@ app.get('/logout', function(req, res) {
     req.session.utente=null;
     res.redirect('/');
 });
-app.all('*',function(req, res, next){
+/*app.all('*',function(req, res, next){
 	if(req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
 		res.redirect(admin.getCurrentPage());
 		}
 	else{
 	return next();
 	}
-	});
+	});*/
 app.use('/',routes);
 app.use('/login',login);
 app.use('/registrazione', registrazione);
@@ -268,29 +268,27 @@ whilePlay.on('connection', function(socket){
 });
 winVote.on('connection', function(socket){
 	console.log("Connessione a winVote ! ");
-	socket.emit('welcomeVote', admin.blueTeam.getVotes(), admin.redTeam.getVotes());
+	socket.emit('welcomeVote', admin.blueTeam().getVotes(), admin.redTeam().getVotes());
 	
 	socket.on('blueClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		admin.blueTeam.addVote();
+		admin.blueTeam().addVote();
 		console.log("hanno votato blu");		
-		winVote.emit('blueVote', admin.blueTeam.getVotes());
+		winVote.emit('blueVote', admin.blueTeam().getVotes());
 	});
 	socket.on('redClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
-		admin.redTeam.addVote();
+		admin.redTeam().addVote();
 		console.log("hanno votato blu");		
-		winVote.emit('redVote', admin.redTeam.getVotes());
+		winVote.emit('redVote', admin.redTeam().getVotes());
 	});	
 	
 });
 matchResult.on('connection', function(socket){
 	console.log("connessione a matchResult");
-	blueT=admin.blueTeam();
-	redT=admin.redTeam();
-	socket.emit('welcomeResult', blueT.getVotes(), redT.getVotes(), blueT.getPunteggi(), redT.getPunteggi(), admin.getCurrentMatchNum());	
+	socket.emit('welcomeResult', admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum());	
 });
 
 	// ---- Boris -----FINE
