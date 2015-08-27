@@ -158,14 +158,14 @@ app.get('/logout', function(req, res) {
     req.session.utente=null;
     res.redirect('/');
 });
-/*app.all('*',function(req, res, next){
+app.all('*',function(req, res, next){
 	if(req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
 		res.redirect(admin.getCurrentPage());
 		}
 	else{
 	return next();
 	}
-	});*/
+	});
 app.use('/',routes);
 app.use('/login',login);
 app.use('/registrazione', registrazione);
