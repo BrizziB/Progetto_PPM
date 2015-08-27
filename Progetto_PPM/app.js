@@ -267,8 +267,10 @@ var sessionMiddleWare = session({
 
 var app = express();
 var io = new socketServer();
+var whilePlay = io.of("/whilePlay");
 var winVote = io.of("/winVote");
 var votoTitoloCategoria = io.of("/votoTitoloCategoria");
+var matchResult = io.of("/matchResult");
 app.io = io;
 io.use(function(socket, next){
 	sessionMiddleWare(socket.request, socket.request.res, next);
@@ -475,11 +477,27 @@ function disabilitaVotoUtente(sess,sockAttuali){
 //TODO: i voti devono essere mantenuti dall'admin
 var listaTitoli = new ListaOggettiVoti('Test1','Test2','Test3');
 
+whilePlay.on('connection', function(socket){
+	console.log("connessione a whilePlay");
+	socket.emit('welcomeWait', admin.blueTeam().getFouls(), admin.redTeam().getFouls(), admin.blueTeam().getPenalty(), admin.redTeam().getPenalty(), admin.getCurrentTitle(), admin.getCurrentCategory());
+	
+	socket.on('redFaul', function(){
+		admin.redTeam().addFoul();
+		console.log("falli dei red: "+admin.redTeam().getFouls()+" ! ");
+		whilePlay.emit('faul', admin.redTeam().getTeamName(), admin.redTeam().getFouls(), admin.redTeam().getPenalty());
+	});
+	
+	socket.on('blueFaul', function(){
+		admin.blueTeam().addFoul();
+		console.log("falli dei blue: "+admin.blueTeam().getFouls()+" ! ");
+		whilePlay.emit('faul', admin.blueTeam().getTeamName(), admin.blueTeam().getFouls(), admin.blueTeam().getPenalty());
+	});
+	
+});
 winVote.on('connection', function(socket){
-	// ---- Boris -----
-	console.log("Connessione ! ");
+	console.log("Connessione a winVote ! ");
 	socket.emit('welcomeVote', blue.getVoti(), red.getVoti());
-	socket.emit('welcomeWait', admin.blueTeam().getFouls(), admin.redTeam().getFouls(), admin.blueTeam().getPenalty(), admin.redTeam().getPenalty());
+	
 	socket.on('blueClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
@@ -495,48 +513,15 @@ winVote.on('connection', function(socket){
 		winVote.emit('redVote', red.getVoti());
 	});
 	
-	socket.on('stopVoting', function(){
-		if(red.getVoti()>blue.getVoti()){
-			console.log("evento STOP VOTING rosso rilevato");
-			admin.redTeam().addPoint();
-			admin.redTeam().punteggi[admin.CurrentMatchNum]=red.getVoti();
-			admin.blueTeam().punteggi[admin.CurrentMatchNum]=blue.getVoti();
-			red.setVoti(0);
-			blue.setVoti(0);
-			winVote.emit('stopVote', 'red', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
-		}
-		if(blue.getVoti()>red.getVoti()){
-			console.log("evento STOP VOTING blu rilevato");
-			admin.blueTeam().addPoint();
-			admin.redTeam().punteggi[admin.CurrentMatchNum]=red.getVoti();
-			admin.blueTeam().punteggi[admin.CurrentMatchNum]=blue.getVoti();
-			red.setVoti(0);
-			blue.setVoti(0);
-			winVote.emit('stopVote', 'blue', admin.redTeam().getPoints(), admin.blueTeam().getPoints());
-		}
-		else{
-			winVote.emit('stopVote', 'PARI');
-		}
-	});
 	
+});
+matchResult.on('connection', function(socket){
+	console.log("connessione a matchResult");
+	blueT=admin.blueTeam();
+	redT=admin.redTeam();
+	socket.emit('welcomeResult', blue.getVoti(), red.getVoti(), blueT.getPunteggi(), redT.getPunteggi(), admin.getCurrentMatchNum());	
 });
 
-io.on('connection', function(socket){
-	socket.on('redFaul', function(){
-		admin.redTeam().addFoul();
-		console.log("falli dei red: "+admin.redTeam().getFouls()+" ! ");
-		io.emit('faul', admin.redTeam().getTeamName(), admin.redTeam().getFouls(), admin.redTeam().getPenalty());
-	});
-	
-	socket.on('blueFaul', function(){
-		admin.blueTeam().addFoul();
-		console.log("falli dei blue: "+admin.blueTeam().getFouls()+" ! ");
-		io.emit('faul', admin.blueTeam().getTeamName(), admin.blueTeam().getFouls(), admin.blueTeam().getPenalty());
-	});
-	socket.on('goToWait1', function(){
-		io.emit('goToWait');
-	});
-});
 	// ---- Boris -----FINE
 	
 	// ---- Pitti -----

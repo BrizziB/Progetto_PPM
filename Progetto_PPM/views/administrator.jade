@@ -9,26 +9,13 @@ block content
 		input(id='blueF',type="button", data-corners="false", data-enhanced="true", value="Fallo dei Blu")
 	div(id='redFaul', class="ui-btn ui-input-btn ui-shadow", ) Fallo dei Rossi!
 		input(id='redF',type="button", data-corners="false", data-enhanced="true", value="Fallo dei Rossi")
-	div(id='stopVote', class="ui-btn ui-input-btn ui-shadow", ) Fine Votazione :D
-		input(id='stopV',type="button", data-corners="false", data-enhanced="true", value="Fine votazione!")
-	div(id='goToWait', class="ui-btn ui-input-btn ui-shadow", ) Vai a Wait ;)
-		input(id='goToW',type="button", data-corners="false", data-enhanced="true", value="vai a Wait!")
-		
+
 	script.
-		var socket=io();
+		var socket=io(":3000/whilePlay");
+			$("#blueFaul").click(function(){
+				socket.emit('blueFaul');
+			});
 		
-		$("#stopVote").click(function(){
-			socket.emit('stopVoting');
-		});
-		
-		$("#goToWait").click(function(){
-			socket.emit('goToWait1');
-		});
-		
-		$("#blueFaul").click(function(){
-			socket.emit('blueFaul');
-		});
-		
-		$("#redFaul").click(function(){
-			socket.emit('redFaul');
-		});
+			$("#redFaul").click(function(){
+				socket.emit('redFaul');
+			});

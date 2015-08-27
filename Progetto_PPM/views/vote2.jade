@@ -17,13 +17,14 @@ block content
 	div(id='winDiv' )
 	canvas#myChart()
 	script.
+		Chart.defaults.global.showTooltips = false;
 		var red=0;
 		var blue=0;
 		var myChart;
 		var socket=io(":3000/winVote");
 		var ctx=document.getElementById("myChart").getContext("2d");
 		var data= {
-			labels : [],
+			labels : [""],
 			datasets : [
 				{
 					fillColor : "rgba(255,0,0,0.9)",
@@ -83,27 +84,6 @@ block content
 			$('#redButton').hide();
 			
 		});
-		//TODO dividi le due funzioni, viene meglio, magari crea due bottoni su admin, vedi un po' via..
-		
-		socket.on('stopVote', function(team, redPt, bluePt){
-			var parag = document.createElement('p');
-			if (team==='red'||team==='blue'){
-				var text1 = document.createTextNode("Vince la squadra " + team + " !!");
-				var text2 = document.createTextNode("   Red : " +redPt + " punti ");
-				var text3 = document.createTextNode("   Blue : " +bluePt + " punti ");
-			}
-			else {
-				var text1 = document.createTextNode("_Pareggio_");
-				var text2 = document.createTextNode("   Red : " +redPt + " punti ");
-				var text3 = document.createTextNode("   Blue : " +bluePt + " punti ");
-			}
-			parag.appendChild(text1);
-			parag.appendChild(text2);
-			parag.appendChild(text3);
-			document.getElementById("winDiv").appendChild(parag);
-		});
-		
-		socket.on('goToWait', function(){
-			window.location.href = "/wait";
-		});
+
+
 	

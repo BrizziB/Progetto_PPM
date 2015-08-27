@@ -10,19 +10,22 @@ block content
 		h1 Attendere prego!
 		h2 rappresentazione in corso
 	div
+		h4 Titolo della rappresenzatione :
+			p(id='title')
+		h4 Categoria :
+			p(id='category')
 		h2 Falli:
-		p redFauls :
-			p(id='redFaul') /
+		h5 redFauls :
+			p(id='redFaul') nessuno
 			p redPenality :
-				p(id='redPen') /
-		p blueFauls :
-			p(id='blueFaul') /
+				p(id='redPen') nessuno
+		h5 blueFauls :
+			p(id='blueFaul') nessuno
 			p bluePenality :
-				p(id='bluePen') /
+				p(id='bluePen') nessuno
 
 	script.
-		//TODO aggiungere il bar graph con i risultati delle varie improvvisazioni
-		var socket=io();
+		var socket=io(":3000/whilePlay");	
 		var blueFauls;
 		var redFauls;
 		var bluePenality;
@@ -33,6 +36,7 @@ block content
 			if (teamName==='red'){
 				document.getElementById("redFaul").innerHTML=faulNum;
 				document.getElementById("redPen").innerHTML=penPt;
+				document.getElementById("redFaul").contentWindow.location.reload(true);
 			}
 			else {
 				document.getElementById("blueFaul").innerHTML=faulNum;
@@ -40,11 +44,13 @@ block content
 			}
 		}
 		
-		socket.on('welcomeWait', function(blueF, redF, blueP, redP){
+		socket.on('welcomeWait', function(blueF, redF, blueP, redP, title, category){
 			blueFauls=blueF;
 			bluePenality=blueP;
 			redFauls=redF;
 			redPenality=redP;
+			document.getElementById("title").innerHTML=title;
+			document.getElementById("category").innerHTML=category;
 			document.getElementById("redFaul").innerHTML=redFauls;
 			document.getElementById("blueFaul").innerHTML=blueFauls;
 			document.getElementById("redPen").innerHTML=redPenality;
