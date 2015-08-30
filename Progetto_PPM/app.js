@@ -433,11 +433,27 @@ function aggiornaSessioneDopoVoto(socket){
 	sess.utente.votato = true;
 	sess.save();	
 }
+
+//XXX Funzione con bug: emette solo sul namespace '/'
 function disabilitaVotoUtente(sess,sockAttuali){
 	var sessID = sess.utente.sessionID;
+	console.log(sessID);
 	for(var i=0, l=sockAttuali.length; i<l; i++){
 		if (sessID===sockAttuali[i].request.session.utente.sessionID){
 			sockAttuali[i].emit('disabilitaVoto');
+		}
+	}	
+}
+
+function disabilitaVotoUtenteNSP(sess,namespace){
+	var sessID = sess.utente.sessionID;
+	var sockAttuali=io.of(namespace || "/").connected;
+	console.log(sockAttuali);
+	for(var i in sockAttuali){
+		if (sessID===sockAttuali[i].request.session.utente.sessionID){
+			console.log(sockAttuali[i]);
+			sockAttuali[i].emit('disabilitaVoto');
+			console.log('DisabilitaVoto inviato!');
 		}
 	}	
 }
@@ -490,7 +506,7 @@ winVote.on('connection', function(socket){
 	
 });
 
-io.on('connection', function(socket){
+/*io.on('connection', function(socket){
 	socket.on('redFaul', function(){
 		admin.redTeam().addFoul();
 		console.log("falli dei red: "+admin.redTeam().getFouls()+" ! ");
@@ -505,7 +521,7 @@ io.on('connection', function(socket){
 	socket.on('goToWait1', function(){
 		io.emit('goToWait');
 	});
-});
+});*/
 	// ---- Boris -----FINE
 	
 	// ---- Pitti -----
@@ -543,14 +559,16 @@ votoTitoloCategoria.on('connection', function(socket){
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
-		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
 		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 	socket.on('voto',function(voto){
 		aggiornaSessioneDopoVoto(socket);
 		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
-		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
+		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 
@@ -558,13 +576,14 @@ votoTitoloCategoria.on('connection', function(socket){
 		var oggetto =listaTitoli.oggettoDaID(idOggetto);
 		socket.emit('riceviElementoMancante',oggetto, idOggetto,listaTitoli.prendiVoti(oggetto));
 	});
-	if (app.get('env') === 'development') {
+	/* - Parte per il pulsante reset su vote.jade -
+	 * if (app.get('env') === 'development') {
 		socket.on('reset',function(){
 			delete socket.request.session.utente;
 			socket.request.session.save();
 			votoTitoloCategoria.emit('refresh');
 		});
-	}
+	}*/
 	
 	// ---- Pitti -----FINE
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
