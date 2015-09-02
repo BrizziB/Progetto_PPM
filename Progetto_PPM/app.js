@@ -343,5 +343,36 @@ io.on('connection', function(socket){
 	// ---- Pitti -----FINE
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
 });
+
+
+adminChan.on('connect',function(socket){
+	var titleTimer = admin.getTitleTimer();
+	var catTimer = admin.getCatTimer();
+	var waitTimer = admin.getWaitTimer();
+	var winnerTimer = admin.getWinnerTimer();
+	var redTeam = admin.redTeam;
+	var blueTeam = admin.blueTeam;
+	socket.emit('init',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPunteggi(),blueTeam.getFouls(),redTeam.getPunteggi(),redTeam.getFouls()]);
+	socket.on('changeTimer',function(type,time){
+		switch(type){
+		case 'title':
+			admin.setTitleTimer(time);
+			break;
+		case 'category':
+			admin.setCatTimer(time);
+			break;
+		case 'waitTimer':
+			admin.setWaitTimer(time);
+			break;
+		case 'winner':
+			admin.setWinnerTimer(time);
+			break;
+		default:
+			console.log('Errore: impossibile selezionare il timer da modificare!');
+	}
+	//TODO: gestione falli by Boris				
+		
+	})
+});
 //  [  ]
 module.exports = app;

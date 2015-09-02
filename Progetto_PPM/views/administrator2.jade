@@ -1,0 +1,39 @@
+extends layout
+
+block head
+	script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
+	script(type='text/javascript', src='/scripts/custom/adminPageScripts.js')
+	
+block content
+	script alert('Hai inserito tutti gli script? Hai collegato il CSS?');
+	#impostazioniVoto
+		each value in ['Titolo','Categoria','Attesa','Vincitore']
+			div(id='impostaTimer'+value, class='timer ui-grid-b')
+				.ui-block-a
+					p = 'Imposta timer per ' + value
+				.ui-block-b
+					input(type='text', name='Timer'+value, id='valoreTimer'+value)
+                .ui-block-c
+					input(type='button', value = 'Invia', id='bottoneTimer'+value)
+	#avvioVoto.ui-grid-a
+		.ui-block-a
+			input(type='button', value='Inizia prima parte', id='titoloCategoria')
+		.ui-block-b
+			input(type='button', value='Inizia seconda parte', id='vincitore')
+	#conteggioFalliPunteggio.ui-grid-a
+		#red.ui-block-a.bloccoPuntiFalli
+			input(type='button', value='Fallo ai Rossi', id='falloRossi')
+			p
+				span.titolo Squadra Rossa 
+				span.titoloPunteggio Punti:
+				span.punteggio 42
+				span.titoloFalli Numero Falli:
+				span.falli 7
+		#blue.ui-block-b.bloccoPuntiFalli
+			input(type='button', value='Fallo ai Blue', id='falloBlu')
+			p
+				span.titolo Squadra Blue
+				span.titoloPunteggio Punti:
+				span.punteggio 42
+				span.titoloFalli Numero Falli:
+				span.falli 7
