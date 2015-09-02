@@ -60,7 +60,7 @@ socket.on('aggiornaListaVoto',function(lista,listaID,lunghezzaListaServer){
 	}
 	$.each(lista, function(key, value){
 		var openLi = "<li id='" + listaID[key] + "'>";
-		var openA = '<a href="#risposta" data-rel="dialog" class="ui-btn ui-btn-inline ui-corner-all ui-shadow ui-mini">';
+		var openA = '<a href="#risposta"  class="ui-btn ui-btn-inline ui-corner-all ui-shadow ui-mini">';
 		var htmlTesto = "<span class=\"testo\">" + value + "</span>";
 		var htmlConta = "<span class=\"ui-li-count contatoreVoto\">"+key+"</span>";
 		var htmlTestoBottone ="<span class =\"testoBottone\">Vota!<\span>"

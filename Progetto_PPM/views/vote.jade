@@ -35,7 +35,7 @@ block content
                     socket.emit('reset');
                 });
                     
-     #risposta('data-role'= 'page')
+     #risposta('data-role'= 'page', 'data-dialog'='true')
         .ui-content('role'='main')
             p Grazie per avere votato!
-            p #[a(href='#main', data-rel='back', class='ui-btn ui-icon-back ui-btn-icon-left') Torna alla pagina principale ]
+            p #[a(href='#main', data-rel='back', class='ui-btn ui-icon-back ui-btn-icon-left ui-corner-all ui-shadow') Torna alla pagina principale ]
