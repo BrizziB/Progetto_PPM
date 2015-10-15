@@ -72,6 +72,9 @@ app.set('admin',admin);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+
+
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -80,6 +83,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleWare);
+
+mongoUrl = "mongodb://localhost/superPPM";
+mongoose.connect(mongoUrl, function(error) {
+    // handle the error case
+    if (error) {
+        console.error("Failed to connect to the Mongo server!!");
+        console.error(error);
+        throw error;
+    } else {
+        console.log("connected to mongo server at: " + mongoUrl);
+    }
+});
+//require("./passport-configuration");
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -144,7 +160,7 @@ function(accessToken, refreshToken, profile, done) {
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-mongoose.connect('mongodb://localhost/superPPM');
+
 
 //controlla se sei autenticato (middleware)
 function ensureAuthenticated(req, res, next) {
@@ -158,14 +174,14 @@ app.get('/logout', function(req, res) {
     req.session.utente=null;
     res.redirect('/');
 });
-app.all('*',function(req, res, next){
-	if(req.isAuthenticated() === true && req.path!==admin.getCurrentPage()){
+/*app.all('*',function(req, res, next){
+	if(req.isAuthenticated() === true && req.originalURL!==admin.getCurrentPage()){
 		res.redirect(admin.getCurrentPage());
 		}
 	else{
 	return next();
 	}
-	});
+	});*/
 app.use('/',routes);
 app.use('/login',login);
 app.use('/registrazione', registrazione);
@@ -345,7 +361,7 @@ io.on('connection', function(socket){
 });
 
 
-adminChan.on('connect',function(socket){
+/*adminChan.on('connect',function(socket){
 	var titleTimer = admin.getTitleTimer();
 	var catTimer = admin.getCatTimer();
 	var waitTimer = admin.getWaitTimer();
@@ -373,6 +389,6 @@ adminChan.on('connect',function(socket){
 	//TODO: gestione falli by Boris				
 		
 	})
-});
+});*/
 //  [  ]
 module.exports = app;

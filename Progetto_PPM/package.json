@@ -18,7 +18,7 @@
     "socket.io":"*",
     "hashmap":"~2.0.3",
     "mongoose":"*",
-    "passport":"*",
+    "passport": "0.2.2",
     "passport-local":"*",
     "passport-local-mongoose":"*",
     "passport-facebook":"*",
