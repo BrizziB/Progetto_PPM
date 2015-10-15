@@ -368,16 +368,16 @@ io.on('connection', function(socket){
 	socket.emit('init',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPunteggi(),blueTeam.getFouls(),redTeam.getPunteggi(),redTeam.getFouls()]);
 	socket.on('changeTimer',function(type,time){
 		switch(type){
-		case 'title':
+		case 'Titolo':
 			admin.setTitleTimer(time);
 			break;
-		case 'category':
+		case 'Categoria':
 			admin.setCatTimer(time);
 			break;
-		case 'waitTimer':
+		case Attesa':
 			admin.setWaitTimer(time);
 			break;
-		case 'winner':
+		case 'Vincitore':
 			admin.setWinnerTimer(time);
 			break;
 		default:

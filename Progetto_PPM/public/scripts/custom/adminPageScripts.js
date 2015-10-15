@@ -11,4 +11,8 @@ io.on('init',function(timers){
 	$('#blue .falli').text(timers[7]);
 });
 
-$('#impostazioniVoto').on('click','button', function(event){});
+$('#impostazioniVoto').on('click','button', function(event){
+	var element = event.target;
+	var tipo = element.name.substring(5);
+	
+});
