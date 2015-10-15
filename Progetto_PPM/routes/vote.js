@@ -36,7 +36,9 @@ router.get('/categoria', function(req, res, next) {
 		layoutPagina.title="Seleziona la categoria!";
 		layoutPagina.titoloLista="Seleziona la categoria dalla lista";
 	}
-	layoutPagina.aggiungiTitolo= false; 
+	layoutPagina.aggiungiTitolo= false;
+	var admin = req.app.get('admin');
+	layoutPagina.titoloScelto = admin.getCurrentTitle();
 
 	res.render('vote',layoutPagina);
 });
