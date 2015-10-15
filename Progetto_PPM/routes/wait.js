@@ -7,19 +7,19 @@ router.get('/', function(req, res, next) {
 	var titCat;
 	titCat.categoria = admin.getCurrentCategory();
 	switch(req.query.type){
-  	case play: 
+  	case "play": 
   		res.render('wait');
   		break;
   	
-  	case title:
+  	case "title":
   		titCat.categoria = null; 	
 
-  	case category:
+  	case "category":
   		titCat.titolo = admin.getCurrentTitle();
   		res.render('waitTitleCategory',titCat);
 		break;
 	
-  	case result: 
+  	case "result": 
   		res.render('waitResult');
   		break;
   	

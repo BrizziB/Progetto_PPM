@@ -5,8 +5,8 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 	}
 	var penalties;
 	var numFouls;//infrazione
-	var votes; //numero di voti per ogni match
-	var points;  //PUNTI TOTALI
+	var votes=0; //numero di voti per ogni match
+	var points=0;  //PUNTI TOTALI
 	
 	this.addVote=function(){
 		votes++;
@@ -108,7 +108,7 @@ function Settings(){
 }
 
 exports.Admin = function(){
-	var currentMatchNum;
+	var currentMatchNum=1;
 	var currentTitle;
 	var currentCategory;
 	var matchSettings = new Settings();

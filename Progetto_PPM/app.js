@@ -41,9 +41,6 @@ var Utente = function(){
 };
 
 
-
-
-
 var fileStore = new FileStore({
 	ttl: 60 * 60 * 5
 });
@@ -71,8 +68,6 @@ app.set('admin',admin);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
-
 
 
 // uncomment after placing your favicon in /public
@@ -159,7 +154,6 @@ function(accessToken, refreshToken, profile, done) {
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 
 
 //controlla se sei autenticato (middleware)
@@ -293,12 +287,13 @@ winVote.on('connection', function(socket){
 		admin.blueTeam().addVote();
 		console.log("hanno votato blu");		
 		winVote.emit('blueVote', admin.blueTeam().getVotes());
+		console.log(admin.blueTeam().getVotes());
 	});
 	socket.on('redClick', function(){
 		aggiornaSessioneDopoVoto(socket);
 		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		admin.redTeam().addVote();
-		console.log("hanno votato blu");		
+		console.log("hanno votato rosso");		
 		winVote.emit('redVote', admin.redTeam().getVotes());
 	});	
 	
@@ -306,6 +301,7 @@ winVote.on('connection', function(socket){
 matchResult.on('connection', function(socket){
 	console.log("connessione a matchResult");
 	socket.emit('welcomeResult', admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum());	
+	console.log(admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum())
 });
 
 	// ---- Boris -----FINE

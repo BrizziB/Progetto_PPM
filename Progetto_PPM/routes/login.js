@@ -4,7 +4,7 @@ var Account = require('../models/User');
 var router = express.Router();
 
 router.get('/', function(req, res) {
-    res.render('login', { user : req.user });
+    res.render('login');
 });
 
 router.post('/', passport.authenticate('local'), function(req, res) {
