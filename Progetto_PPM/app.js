@@ -175,7 +175,8 @@ app.get('/logout', function(req, res) {
     res.redirect('/');
 });
 /*app.all('*',function(req, res, next){
-	if(req.isAuthenticated() === true && req.originalURL!==admin.getCurrentPage()){
+	console.log("peppe "+ req.originalUrl);
+	if(req.isAuthenticated() === true && req.originalUrl!==admin.getCurrentPage()){
 		res.redirect(admin.getCurrentPage());
 		}
 	else{

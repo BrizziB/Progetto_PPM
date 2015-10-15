@@ -10,10 +10,10 @@ block content
 		each value in ['Titolo','Categoria','Attesa','Vincitore']
 			div(id='impostaTimer'+value, class='timer ui-grid-b')
 				.ui-block-a
-					p = 'Imposta timer per ' + value
+					p='Imposta timer per ' + value
 				.ui-block-b
 					input(type='text', name='Timer'+value, id='valoreTimer'+value)
-                .ui-block-c
+				.ui-block-c
 					input(type='button', value = 'Invia', id='bottoneTimer'+value)
 	#avvioVoto.ui-grid-a
 		.ui-block-a
