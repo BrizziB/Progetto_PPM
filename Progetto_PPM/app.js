@@ -9,6 +9,7 @@ var session = require('express-session');
 var HashMap = require('hashmap');
 var mongoose = require('mongoose');
 var FileStore = require('session-file-store')(session);
+
 //classi personali
 var ListaOggettiVoti=require('./classes/ListaOggettiVoti.js');
 var adminVars = require('./classes/Admin.js');
@@ -79,7 +80,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleWare);
 
-mongoUrl = "mongodb://localhost/superPPM";
+var mongoUrl = "mongodb://localhost/superPPM";
 mongoose.connect(mongoUrl, function(error) {
     // handle the error case
     if (error) {
@@ -365,7 +366,7 @@ io.on('connection', function(socket){
 	var winnerTimer = admin.getWinnerTimer();
 	var redTeam = admin.redTeam;
 	var blueTeam = admin.blueTeam;
-	socket.emit('init',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPunteggi(),blueTeam.getFouls(),redTeam.getPunteggi(),redTeam.getFouls()]);
+	socket.emit('refresh',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPunteggi(),blueTeam.getFouls(),redTeam.getPunteggi(),redTeam.getFouls()]);
 	socket.on('changeTimer',function(type,time){
 		switch(type){
 		case 'Titolo':
@@ -383,9 +384,18 @@ io.on('connection', function(socket){
 		default:
 			console.log('Errore: impossibile selezionare il timer da modificare!');
 	}
-	//TODO: gestione falli by Boris				
 		
 	})
+	io.on('fallo',function(type){		
+		switch(type){
+			case 'rosso':
+			case 'blu':
+			default
+				console.log('Errore: impossibile attribuire il fallo');
+		
+		}
+		//TODO: gestione falli by Boris				
+	});
 });*/
 //  [  ]
 module.exports = app;

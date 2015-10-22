@@ -1,6 +1,6 @@
 //var io = socket(:3000/.... da aggiungere nome canale
 
-io.on('init',function(timers){
+io.on('refresh',function(timers){
 	$('#valoreTimerTitolo').text(timers[0]);
 	$('#valoreTimerCategoria').text(timers[1]);
 	$('#valoreTimerAttesa').text(timers[2]);
@@ -13,6 +13,20 @@ io.on('init',function(timers){
 
 $('#impostazioniVoto').on('click','button', function(event){
 	var element = event.target;
-	var tipo = element.name.substring(5);
-	
+	var type = element.name.substring(5);
+	var timer = $('#valoreTimer'+type).text();
+	io.emit('changeTimer',type,time);
+});
+
+$('#falloRossi').click(function(event){
+	io.emit('fallo','rosso');
+});
+
+$('#falloBlu').click(function(event){
+	io.emit('fallo','blu');
+});
+
+io.on('updatePoints',function(points){
+	$('#blue .punteggi').text(points.blue);
+	$('#red .punteggi').text(points.red);
 });

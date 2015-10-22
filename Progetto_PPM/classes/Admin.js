@@ -61,7 +61,7 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 	this.addPoint=function(){
 		points++;
 	};
-}
+};
 
 var team=exports.team;
 
@@ -146,11 +146,13 @@ exports.Admin = function(){
 	
 	//invariante: stiamo inviando la pagina corrente dopo la modifica
 	var clientRedirect = function (){
+//TODO: controllare se io.emit viene emesso ed intercettato
 		io.emit('redirect', getCurrentPageInternal());
 	};
 	
 	this.assegnaPunteggi=function(){
-		
+	//TODO: da implementare, controllare se io.emit viene emesso ed intercettato
+		io.emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};
 	
 	var isStopped=false;
@@ -204,7 +206,7 @@ exports.Admin = function(){
 	
 	this.getCurrentMatchNum=function(){
 		return currentMatchNum;
-	}
+	};
 	
 	
 	this.setWinner = function(){
