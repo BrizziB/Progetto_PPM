@@ -1,6 +1,8 @@
 var app = require('../app');
 var io = app.io;
 var ListaOggettiVoti =require ('ListaOggettiVoti');
+//VARIABILI AGGIUNTE
+var User = require('..\models\User.js');
 
 exports.team = function (teamName, nFoulsBeforePenalty){
 	var punteggi = []; //va aggiornato dopo ogni improvvisazione
@@ -116,7 +118,7 @@ exports.Admin = function(){
 	var currentTitle;
 	var currentCategory;
 	var matchSettings = new Settings();
-	var currentPage = '/wait';
+	var currentPage = '/wait?type=start';
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
 	var startVote = false;
@@ -210,8 +212,10 @@ exports.Admin = function(){
 			redTeam.addPoint();
 			blueTeam.addPoint();
 		}
+		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};
+//XXX:	
 //-FUNZIONI PROPOSTE DA AGGIUNGERE
 	var titleWinner = function(){
 		var titles = titlesCatsList;
@@ -223,6 +227,7 @@ exports.Admin = function(){
 				maxTitle =title;
 			}
 		});
+		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		currentTitle = maxTitle;
 	};
 
@@ -237,6 +242,7 @@ exports.Admin = function(){
 			}
 		});
 		currentCategory = maxCategory;
+		User.update({},{$set:{votato:false}},{multi:true}).exec();
 	};	
 //-FINE
 //FUNZIONE MODIFICATA	
