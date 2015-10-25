@@ -1,5 +1,6 @@
 var app = require('../app');
 var io = app.io;
+var ListaOggettiVoti =require ('ListaOggettiVoti');
 
 exports.team = function (teamName, nFoulsBeforePenalty){
 	var punteggi = []; //va aggiornato dopo ogni improvvisazione
@@ -183,23 +184,6 @@ exports.Admin = function(){
 		}, delay);
 	};
 	
-	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
-		var timerArray = [];		
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait? type=play"  });
-		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait? type=category"  });
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
-		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait? type=title"  });
-		
-		setCurrentPage("/vote/title");
-		theBeast(timerArray);		
-	};
-	
-	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
-		var timerArray = [];
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });
-		setCurrentPage("/vote/matchwinner");
-		theBeast(timerArray);
-	};
 	
 	this.getCurrentTitle=function(){
 		return currentTitle;
@@ -228,5 +212,64 @@ exports.Admin = function(){
 		}
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};
+//-FUNZIONI PROPOSTE DA AGGIUNGERE
+	var titleWinner = function(){
+		var titles = titlesCatsList;
+		var maxVotes= -1;
+		var maxTitle = '';
+		titles.ciclaLista(function(nVotes,title){
+			if(nVotes> maxVotes){
+				nVotes = maxVotes;
+				maxTitle =title;
+			}
+		});
+		currentTitle = maxTitle;
+	};
+
+	var categoryWinner = function(){
+		var categories = titlesCatsList;
+		var maxVotes= -1;
+		var maxCategory = '';
+		categories.ciclaLista(function(nVotes,category){
+			if(nVotes> maxVotes){
+				nVotes = maxVotes;
+				maxCategory =category;
+			}
+		});
+		currentCategory = maxCategory;
+	};	
+//-FINE
+//FUNZIONE MODIFICATA	
+	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
+		var timerArray = [];		
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait? type=play"  });
+		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait? type=category", funct: categoryWinner  });
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
+		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait? type=title",funct: titleWinner  });
+		
+		setCurrentPage("/vote/title");
+		theBeast(timerArray);		
+	};
+		
+	
+/*FUNZIONE ORIGINALE
+	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
+		var timerArray = [];		
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait? type=play"  });
+		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait? type=category"  });
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
+		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait? type=title"  });
+		
+		setCurrentPage("/vote/title");
+		theBeast(timerArray);		
+	};
+	*/
+	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
+		var timerArray = [];
+		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });
+		setCurrentPage("/vote/matchwinner");
+		theBeast(timerArray);
+	};
+
 };
 
