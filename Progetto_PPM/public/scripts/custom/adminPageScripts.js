@@ -15,7 +15,7 @@ $('#impostazioniVoto').on('click','button', function(event){
 	var element = event.target;
 	var type = element.name.substring(5);
 	var timer = $('#valoreTimer'+type).text();
-	io.emit('changeTimer',type,time);
+	io.emit('changeTimer',type,timer);
 });
 
 $('#falloRossi').click(function(event){
@@ -29,4 +29,8 @@ $('#falloBlu').click(function(event){
 io.on('updatePoints',function(points){
 	$('#blue .punteggi').text(points.blue);
 	$('#red .punteggi').text(points.red);
+});
+
+$('#faseUno, #faseDue').click(function(event){
+	io.emit('controlloVotazione', event.target.id);
 });

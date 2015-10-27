@@ -408,10 +408,24 @@ adminChan.on('connect',function(socket){
 		switch(type){
 			case 'rosso':
 			case 'blu':
+				break;
 			default:
 				console.log('Errore: impossibile attribuire il fallo');
 		
 		}
+	io.on('controlloVotazione',function(fase){
+		switch(fase){
+		case 'faseUno':
+			admin.phase1();
+			break;
+		case 'faseDue':
+			admin.phase2();
+			break;
+		//XXX: controllo blocco?
+		default:
+			console.log('Errore: impossibile controllare la votazione!');
+		}
+	});
 		//TODO: gestione falli by Boris				
 	});
 });
