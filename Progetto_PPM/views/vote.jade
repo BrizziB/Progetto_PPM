@@ -1,22 +1,17 @@
 extends layout.jade
 block head
     script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
-    script(type='text/javascript', src='/scripts/hashmap.js')
 
 block content
-    script var socket=io(":3000/votoTitoloCategoria");
+    script var socket=io();//(":3000/votoTitoloCategoria");
     if votoAbilitato
         script var votato = false;
     else
         script var votato = true;
     #Votazione('data-role'= 'page')
         .ui-content('role' = 'main')
-        if titoloScelto
-                #titScelto
-                   p Titolo scelto:
-                   span#titolo=titoloScelto
         p#titoloLista= titoloLista
-        ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti' style ='diplay:inline')
+        ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti')
            script(type='text/javascript', src='/scripts/custom/voteLista.js')  
                         
         if aggiungiTitolo
@@ -39,7 +34,7 @@ block content
                     socket.emit('reset');
                 });
                     
-     #risposta('data-role'= 'page', 'data-dialog'='true')
+     #risposta('data-role'= 'page')
         .ui-content('role'='main')
             p Grazie per avere votato!
-            p #[a(href='#main', data-rel='back', class='ui-btn ui-icon-back ui-btn-icon-left ui-corner-all ui-shadow') Torna alla pagina principale ]
+            p #[a(href='#main', data-rel='back', class='ui-btn ui-icon-back ui-btn-icon-left') Torna alla pagina principale ]

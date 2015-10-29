@@ -32,11 +32,11 @@
                         else{
                             socket.emit('nuovoElemento',fields[0].value);
                             $('#CasellaTesto').val('');
-                            event.preventDefault();
-                            window.location.assign("#risposta");
+                            event.preventDefault(); 
                         }
                     });
                     socket.on('votato',function(testo){
-                       //-TO DO: aggiungere finestrella carina!
+                        socket.emit('voto',testo);
+                        //-TO DO: aggiungere finestrella carina!
                         alert('Hai votato per '+ testo +'!');
                     })

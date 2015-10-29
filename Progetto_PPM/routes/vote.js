@@ -11,10 +11,9 @@ router.get('*',function(req,res,next){
 		layoutPagina.titoloLista="Ecco i risultati in tempo reale";
 	}
 	layoutPagina.votoAbilitato= req.session.utente.votato?false:true;
-/* - Parte per il pulsante reset su vote.jade -	
-  if (app.get('env') === 'development') {
+	if (app.get('env') === 'development') {
 		layoutPagina.dev=true;
-	}*/
+	}
 	next();
 });
 //XXX: redirect temporaneo, da decidere struttura pagine con Boris!
@@ -27,7 +26,15 @@ router.get('/titolo', function(req, res, next) {
 		layoutPagina.title="Seleziona il titolo!";
 		layoutPagina.titoloLista="Seleziona il titolo dalla lista";
 	}
+/*	else{
+		layoutPagina.title="Attendi la fine della votazione...";
+		layoutPagina.titoloLista="Ecco i risultati in tempo reale";
+	}*/
 	layoutPagina.aggiungiTitolo= req.session.utente.aggiungiTitolo; 
+	/*layoutPagina.votoAbilitato= req.session.utente.votato?false:true;
+	if (app.get('env') === 'development') {
+		layoutPagina.dev=true;
+	}*/
 	res.render('vote',layoutPagina);
 });
 
@@ -36,10 +43,15 @@ router.get('/categoria', function(req, res, next) {
 		layoutPagina.title="Seleziona la categoria!";
 		layoutPagina.titoloLista="Seleziona la categoria dalla lista";
 	}
-	layoutPagina.aggiungiTitolo= false;
-	var admin = req.app.get('admin');
-	layoutPagina.titoloScelto = admin.getCurrentTitle();
-
+/*	else{
+		layoutPagina.title="Attendi la fine della votazione...";
+		layoutPagina.titoloLista="Ecco i risultati in tempo reale";
+	}*/
+	layoutPagina.aggiungiTitolo= false; 
+	/*layoutPagina.votoAbilitato= req.session.utente.votato?false:true;
+	if (app.get('env') === 'development') {
+		layoutPagina.dev=true;
+	}*/
 	res.render('vote',layoutPagina);
 });
 module.exports = router;
