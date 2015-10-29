@@ -115,6 +115,9 @@ function ListaOggettiVoti(){
 	this.listaVoti=function(){
 		return contenitoreVoti.clone();
 	};
+	this.iDDaOggetto=function(nomeOggetto){
+		return contenitoreOggetti.get(nomeOggetto);
+	};
 	this.oggettoDaID=function(idOggetto){
 		return contenitoreOggetti.search(idOggetto);
 	};
