@@ -121,6 +121,9 @@ function ListaOggettiVoti(){
 	this.oggettoDaID=function(idOggetto){
 		return contenitoreOggetti.search(idOggetto);
 	};
+	this.iDDaOggetto=function(nomeOggetto){
+		return contenitoreOggetti.get(nomeOggetto);
+	};
 	this.listaOrdinataPerNome=function(){
 		return contenitoreOggetti.keys().sort();
 	};

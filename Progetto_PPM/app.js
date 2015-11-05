@@ -58,6 +58,7 @@ var whilePlay = io.of("/whilePlay");
 var winVote = io.of("/winVote");
 var votoTitoloCategoria = io.of("/votoTitoloCategoria");
 var matchResult = io.of("/matchResult");
+var adminChan = io.of("adminChan");
 app.io = io;
 io.use(function(socket, next){
 	sessionMiddleWare(socket.request, socket.request.res, next);
@@ -163,7 +164,6 @@ function ensureAuthenticated(req, res, next) {
 	  res.redirect('/login');
 	}
 
-
 app.get('/logout', function(req, res) {
     req.logout();
     req.session.utente=null;
@@ -246,7 +246,7 @@ function aggiornaSessioneDopoVoto(socket){
 	console.log(sess.utente.sessionID);
 	console.log(User);
 	User.update({username: sess.utente.sessionID},{ $set:{votato: true}},function (err, numberAffected, raw) {
-		  if (err) return handleError(err);
+		  if (err) {return handleError(err);}
 		});	
 }
 
@@ -299,7 +299,7 @@ winVote.on('connection', function(socket){
 	
 	socket.on('blueClick', function(){
 		aggiornaSessioneDopoVoto(socket);
-		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		disabilitaVotoUtenteNSP(socket.request.session,'/winVote');
 		admin.blueTeam().addVote();
 		console.log("hanno votato blu");		
 		winVote.emit('blueVote', admin.blueTeam().getVotes());
@@ -307,7 +307,7 @@ winVote.on('connection', function(socket){
 	});
 	socket.on('redClick', function(){
 		aggiornaSessioneDopoVoto(socket);
-		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		disabilitaVotoUtenteNSP(socket.request.session,'/winVote');
 		admin.redTeam().addVote();
 		console.log("hanno votato rosso");		
 		winVote.emit('redVote', admin.redTeam().getVotes());
@@ -317,7 +317,7 @@ winVote.on('connection', function(socket){
 matchResult.on('connection', function(socket){
 	console.log("connessione a matchResult");
 	socket.emit('welcomeResult', admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum());	
-	console.log(admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum())
+	console.log(admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum());
 });
 
 	// ---- Boris -----FINE
@@ -357,16 +357,13 @@ votoTitoloCategoria.on('connection', function(socket){
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
-		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
 		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 	socket.on('voto',function(voto){
 		aggiornaSessioneDopoVoto(socket);
-		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
 		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
-		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 
@@ -374,21 +371,13 @@ votoTitoloCategoria.on('connection', function(socket){
 		var oggetto =listaTitoli.oggettoDaID(idOggetto);
 		socket.emit('riceviElementoMancante',oggetto, idOggetto,listaTitoli.prendiVoti(oggetto));
 	});
-	/* - Parte per il pulsante reset su vote.jade -
-	 * if (app.get('env') === 'development') {
-		socket.on('reset',function(){
-			delete socket.request.session.utente;
-			socket.request.session.save();
-			votoTitoloCategoria.emit('refresh');
-		});
-	}*/
 	
 	// ---- Pitti -----FINE
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
 });
 
 
-/*adminChan.on('connect',function(socket){
+adminChan.on('connect',function(socket){
 	var titleTimer = admin.getTitleTimer();
 	var catTimer = admin.getCatTimer();
 	var waitTimer = admin.getWaitTimer();
@@ -404,7 +393,7 @@ votoTitoloCategoria.on('connection', function(socket){
 		case 'Categoria':
 			admin.setCatTimer(time);
 			break;
-		case Attesa':
+		case 'Attesa':
 			admin.setWaitTimer(time);
 			break;
 		case 'Vincitore':
@@ -414,17 +403,31 @@ votoTitoloCategoria.on('connection', function(socket){
 			console.log('Errore: impossibile selezionare il timer da modificare!');
 	}
 		
-	})
+	});
 	io.on('fallo',function(type){		
 		switch(type){
 			case 'rosso':
 			case 'blu':
-			default
+				break;
+			default:
 				console.log('Errore: impossibile attribuire il fallo');
 		
 		}
+	io.on('controlloVotazione',function(fase){
+		switch(fase){
+		case 'faseUno':
+			admin.phase1();
+			break;
+		case 'faseDue':
+			admin.phase2();
+			break;
+		//XXX: controllo blocco?
+		default:
+			console.log('Errore: impossibile controllare la votazione!');
+		}
+	});
 		//TODO: gestione falli by Boris				
 	});
-});*/
+});
 //  [  ]
 module.exports = app;
