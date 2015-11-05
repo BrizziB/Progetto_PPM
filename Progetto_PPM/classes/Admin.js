@@ -1,8 +1,8 @@
 var app = require('../app');
 var io = app.io;
-var ListaOggettiVoti =require ('ListaOggettiVoti');
+var ListaOggettiVoti =require('./ListaOggettiVoti');
 //VARIABILI AGGIUNTE
-var User = require('..\models\User.js');
+var User = require('../models/User.js');
 
 exports.team = function (teamName, nFoulsBeforePenalty){
 	var punteggi = []; //va aggiornato dopo ogni improvvisazione
