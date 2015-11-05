@@ -1,5 +1,7 @@
-var app = require('../app');
-var io = app.io;
+/*var app =require('../app');
+console.log(app);
+var io = app.get('io');*/
+
 var ListaOggettiVoti =require('./ListaOggettiVoti');
 //VARIABILI AGGIUNTE
 var User = require('../models/User.js');
@@ -72,7 +74,7 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 var team=exports.team;
 
 
-exports.Admin = function(){
+exports.Admin = function(socketio){
 	var currentMatchNum=1;
 	var currentTitle;
 	var currentCategory;
@@ -80,12 +82,13 @@ exports.Admin = function(){
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
 	var startVote = false;
-	var titlesCatsList;
+	var titlesCatsList=new ListaOggettiVoti('Pippo','Pluto','Topolino','Minnie');
 	var nFoulsBeforePenalty;
-	var titleTimer=0;
-	var catTimer=0;
-	var waitTimer=0;
-	var winnerTimer=0;
+	var titleTimer=10;
+	var catTimer=10;
+	var waitTimer=10;
+	var winnerTimer=10;
+	var io=socketio;
 	
 	this.setNFoulsBeforePenalty=function(num){
 		nFoulsBeforePenalty=num;
@@ -179,8 +182,9 @@ exports.Admin = function(){
 			}
 			setCurrentPage(next);
 			clientRedirect();
+			console.log("puoi vedermi!");
 			theBeast(timerArray);
-		}, delay);
+		}, delay*1000);
 	};
 	
 	
@@ -197,8 +201,8 @@ exports.Admin = function(){
 	
 	
 	this.setWinner = function(){
-		redTeam().setPunteggi(this.getCurrentMatchNum(), redTeam.getVotes() );
-		blueTeam().setPunteggi(this.getCurrentMatchNum(), blueTeam.getVotes() );
+		redTeam.setPunteggi(this.getCurrentMatchNum(), redTeam.getVotes() );
+		blueTeam.setPunteggi(this.getCurrentMatchNum(), blueTeam.getVotes() );
 		if(blueTeam.getVotes()>redTeam.getVotes()){	
 			blueTeam.addPoint();
 		}		
@@ -247,11 +251,12 @@ exports.Admin = function(){
 		var timerArray = [];		
 		timerArray.push({delay: this.getWaitTimer() ,page: "/wait? type=play"  });
 		timerArray.push({delay: this.getCatTimer() ,page: "/wait? type=category", funct: categoryWinner  });
-		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/category"  });
+		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria"  });
 		timerArray.push({delay: this.getTitleTimer() ,page: "/wait? type=title",funct: titleWinner  });
 		
-		setCurrentPage("/vote/title");
-		theBeast(timerArray);		
+		setCurrentPage("/vote/titolo");
+		console.log("pagina corrente:  "+this.getCurrentPage());
+		theBeast(timerArray);
 	};
 		
 	

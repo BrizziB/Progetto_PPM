@@ -9,7 +9,6 @@ socket.on('refresh',function(timers){
 	$('#red .falli').text(timers[5]);
 	$('#blue .punteggio').text(timers[6]);
 	$('#blue .falli').text(timers[7]);
-	alert(timers);
 });
 
 $('#impostazioniVoto').on('click','button', function(event){
@@ -21,7 +20,7 @@ $('#impostazioniVoto').on('click','button', function(event){
 
 $('#falloRossi').on('click',function(){
 	socket.emit('fallo','rosso');
-	console.log ("premuto Fallo Rosso");
+	alert ("premuto Fallo Rosso");
 });
 
 $('#falloBlu').click(function(){
@@ -35,5 +34,4 @@ socket.on('updatePoints',function(points){
 
 $('#faseUno, #faseDue').click(function(event){
 	socket.emit('controlloVotazione', event.target.id);
-	alert('inizio fase');
 });

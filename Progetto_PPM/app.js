@@ -54,6 +54,7 @@ var sessionMiddleWare = session({
 
 var app = express();
 var io = new socketServer();
+app.set('io',{io: io});
 var whilePlay = io.of("/whilePlay");
 var winVote = io.of("/winVote");
 var votoTitoloCategoria = io.of("/votoTitoloCategoria");
@@ -64,7 +65,7 @@ io.use(function(socket, next){
 	sessionMiddleWare(socket.request, socket.request.res, next);
 });
 
-var admin = new Admin();
+var admin = new Admin(io);
 app.set('admin',admin);
 
 // view engine setup
@@ -416,30 +417,34 @@ adminChan.on('connect',function(socket){
 	}
 		
 	});
-	socket.on('fallo',function(type){		
-		switch(type){
-			case 'rosso':
-			case 'blu':
-				break;
-			default:
-				console.log('Errore: impossibile attribuire il fallo');
-		
-		}
+
 	socket.on('controlloVotazione',function(fase){
 		switch(fase){
 		case 'faseUno':
 			admin.phase1();
+			console.log('inizio fase1');
 			break;
 		case 'faseDue':
 			admin.phase2();
+			console.log('inizio fase2');
 			break;
 		//XXX: controllo blocco?
 		default:
 			console.log('Errore: impossibile controllare la votazione!');
 		}
 	});
-		//TODO: gestione falli by Boris				
+	socket.on('fallo',function(type){		
+			switch(type){
+				case 'rosso':
+				case 'blu':
+					break;
+				default:
+					console.log('Errore: impossibile attribuire il fallo');
+			
+			}
 	});
+	
+		//TODO: gestione falli by Boris				
 });
 //  [  ]
 module.exports = app;
