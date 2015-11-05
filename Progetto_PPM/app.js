@@ -250,11 +250,26 @@ function aggiornaSessioneDopoVoto(socket){
 		});	
 }
 
+//XXX Funzione con bug: emette solo sul namespace '/'
 function disabilitaVotoUtente(sess,sockAttuali){
 	var sessID = sess.utente.sessionID;
+	console.log(sessID);
 	for(var i=0, l=sockAttuali.length; i<l; i++){
 		if (sessID===sockAttuali[i].request.session.utente.sessionID){
 			sockAttuali[i].emit('disabilitaVoto');
+		}
+	}	
+}
+
+function disabilitaVotoUtenteNSP(sess,namespace){
+	var sessID = sess.utente.sessionID;
+	var sockAttuali=io.of(namespace || "/").connected;
+	console.log(sockAttuali);
+	for(var i in sockAttuali){
+		if (sessID===sockAttuali[i].request.session.utente.sessionID){
+			console.log(sockAttuali[i]);
+			sockAttuali[i].emit('disabilitaVoto');
+			console.log('DisabilitaVoto inviato!');
 		}
 	}	
 }
@@ -308,28 +323,32 @@ matchResult.on('connection', function(socket){
 	// ---- Boris -----FINE
 	
 	// ---- Pitti -----
-io.on('connection', function(socket){
-	socket.emit('aggiornaListaVoto', listaTitoli.listaOggetti(), listaTitoli.numeroOggetti());
+votoTitoloCategoria.on('connection', function(socket){
+	console.log('Connessione!');
+	var listaOggetti = [];
+	var listaOggettiID = [];
+	(function(){
+		listaOggetti =listaTitoli.listaOggetti();
+		var indice;
+		for (indice in listaOggetti ){
+			listaOggettiID.push(listaTitoli.iDDaOggetto(listaOggetti[indice]));
+		}
+	}());
+	socket.emit('aggiornaListaVoto',listaOggetti, listaOggettiID, listaTitoli.numeroOggetti());
+	socket.emit('aggiornaVoti',listaTitoli.listaVoti());
 	//console.log(listaTitoli);
 	socket.on('nuovoElemento',function(testo){
 		var esistente = false;
 		var testoDaComparare = comparabile(testo);
-		/*for(var indice=0, lunghezza =listaTitoli.length; indice<lunghezza; indice++){
-			if (comparabile(listaTitoli[indice])===testoDaComparare){
-				esistente=true;
-				break;
-			}			
-		}*/
 		listaTitoli.ciclaLista(function(nVoti,titolo){
 			if (!esistente && comparabile(titolo)===testoDaComparare){
 				esistente= true;
 			}
 		});
+		//TODO: in realtà non va messo qui e va temporizzato		
 		if (esistente===false){
 			listaTitoli.aggiungiOggetto(testo,1);
-			/*listaTitoliContenitori[listaTitoliContenitori.length]=new contenitoreVoti(testo,1);
-			listaTitoli[listaTitoli.length]=testo;*/
-			io.emit('aggiornaListaVoto',[testo],listaTitoli.numeroOggetti());		
+			votoTitoloCategoria.emit('aggiornaListaVoto',[testo],[listaTitoli.iDDaOggetto(testo)],listaTitoli.numeroOggetti());
 		}
 		else
 			{
@@ -338,21 +357,31 @@ io.on('connection', function(socket){
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
-		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
+		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 	socket.on('voto',function(voto){
 		aggiornaSessioneDopoVoto(socket);
 		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
-		disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
+		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
+		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
-	if (app.get('env') === 'development') {
+
+	socket.on('richiediElementoMancante',function(idOggetto){
+		var oggetto =listaTitoli.oggettoDaID(idOggetto);
+		socket.emit('riceviElementoMancante',oggetto, idOggetto,listaTitoli.prendiVoti(oggetto));
+	});
+	/* - Parte per il pulsante reset su vote.jade -
+	 * if (app.get('env') === 'development') {
 		socket.on('reset',function(){
 			delete socket.request.session.utente;
 			socket.request.session.save();
-			io.emit('refresh');
+			votoTitoloCategoria.emit('refresh');
 		});
-	}
+	}*/
 	
 	// ---- Pitti -----FINE
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
