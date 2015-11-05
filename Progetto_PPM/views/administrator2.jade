@@ -2,10 +2,9 @@ extends layout
 
 block head
 	script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
-	script(type='text/javascript', src='/scripts/custom/adminPageScripts.js')
 	
 block content
-	script alert('Hai inserito tutti gli script? Hai collegato il CSS?');
+	//script alert('Hai inserito tutti gli script? Hai collegato il CSS?');
 	#impostazioniVoto
 		each value in ['Titolo','Categoria','Attesa','Vincitore']
 			div(id='impostaTimer'+value, class='timer ui-grid-b')
@@ -15,11 +14,11 @@ block content
 					input(type='text', name='Timer'+value, id='valoreTimer'+value)
 				.ui-block-c
 					input(type='button', value = 'Invia', id='bottoneTimer'+value)
-	#avvioVoto.ui-grid-a
-		.ui-block-a
-			input(type='button', value='Inizia prima parte', id='titoloCategoria')
-		.ui-block-b
-			input(type='button', value='Inizia seconda parte', id='vincitore')
+	#bottoniInizio.ui-grid-a
+		#inizioParteUno.ui-block-a
+			input(type='button', value='Inizio fase uno', id='faseUno')
+		#inizioParteDue.ui-block-b
+			input(type='button', value='Inizio fase due', id='faseDue')
 	#conteggioFalliPunteggio.ui-grid-a
 		#red.ui-block-a.bloccoPuntiFalli
 			input(type='button', value='Fallo ai Rossi', id='falloRossi')
@@ -41,8 +40,7 @@ block content
 				br
 				span.titoloFalli Numero Falli: 
 				span.falli 7
-	#bottoniInizio.ui-grid-a
-	   #inizioParteUno.ui-block-a
-	       input(type='button', value='Inizio fase uno', id='faseUno')
-       #inizioParteDue.ui-block-b
-           input(type='button', value='Inizio fase due', id='faseDue')
+	
+	script var socket=io(":3000/adminChan");
+	script(type='text/javascript', src='/scripts/custom/adminPageScripts.js')
+				

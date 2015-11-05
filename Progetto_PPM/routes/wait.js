@@ -1,21 +1,28 @@
 var express = require('express');
 var router = express.Router();
+var app=express();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
 	var admin = req.app.get('admin');  		
-	var titCat;
-	titCat.categoria = admin.getCurrentCategory();
+	var titCat =(function(){
+		this.categoria = admin.getCurrentCategory();
+		this.titolo = admin.getCurrentTitle();
+	})();
 	switch(req.query.type){
-  	case "play": 
+  	case "start": 
   		res.render('wait');
   		break;
   	
+  	case "play":
+  		res.render('wait');
+  		break;
+  		
   	case "title":
   		titCat.categoria = null; 	
 
   	case "category":
-  		titCat.titolo = admin.getCurrentTitle();
+  		
   		res.render('waitTitleCategory',titCat);
 		break;
 	
@@ -29,3 +36,4 @@ router.get('/', function(req, res, next) {
 });
 
 module.exports = router;
+

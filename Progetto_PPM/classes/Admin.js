@@ -9,8 +9,8 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 	if(nFoulsBeforePenalty === undefined){
 		nFoulsBeforePenalty=5;
 	}
-	var penalties;
-	var numFouls;//infrazione
+	var penalties=0;
+	var numFouls=0;//infrazione
 	var votes=0; //numero di voti per ogni match
 	var points=0;  //PUNTI TOTALI
 	
@@ -71,12 +71,21 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 
 var team=exports.team;
 
-function Settings(){
+
+exports.Admin = function(){
+	var currentMatchNum=1;
+	var currentTitle;
+	var currentCategory;
+	var currentPage = '/wait?type=start';
+	var blueTeam = new team("blue");
+	var redTeam = new team("red");
+	var startVote = false;
+	var titlesCatsList;
 	var nFoulsBeforePenalty;
-	var titleTimer;
-	var catTimer;
-	var waitTimer;
-	var winnerTimer;
+	var titleTimer=0;
+	var catTimer=0;
+	var waitTimer=0;
+	var winnerTimer=0;
 	
 	this.setNFoulsBeforePenalty=function(num){
 		nFoulsBeforePenalty=num;
@@ -111,18 +120,6 @@ function Settings(){
 	this.getWinnerTimer=function(){
 		return winnerTimer;
 	};
-}
-
-exports.Admin = function(){
-	var currentMatchNum=1;
-	var currentTitle;
-	var currentCategory;
-	var matchSettings = new Settings();
-	var currentPage = '/wait?type=start';
-	var blueTeam = new team("blue");
-	var redTeam = new team("red");
-	var startVote = false;
-	var titlesCatsList;
 	
 	this.getTitlesCats= function(){
 		return titlesCatsList;
@@ -248,10 +245,10 @@ exports.Admin = function(){
 //FUNZIONE MODIFICATA	
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];		
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait? type=play"  });
-		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait? type=category", funct: categoryWinner  });
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
-		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait? type=title",funct: titleWinner  });
+		timerArray.push({delay: this.getWaitTimer() ,page: "/wait? type=play"  });
+		timerArray.push({delay: this.getCatTimer() ,page: "/wait? type=category", funct: categoryWinner  });
+		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/category"  });
+		timerArray.push({delay: this.getTitleTimer() ,page: "/wait? type=title",funct: titleWinner  });
 		
 		setCurrentPage("/vote/title");
 		theBeast(timerArray);		
@@ -261,10 +258,10 @@ exports.Admin = function(){
 /*FUNZIONE ORIGINALE
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];		
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait? type=play"  });
-		timerArray.push({delay: matchSettings.getCategoryTimer() ,page: "/wait? type=category"  });
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/vote/category"  });
-		timerArray.push({delay: matchSettings.getTitleTimer() ,page: "/wait? type=title"  });
+		timerArray.push({delay: .getWaitTimer() ,page: "/wait? type=play"  });
+		timerArray.push({delay: .getCategoryTimer() ,page: "/wait? type=category"  });
+		timerArray.push({delay: .getWaitTimer() ,page: "/vote/category"  });
+		timerArray.push({delay: .getTitleTimer() ,page: "/wait? type=title"  });
 		
 		setCurrentPage("/vote/title");
 		theBeast(timerArray);		
@@ -272,7 +269,7 @@ exports.Admin = function(){
 	*/
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
-		timerArray.push({delay: matchSettings.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });
+		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });
 		setCurrentPage("/vote/matchwinner");
 		theBeast(timerArray);
 	};

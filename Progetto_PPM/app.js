@@ -58,7 +58,7 @@ var whilePlay = io.of("/whilePlay");
 var winVote = io.of("/winVote");
 var votoTitoloCategoria = io.of("/votoTitoloCategoria");
 var matchResult = io.of("/matchResult");
-var adminChan = io.of("adminChan");
+var adminChan = io.of("/adminChan");
 app.io = io;
 io.use(function(socket, next){
 	sessionMiddleWare(socket.request, socket.request.res, next);
@@ -169,21 +169,22 @@ app.get('/logout', function(req, res) {
     req.session.utente=null;
     res.redirect('/');
 });
-/*app.all('*',function(req, res, next){
-	console.log("peppe "+ req.originalUrl);
+app.use('/administrator', administrator);
+app.all('*',function(req, res, next){
 	if(req.isAuthenticated() === true && req.originalUrl!==admin.getCurrentPage()){
 		res.redirect(admin.getCurrentPage());
 		}
 	else{
 	return next();
 	}
-	});*/
+	});
 app.use('/',routes);
 app.use('/login',login);
 app.use('/registrazione', registrazione);
+
 app.all('*', function(req,res,next){
 	if(req.isAuthenticated() === true){
-		console.log(req.user);
+		//console.log(req.user);
 		if (req.session.utente === null || req.session.utente === undefined){
 			req.session.utente=new Utente();
 		}
@@ -198,7 +199,6 @@ app.all('*', function(req,res,next){
 app.use('/users', users);
 app.use('/wait', wait);
 app.use('/waitResult', waitResult);
-app.use('/administrator', administrator);
 app.use('/vote',vote);
 app.use('/vote/matchwinner',vote2);
 
@@ -357,13 +357,16 @@ votoTitoloCategoria.on('connection', function(socket){
 				socket.emit('votato',testo);
 			}
 		aggiornaSessioneDopoVoto(socket);
+		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
 		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 	socket.on('voto',function(voto){
 		aggiornaSessioneDopoVoto(socket);
+		//aggiungiVoti(voto,listaTitoliContenitori);
 		listaTitoli.aggiungiVoto(voto);
 		disabilitaVotoUtenteNSP(socket.request.session,'/votoTitoloCategoria');
+		//disabilitaVotoUtente(socket.request.session,io.sockets.sockets);
 		votoTitoloCategoria.emit('aggiornaVoti',listaTitoli.listaVoti());
 	});
 
@@ -371,6 +374,14 @@ votoTitoloCategoria.on('connection', function(socket){
 		var oggetto =listaTitoli.oggettoDaID(idOggetto);
 		socket.emit('riceviElementoMancante',oggetto, idOggetto,listaTitoli.prendiVoti(oggetto));
 	});
+	/* - Parte per il pulsante reset su vote.jade -
+	 * if (app.get('env') === 'development') {
+		socket.on('reset',function(){
+			delete socket.request.session.utente;
+			socket.request.session.save();
+			votoTitoloCategoria.emit('refresh');
+		});
+	}*/
 	
 	// ---- Pitti -----FINE
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
@@ -378,13 +389,14 @@ votoTitoloCategoria.on('connection', function(socket){
 
 
 adminChan.on('connect',function(socket){
+	console.log('Admin connesso!');
 	var titleTimer = admin.getTitleTimer();
 	var catTimer = admin.getCatTimer();
 	var waitTimer = admin.getWaitTimer();
 	var winnerTimer = admin.getWinnerTimer();
-	var redTeam = admin.redTeam;
-	var blueTeam = admin.blueTeam;
-	socket.emit('refresh',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPunteggi(),blueTeam.getFouls(),redTeam.getPunteggi(),redTeam.getFouls()]);
+	var redTeam = admin.redTeam();
+	var blueTeam = admin.blueTeam();
+	socket.emit('refresh',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPoints(),blueTeam.getFouls(),redTeam.getPoints(),redTeam.getFouls()]);
 	socket.on('changeTimer',function(type,time){
 		switch(type){
 		case 'Titolo':
@@ -404,7 +416,7 @@ adminChan.on('connect',function(socket){
 	}
 		
 	});
-	io.on('fallo',function(type){		
+	socket.on('fallo',function(type){		
 		switch(type){
 			case 'rosso':
 			case 'blu':
@@ -413,7 +425,7 @@ adminChan.on('connect',function(socket){
 				console.log('Errore: impossibile attribuire il fallo');
 		
 		}
-	io.on('controlloVotazione',function(fase){
+	socket.on('controlloVotazione',function(fase){
 		switch(fase){
 		case 'faseUno':
 			admin.phase1();
