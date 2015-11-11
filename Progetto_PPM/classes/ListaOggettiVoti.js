@@ -113,7 +113,11 @@ function ListaOggettiVoti(){
 		return contenitoreOggetti.count();
 	};
 	this.listaVoti=function(){
-		return contenitoreVoti.clone();
+		var arrayVoti = [];
+		contenitoreVoti.forEach(function(nVoti,IDNumber){
+			arrayVoti.push({ID:IDNumber,Voti:nVoti});
+		});
+		return arrayVoti;
 	};
 	this.iDDaOggetto=function(nomeOggetto){
 		return contenitoreOggetti.get(nomeOggetto);
