@@ -1,0 +1,27 @@
+extends layout
+block head
+    script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
+        
+block content
+    #controlloRestrizione
+        p Stato restrizione pagina attuale:
+        br
+        p#nonAttivo Non attivo
+        p#attivo Attivo
+        if noCurrentPage              
+            script.
+                var noCurrentPage = true
+                $("#nonAttivo").show();
+                $("#attivo").hide();
+         else               
+                script.
+                    var noCurrentPage = false  
+                    $("#nonAttivo").hide();
+                    $("#attivo").show();
+        button#contrPaginaCorr Attiva-Disattiva restrizione pagina
+    #controlloVotato
+            button#elimTuttiVoti Elimina tutti i voti
+            p Cancella un solo voto
+            input(type='text', name='CancellaVoto', id='CancellaVoto', placeholder='Inserisci un nome')
+            button#eliminaVoto Elimina il voto
+    script(type='text/javascript', src='scripts/custom/paginaControllo.js')  

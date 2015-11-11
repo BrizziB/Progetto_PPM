@@ -159,12 +159,18 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
+
 //controlla se sei autenticato (middleware)
 function ensureAuthenticated(req, res, next) {
 	  if (req.isAuthenticated()) { return next(); }
 	  res.redirect('/login');
 	}
-
+//XXX:CODICE PER IL TEST
+var noCurrentPage = false;
+app.get('/test',function(req,res,next){
+	res.render('paginaControllo',{title:"Pagina di Controllo per test",noCurrentPage: noCurrentPage});
+});
+///
 app.get('/logout', function(req, res) {
     req.logout();
     req.session.utente=null;
@@ -173,12 +179,15 @@ app.get('/logout', function(req, res) {
 app.use('/administrator', administrator);
 app.all('*',function(req, res, next){
 	if(req.isAuthenticated() === true && req.originalUrl!==admin.getCurrentPage()){
-		res.redirect(admin.getCurrentPage());
+		if(noCurrentPage === true){
+			return next();
 		}
-	else{
-	return next();
+		res.redirect(admin.getCurrentPage());
 	}
-	});
+	else{
+		return next();
+	}
+});
 app.use('/',routes);
 app.use('/login',login);
 app.use('/registrazione', registrazione);
@@ -244,8 +253,6 @@ function aggiornaSessioneDopoVoto(socket){
 	sess.utente.votato = true;
 	sess.save();
 	//var User = require('./models/User');
-	console.log(sess.utente.sessionID);
-	console.log(User);
 	User.update({username: sess.utente.sessionID},{ $set:{votato: true}},function (err, numberAffected, raw) {
 		  if (err) {return handleError(err);}
 		});	
@@ -265,10 +272,10 @@ function disabilitaVotoUtente(sess,sockAttuali){
 function disabilitaVotoUtenteNSP(sess,namespace){
 	var sessID = sess.utente.sessionID;
 	var sockAttuali=io.of(namespace || "/").connected;
-	console.log(sockAttuali);
+	//console.log(sockAttuali);
 	for(var i in sockAttuali){
 		if (sessID===sockAttuali[i].request.session.utente.sessionID){
-			console.log(sockAttuali[i]);
+			//console.log(sockAttuali[i]);
 			sockAttuali[i].emit('disabilitaVoto');
 			console.log('DisabilitaVoto inviato!');
 		}
@@ -445,6 +452,25 @@ adminChan.on('connect',function(socket){
 	});
 	
 		//TODO: gestione falli by Boris				
+});
+
+//XXX:CODICE PER IL TEST
+io.of("paginaControllo").on('connect',function(socket){
+	socket.on('attivaDisattivaPagina',function(){
+		noCurrentPage = !noCurrentPage;
+		console.log('noCurrentPage impostato su: ', noCurrentPage);
+	});
+	
+	socket.on('eliminaVoto',function(nome){
+		if (nome ===''){
+			User.update({},{$set:{votato:false}},{multi:true}).exec();
+		}
+		else{
+			User.update({username: nome},{$set:{votato:false}}).exec();
+		}
+			
+	});
+	
 });
 //  [  ]
 module.exports = app;
