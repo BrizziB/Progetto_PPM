@@ -14,7 +14,9 @@ socket.on('refresh',function(timers){
 $('#impostazioniVoto').on('click','button', function(event){
 	var element = event.target;
 	var type = element.name.substring(5);
+	console.log('tipo: ', type);
 	var timer = $('#valoreTimer'+type).text();
+	console.log('timer: ',timer);
 	socket.emit('changeTimer',type,timer);
 });
 

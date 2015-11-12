@@ -78,6 +78,7 @@ exports.Admin = function(socketio){
 	var currentMatchNum=1;
 	var currentTitle;
 	var currentCategory;
+	//var currentPage = '/vote/categoria';
 	var currentPage = '/wait?type=start';
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
@@ -153,7 +154,10 @@ exports.Admin = function(socketio){
 	//invariante: stiamo inviando la pagina corrente dopo la modifica
 	var clientRedirect = function (){
 	//TODO: controllare se io.emit viene emesso ed intercettato
-		io.emit('redirect', getCurrentPageInternal());
+		//io.of('controlChan').emit('redirect');
+		io.emit('redirect');
+		console.log('redirect a pagina corrente  ', getCurrentPageInternal());
+		
 	};
 
 	///XXX: questa funzione è realmente utile?
@@ -248,14 +252,14 @@ exports.Admin = function(socketio){
 //-FINE
 //FUNZIONE MODIFICATA	
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
-		var timerArray = [];		
-		timerArray.push({delay: this.getWaitTimer() ,page: "/wait? type=play"  });
-		timerArray.push({delay: this.getCatTimer() ,page: "/wait? type=category", funct: categoryWinner  });
+		var timerArray = [];
+		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=play"  });
+		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner  });
 		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria"  });
-		timerArray.push({delay: this.getTitleTimer() ,page: "/wait? type=title",funct: titleWinner  });
+		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner  });
 		
 		setCurrentPage("/vote/titolo");
-		console.log("pagina corrente:  "+this.getCurrentPage());
+		clientRedirect();
 		theBeast(timerArray);
 	};
 		
@@ -276,6 +280,7 @@ exports.Admin = function(socketio){
 		var timerArray = [];
 		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });
 		setCurrentPage("/vote/matchwinner");
+		clientRedirect();
 		theBeast(timerArray);
 	};
 
