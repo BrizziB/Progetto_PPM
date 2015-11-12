@@ -5,24 +5,27 @@ var app=express();
 /* GET users listing. */
 router.get('/', function(req, res, next) {
 	var admin = req.app.get('admin');  		
-	var titCat =(function(){
-		this.categoria = admin.getCurrentCategory();
-		this.titolo = admin.getCurrentTitle();
-	})();
+	var titCat ={};
+		
+	titCat.categoria = admin.getCurrentCategory();
+	titCat.titolo = admin.getCurrentTitle();
+	titCat.title='Ecco i Risultati';
+	
+	console.log('titolo e categoria: ', titCat.categoria, titCat.titolo);
 	switch(req.query.type){
   	case "start": 
-  		res.render('wait');
+  		res.render('wait',{title: 'Attendere l\'inizio della rappresentazione!'});
   		break;
   	
   	case "play":
-  		res.render('wait');
+  		res.render('wait',{title: 'Rappresentazione in corso!'});
   		break;
   		
   	case "title":
-  		titCat.categoria = null; 	
-
-  	case "category":
+  		res.render('waitTitleCategory',titCat); 	
+  		break;
   		
+  	case "category":  		
   		res.render('waitTitleCategory',titCat);
 		break;
 	

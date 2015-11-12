@@ -1,9 +1,20 @@
 extends layout
 
+block head      
+
+    script(type='text/javascript' src='http://localhost:3000/socket.io/socket.io.js')
+    script(type='text/javascript' src='/scripts/custom/redirect.js')
+        //$(document).on( "mobileinit", function() {
+        //$.mobile.loader.prototype.options.hidden = true;
+        //});
+        //$(document).ready(function(){
+        //	$.mobile.loading("hide");
+        //});
+        
 block content
-  .container
+  .container(data-ajax="false")
     h1 Login Page
-    p.lead Say something worthwhile here.
+    p.lead BAMBARAMBA
     br
     form(role='form', action="/login",method="post", style='max-width: 300px;')
       .form-group

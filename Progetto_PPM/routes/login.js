@@ -8,7 +8,9 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', passport.authenticate('local'), function(req, res) {
-    res.redirect('/');
+    console.log('sono autenticato eh!');
+    req.app.io.emit('redirect');
+	res.redirect('/');
 });
 
 

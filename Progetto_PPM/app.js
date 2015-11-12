@@ -176,6 +176,11 @@ app.get('/logout', function(req, res) {
     req.session.utente=null;
     res.redirect('/');
 });
+
+app.get('/redirectPage', function(req, res, next){
+	res.redirect('/');
+});
+
 app.use('/administrator', administrator);
 app.all('*',function(req, res, next){
 	if(req.isAuthenticated() === true && req.originalUrl!==admin.getCurrentPage()){

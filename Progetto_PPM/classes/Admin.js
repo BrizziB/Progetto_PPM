@@ -205,8 +205,8 @@ exports.Admin = function(socketio){
 	
 	
 	this.setWinner = function(){
-		redTeam.setPunteggi(this.getCurrentMatchNum(), redTeam.getVotes() );
-		blueTeam.setPunteggi(this.getCurrentMatchNum(), blueTeam.getVotes() );
+		redTeam.setPunteggi(currentMatchNum, redTeam.getVotes() );
+		blueTeam.setPunteggi(currentMatchNum, blueTeam.getVotes() );
 		if(blueTeam.getVotes()>redTeam.getVotes()){	
 			blueTeam.addPoint();
 		}		
