@@ -18,7 +18,8 @@ router.get('/', function(req, res, next) {
   		break;
   	
   	case "play":
-  		res.render('wait',{title: 'Rappresentazione in corso!'});
+  		titCat.title='Rappresentazione in corso'
+  		res.render('wait',titCat);
   		break;
   		
   	case "title":

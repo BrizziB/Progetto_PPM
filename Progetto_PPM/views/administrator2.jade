@@ -4,44 +4,49 @@ block head
 	script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
 	
 block content
- div(class='ui-page-theme-b', data-role='page')
-  .ui-content(role='main')
-	#impostazioniVoto
-		each value in ['Titolo','Categoria','Attesa','Vincitore']
-			div(id='impostaTimer'+value, class='timer ui-grid-b')
-				.ui-block-a
-					p='Imposta timer per ' + value
-				.ui-block-b
-					input(type='text', name='Timer'+value, id='valoreTimer'+value)
-				.ui-block-c
-					button(id='bottoneTimer'+value) Invia
-	#bottoniInizio.ui-grid-a
-		#inizioParteUno.ui-block-a
-			input(type='button', value='Inizio fase uno', id='faseUno')
-		#inizioParteDue.ui-block-b
-			input(type='button', value='Inizio fase due', id='faseDue')
-	#conteggioFalliPunteggio.ui-grid-a
-		#red.ui-block-a.bloccoPuntiFalli
-			input(type='button', value='Fallo ai Rossi', id='falloRossi')
-			p
-				span.titolo Squadra Rossa
-				br
-				span.titoloPunteggio Punti: 
-				span.punteggio 42
-				br
-				span.titoloFalli Numero Falli: 
-				span.falli 7
-		#blue.ui-block-b.bloccoPuntiFalli
-			input(type='button', value='Fallo ai Blu', id='falloBlu')
-			p
-				span.titolo Squadra Blu
-				br
-				span.titoloPunteggio Punti:
-				span.punteggio 42
-				br
-				span.titoloFalli Numero Falli: 
-				span.falli 7
-	
-	script var socket=io(":3000/adminChan");
-	script(type='text/javascript', src='/scripts/custom/adminPageScripts.js')
+			#impostazioniVoto
+				each value in ['Titolo','Categoria','Attesa','Vincitore']
+					div(id='impostaTimer'+value, class='timer ui-grid-b')
+						.ui-block-a
+							p='Imposta timer per ' + value
+						.ui-block-b
+							input(type='text', name='Timer'+value, id='valoreTimer'+value)
+						.ui-block-c
+							button(id='bottoneTimer'+value) Invia
+			#bottoniInizio.ui-grid-a
+				#inizioParteUno.ui-block-a
+					input(type='button', value='Inizio fase uno', id='faseUno')
+				#inizioParteDue.ui-block-b
+					input(type='button', value='Inizio fase due', id='faseDue')
+			#conteggioFalliPunteggio.ui-grid-a
+				#red.ui-block-a.bloccoPuntiFalli
+					input(type='button', value='Fallo ai Rossi', id='falloRossi')
+					p
+						span.titolo Squadra Rossa
+						br
+						span.titoloPunteggio Punti: 
+						span.punteggio 42
+						br
+						span.titoloFalli Numero Falli: 
+						span.falli 7
+						br
+						span.titoloPenalita Numero Penalita': 
+						span.penalita 1
+				#blue.ui-block-b.bloccoPuntiFalli
+					input(type='button', value='Fallo ai Blu', id='falloBlu')
+					p
+						span.titolo Squadra Blu
+						br
+						span.titoloPunteggio Punti:
+						span.punteggio 42
+						br
+						span.titoloFalli Numero Falli: 
+						span.falli 7
+						br
+						span.titoloPenalita Numero Penalita': 
+						span.penalita 1
+						
+			script var socket=io(":3000/adminChan");
+			script(type='text/javascript', src='/scripts/custom/adminPageScripts.js')
+			script(type='text/javascript', src='/scripts/custom/fauls.js')
 				

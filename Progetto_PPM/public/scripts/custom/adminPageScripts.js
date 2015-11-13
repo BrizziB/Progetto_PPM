@@ -9,6 +9,9 @@ socket.on('refresh',function(timers){
 	$('#red .falli').text(timers[5]);
 	$('#blue .punteggio').text(timers[6]);
 	$('#blue .falli').text(timers[7]);
+	$("#red .penalita").text(timers[8]);
+	$("#blue .penalita").text(timers[9]);
+	
 });
 
 $('#impostazioniVoto').on('click','button', function(event){
@@ -20,7 +23,6 @@ $('#impostazioniVoto').on('click','button', function(event){
 
 $('#falloRossi').on('click',function(){
 	socket.emit('fallo','rosso');
-	alert ("premuto Fallo Rosso");
 });
 
 $('#falloBlu').click(function(){

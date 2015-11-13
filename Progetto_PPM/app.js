@@ -413,7 +413,7 @@ adminChan.on('connect',function(socket){
 	var winnerTimer = admin.getWinnerTimer();
 	var redTeam = admin.redTeam();
 	var blueTeam = admin.blueTeam();
-	socket.emit('refresh',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPoints(),blueTeam.getFouls(),redTeam.getPoints(),redTeam.getFouls()]);
+	socket.emit('refresh',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPoints(),blueTeam.getFouls(),redTeam.getPoints(),redTeam.getFouls(), redTeam.getPenalty(), blueTeam.getPenalty()]);
 	socket.on('changeTimer',function(type,time){
 		switch(type){
 		case 'Titolo':
@@ -452,7 +452,12 @@ adminChan.on('connect',function(socket){
 	socket.on('fallo',function(type){		
 			switch(type){
 				case 'rosso':
+					admin.redTeam().addFoul();
+					adminChan.emit('faul', 'red', admin.redTeam().getFouls(), admin.redTeam().getPenalty());
+					break;
 				case 'blu':
+					admin.blueTeam().addFoul();
+					adminChan.emit('faul', 'blue', admin.blueTeam().getFouls(), admin.blueTeam().getPenalty());
 					break;
 				default:
 					console.log('Errore: impossibile attribuire il fallo');

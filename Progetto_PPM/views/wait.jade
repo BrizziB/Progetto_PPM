@@ -6,60 +6,49 @@ block head
 	script(type='text/javascript' src='/scripts/custom/redirect.js')
 
 block content
-	div(class='ui-page-theme-b', data-role='page')
-		.ui-content(role='main')
-			div
-				h1 Attendere prego!
-				h2 rappresentazione in corso
-			div
-				h4 Titolo della rappresenzatione :
-					p(id='title')
-				h4 Categoria :
-					p(id='category')
-				h2 Falli:
-				h5 redFauls :
-					p(id='redFaul') nessuno
-					p redPenality :
-						p(id='redPen') nessuno
-				h5 blueFauls :
-					p(id='blueFaul') nessuno
-					p bluePenality :
-						p(id='bluePen') nessuno
-		
-			script.
-				var socket=io(":3000/whilePlay");	
-				var blueFauls;
-				var redFauls;
-				var bluePenality;
-				var redPenality;
-				
-				
-				function addFaul(teamName, faulNum, penPt){
-					if (teamName==='red'){
-						document.getElementById("redFaul").innerHTML=faulNum;
-						document.getElementById("redPen").innerHTML=penPt;
-						document.getElementById("redFaul").contentWindow.location.reload(true);
-					}
-					else {
-						document.getElementById("blueFaul").innerHTML=faulNum;
-						document.getElementById("bluePen").innerHTML=penPt;
-					}
-				}
-				
-				socket.on('welcomeWait', function(blueF, redF, blueP, redP, title, category){
-					blueFauls=blueF;
-					bluePenality=blueP;
-					redFauls=redF;
-					redPenality=redP;
-					document.getElementById("title").innerHTML=title;
-					document.getElementById("category").innerHTML=category;
-					document.getElementById("redFaul").innerHTML=redFauls;
-					document.getElementById("blueFaul").innerHTML=blueFauls;
-					document.getElementById("redPen").innerHTML=redPenality;
-					document.getElementById("bluePen").innerHTML=bluePenality;
-				});
-				
-				socket.on('faul', function(name, num, pen){
-					addFaul(name, num, pen);
-		
-				});
+
+			
+			#messaggioAttendere.ui-grid-a
+				#welcome.ui-block-a.bloccoAttendere
+					h1 Attendere prego!
+					h2 rappresentazione in corso
+					
+			#titoloCateoria.ui-grid-a
+				#titoloCat.ui-block-a.bloccoTitoloCategoria
+					if(titolo)
+						h4 Titolo della rappresenzatione :
+							p.titolo=titolo
+					if(categoria)
+						h4 Categoria :
+							p.categoria=categoria
+
+			#conteggioFalliPunteggio.ui-grid-a
+					#red.ui-block-a.bloccoPuntiFalli
+						p
+							span.titolo Squadra Rossa
+							br
+							span.titoloPunteggio Punti: 
+							span.punteggio 42
+							br
+							span.titoloFalli Numero Falli: 
+							span.falli 7
+							br
+							span.titoloPenalita Numero Penalita': 
+							span.penalita 1
+					#blue.ui-block-b.bloccoPuntiFalli
+						p
+							span.titolo Squadra Blu
+							br
+							span.titoloPunteggio Punti:
+							span.punteggio 42
+							br
+							span.titoloFalli Numero Falli: 
+							span.falli 7
+							br
+							span.titoloPenalita Numero Penalita': 
+							span.penalita 1
+							
+		script var socket=io(":3000/adminChan");
+		script(type='text/javascript', src='/scripts/custom/wait.js')
+		script(type='text/javascript', src='/scripts/custom/fauls.js')
+
