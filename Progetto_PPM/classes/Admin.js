@@ -83,7 +83,7 @@ exports.Admin = function(socketio){
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
 	var startVote = false;
-	var titlesCatsList=new ListaOggettiVoti('Pippo','Pluto','Topolino','Minnie');
+	var titlesCatsList=new ListaOggettiVoti('Pippo','Pluto','Topolino','Pitti');
 	var nFoulsBeforePenalty;
 	var titleTimer=10;
 	var catTimer=10;

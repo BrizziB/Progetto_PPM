@@ -171,6 +171,10 @@ app.get('/test',function(req,res,next){
 	res.render('paginaControllo',{title:"Pagina di Controllo per test",noCurrentPage: noCurrentPage});
 });
 ///
+app.get('/redirect', function(req, res, next){
+	res.render('redirect', {title: 'redirect in corso'});
+});
+
 app.get('/logout', function(req, res) {
     req.logout();
     req.session.utente=null;

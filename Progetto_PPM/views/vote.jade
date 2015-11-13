@@ -6,6 +6,8 @@ block head
     
 
 block content
+ div(class='ui-page-theme-b', data-role='page')
+  .ui-content(role='main')
     script var socket=io(":3000/votoTitoloCategoria");
     if votoAbilitato
         script var votato = false;

@@ -9,8 +9,11 @@ router.get('/', function(req, res) {
 
 router.post('/', passport.authenticate('local'), function(req, res) {
     console.log('sono autenticato eh!');
-    req.app.io.emit('redirect');
-	res.redirect('/');
+	var admin=req.app.get('admin');
+	//console.log('redirect di wait', admin.getCurrentPage());
+	//admin.clientRedirect();
+	res.redirect('/redirect');
+	
 });
 
 

@@ -4,6 +4,8 @@ block head
 	script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
 	
 block content
+ div(class='ui-page-theme-b', data-role='page')
+  .ui-content(role='main')
 	#impostazioniVoto
 		each value in ['Titolo','Categoria','Attesa','Vincitore']
 			div(id='impostaTimer'+value, class='timer ui-grid-b')

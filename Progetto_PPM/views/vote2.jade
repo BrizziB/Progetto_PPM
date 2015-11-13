@@ -7,85 +7,87 @@ block head
 	
 
 block content
-	if !votato
-		script var voted=false;
-	else
-		script var voted=true;
-		
-	div(id='blueButton', class="ui-btn ui-input-btn ui-shadow", ) Vota Blu!
-		input(id='blueB',type="button", data-corners="false", data-enhanced="true", value="Vota Blu!")
-	div(id='redButton', class="ui-btn ui-input-btn ui-shadow", ) Vota Rosso!
-		input(id='redB',type="button", data-corners="false", data-enhanced="true", value="Vota Rosso!")
-	div(id='winDiv' )
-	canvas#myChart()
-	script.
-		Chart.defaults.global.showTooltips = false;
-		var red=0;
-		var blue=0;
-		var myChart;
-		var socket=io(":3000/winVote");
-		var ctx=document.getElementById("myChart").getContext("2d");
-		var data= {
-			labels : [""],
-			datasets : [
-				{
-					fillColor : "rgba(255,0,0,0.9)",
-					strokeColor : "rgba(255,0,0,0.4)",
-					data :[red]
-				},
-				{
-					fillColor : "rgba(0,0,255,0.9)",
-					strokeColor : "rgba(0,0,255,0.4)",
-					data :[blue]
+	div(class='ui-page-theme-b', data-role='page')
+		.ui-content(role='main')
+			if !votato
+				script var voted=false;
+			else
+				script var voted=true;
+				
+			div(id='blueButton', class="ui-btn ui-input-btn ui-shadow", ) Vota Blu!
+				input(id='blueB',type="button", data-corners="false", data-enhanced="true", value="Vota Blu!")
+			div(id='redButton', class="ui-btn ui-input-btn ui-shadow", ) Vota Rosso!
+				input(id='redB',type="button", data-corners="false", data-enhanced="true", value="Vota Rosso!")
+			div(id='winDiv' )
+			canvas#myChart()
+			script.
+				Chart.defaults.global.showTooltips = false;
+				var red=0;
+				var blue=0;
+				var myChart;
+				var socket=io(":3000/winVote");
+				var ctx=document.getElementById("myChart").getContext("2d");
+				var data= {
+					labels : [""],
+					datasets : [
+						{
+							fillColor : "rgba(255,0,0,0.9)",
+							strokeColor : "rgba(255,0,0,0.4)",
+							data :[red]
+						},
+						{
+							fillColor : "rgba(0,0,255,0.9)",
+							strokeColor : "rgba(0,0,255,0.4)",
+							data :[blue]
+						}
+					]
 				}
-			]
-		}
+				
+				myChart=new Chart(ctx).Bar(data, {responsive:true});			
+				
+				function voteBlue(myChart, blue){
+					myChart.datasets[1].bars[0].value=blue;
+					myChart.update();
+				}
+				function voteRed(myChart, red){
+					myChart.datasets[0].bars[0].value=red;
+					myChart.update();
+				}
 		
-		myChart=new Chart(ctx).Bar(data, {responsive:true});			
-		
-		function voteBlue(myChart, blue){
-			myChart.datasets[1].bars[0].value=blue;
-			myChart.update();
-		}
-		function voteRed(myChart, red){
-			myChart.datasets[0].bars[0].value=red;
-			myChart.update();
-		}
-
-		socket.on('welcomeVote', function(blue, red){
-			voteBlue(myChart, blue);
-			voteRed(myChart, red);
-			if (voted===true){
-				$("#blueButton").hide();
-				$("#redButton").hide();
-			}
-		});
-		
-		$("#blueButton").click(function(){
-			socket.emit('blueClick');
-			$('#blueButton').hide();
-			$('#redButton').hide();
-		});
-	
-		$("#redButton").click(function(){
-			socket.emit('redClick');
-			$('#blueButton').hide();
-			$('#redButton').hide();
-		});
-		
-		socket.on('blueVote', function(blue){
-			voteBlue(myChart, blue);
-		});
-		socket.on('redVote', function(red){
-			voteRed(myChart, red);
-		});
-		
-		socket.on('disabilitaVoto', function(){
-			voted=true;
-			$('#blueButton').hide();
-			$('#redButton').hide();
+				socket.on('welcomeVote', function(blue, red){
+					voteBlue(myChart, blue);
+					voteRed(myChart, red);
+					if (voted===true){
+						$("#blueButton").hide();
+						$("#redButton").hide();
+					}
+				});
+				
+				$("#blueButton").click(function(){
+					socket.emit('blueClick');
+					$('#blueButton').hide();
+					$('#redButton').hide();
+				});
 			
-		});
+				$("#redButton").click(function(){
+					socket.emit('redClick');
+					$('#blueButton').hide();
+					$('#redButton').hide();
+				});
+				
+				socket.on('blueVote', function(blue){
+					voteBlue(myChart, blue);
+				});
+				socket.on('redVote', function(red){
+					voteRed(myChart, red);
+				});
+				
+				socket.on('disabilitaVoto', function(){
+					voted=true;
+					$('#blueButton').hide();
+					$('#redButton').hide();
+					
+				});
 
 
 	

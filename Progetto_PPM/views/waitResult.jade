@@ -7,109 +7,111 @@ block head
 	
 	
 block content
-	div(id="text1")
-	div(id="text2") Attendi inizio della nuova improvvisazione
-	div(id="score")
-	canvas#lastChart()
-	script.
-		Chart.defaults.global.showTooltips = false;
-		var num;
-		var lastChart;
-		var socket=io(":3000/matchResult");				
-		var ctx=document.getElementById("lastChart").getContext("2d");	
-		socket.on('welcomeResult', function(numBlue, numRed, punteggiBlue, punteggiRed, matchNum){	
-			var winParag = document.createElement('p');
-			if(numBlue>numRed){
-				var txt1=document.createTextNode("Vince l'improvvisazione la squadra BLU");
-			}
-			if(numBlue<numRed){
-				var txt1=document.createTextNode("Vince l'improvvisazione la squadra ROSSA");
-			}
-			if(numBlue==numRed){
-				var txt1=document.createTextNode("l'improvvisazione finisce in PAREGGIO");
-			}
-			winParag.appendChild(txt1);
-			document.getElementById("text1").appendChild(winParag);
-			
-			var scoreParag=document.createElement('p');
-			var redScore = document.createTextNode("punteggio Rosso: "+numRed+",   ");
-			var blueScore = document.createTextNode("punteggio Blu: "+numBlue);
-			
-			scoreParag.appendChild(redScore);
-			scoreParag.appendChild(blueScore);
-			document.getElementById("score").appendChild(scoreParag);
-			
-			if(matchNum>=4){
-				var data= {
-				labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2),"impro "+ (matchNum-3), "impro "+(matchNum-4)],
-				datasets : [
-				{
-					fillColor : "rgba(255,0,0,0.9)",
-					strokeColor : "rgba(255,0,0,0.4)",
-					data :[punteggiRed[matchNum-1], punteggiRed[matchNum-2], punteggiRed[matchNum-3], punteggiRed[matchNum-4]]
-				},
-				{
-					fillColor : "rgba(0,0,255,0.9)",
-					strokeColor : "rgba(0,0,255,0.4)",
-					data :[punteggiBlue[matchNum-1], punteggiBlue[matchNum-2], punteggiBlue[matchNum-3], punteggiBlue[matchNum-4]]
+	div(class='ui-page-theme-b', data-role='page')
+		.ui-content(role='main')
+			div(id="text1")
+			div(id="text2") Attendi inizio della nuova improvvisazione
+			div(id="score")
+			canvas#lastChart()
+			script.
+				Chart.defaults.global.showTooltips = false;
+				var num;
+				var lastChart;
+				var socket=io(":3000/matchResult");				
+				var ctx=document.getElementById("lastChart").getContext("2d");	
+				socket.on('welcomeResult', function(numBlue, numRed, punteggiBlue, punteggiRed, matchNum){	
+					var winParag = document.createElement('p');
+					if(numBlue>numRed){
+						var txt1=document.createTextNode("Vince l'improvvisazione la squadra BLU");
 					}
-					]
-				}
-			}
-			
-			if(matchNum==3){
-				var data= {
-				labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2),"impro "+ (matchNum-3)],
-				datasets : [
-				{
-					fillColor : "rgba(255,0,0,0.9)",
-					strokeColor : "rgba(255,0,0,0.4)",
-					data :[punteggiRed[matchNum-1], punteggiRed[matchNum-2], punteggiRed[matchNum-3]]
-				},
-				{
-					fillColor : "rgba(0,0,255,0.9)",
-					strokeColor : "rgba(0,0,255,0.4)",
-					data :[punteggiBlue[matchNum-1], punteggiBlue[matchNum-2], punteggiBlue[matchNum-3]]
+					if(numBlue<numRed){
+						var txt1=document.createTextNode("Vince l'improvvisazione la squadra ROSSA");
 					}
-					]
-				}
-			}
-			if(matchNum==2){
-				var data= {
-				labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2)],
-				datasets : [
-				{
-					fillColor : "rgba(255,0,0,0.9)",
-					strokeColor : "rgba(255,0,0,0.4)",
-					data :[punteggiRed[matchNum-1], punteggiRed[matchNum-2]]
-				},
-				{
-					fillColor : "rgba(0,0,255,0.9)",
-					strokeColor : "rgba(0,0,255,0.4)",
-					data :[punteggiBlue[matchNum-1], punteggiBlue[matchNum-2]]
+					if(numBlue==numRed){
+						var txt1=document.createTextNode("l'improvvisazione finisce in PAREGGIO");
 					}
-					]
-				}
-			}
-			if(matchNum==1){
-				var data= {
-				labels : ["impro "+ (matchNum-1)],
-				datasets : [
-				{
-					fillColor : "rgba(255,0,0,0.9)",
-					strokeColor : "rgba(255,0,0,0.4)",
-					data :[punteggiRed[matchNum]]
-				},
-				{
-					fillColor : "rgba(0,0,255,0.9)",
-					strokeColor : "rgba(0,0,255,0.4)",
-					data :[punteggiBlue[matchNum]]
+					winParag.appendChild(txt1);
+					document.getElementById("text1").appendChild(winParag);
+					
+					var scoreParag=document.createElement('p');
+					var redScore = document.createTextNode("punteggio Rosso: "+numRed+",   ");
+					var blueScore = document.createTextNode("punteggio Blu: "+numBlue);
+					
+					scoreParag.appendChild(redScore);
+					scoreParag.appendChild(blueScore);
+					document.getElementById("score").appendChild(scoreParag);
+					
+					if(matchNum>=4){
+						var data= {
+						labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2),"impro "+ (matchNum-3), "impro "+(matchNum-4)],
+						datasets : [
+						{
+							fillColor : "rgba(255,0,0,0.9)",
+							strokeColor : "rgba(255,0,0,0.4)",
+							data :[punteggiRed[matchNum-1], punteggiRed[matchNum-2], punteggiRed[matchNum-3], punteggiRed[matchNum-4]]
+						},
+						{
+							fillColor : "rgba(0,0,255,0.9)",
+							strokeColor : "rgba(0,0,255,0.4)",
+							data :[punteggiBlue[matchNum-1], punteggiBlue[matchNum-2], punteggiBlue[matchNum-3], punteggiBlue[matchNum-4]]
+							}
+							]
+						}
 					}
-					]
-				}
-			}
-		
-		lastChart=new Chart(ctx).Bar(data, {responsive:true}, {showTooltips:false});
-		});
+					
+					if(matchNum==3){
+						var data= {
+						labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2),"impro "+ (matchNum-3)],
+						datasets : [
+						{
+							fillColor : "rgba(255,0,0,0.9)",
+							strokeColor : "rgba(255,0,0,0.4)",
+							data :[punteggiRed[matchNum-1], punteggiRed[matchNum-2], punteggiRed[matchNum-3]]
+						},
+						{
+							fillColor : "rgba(0,0,255,0.9)",
+							strokeColor : "rgba(0,0,255,0.4)",
+							data :[punteggiBlue[matchNum-1], punteggiBlue[matchNum-2], punteggiBlue[matchNum-3]]
+							}
+							]
+						}
+					}
+					if(matchNum==2){
+						var data= {
+						labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2)],
+						datasets : [
+						{
+							fillColor : "rgba(255,0,0,0.9)",
+							strokeColor : "rgba(255,0,0,0.4)",
+							data :[punteggiRed[matchNum-1], punteggiRed[matchNum-2]]
+						},
+						{
+							fillColor : "rgba(0,0,255,0.9)",
+							strokeColor : "rgba(0,0,255,0.4)",
+							data :[punteggiBlue[matchNum-1], punteggiBlue[matchNum-2]]
+							}
+							]
+						}
+					}
+					if(matchNum==1){
+						var data= {
+						labels : ["impro "+ (matchNum-1)],
+						datasets : [
+						{
+							fillColor : "rgba(255,0,0,0.9)",
+							strokeColor : "rgba(255,0,0,0.4)",
+							data :[punteggiRed[matchNum]]
+						},
+						{
+							fillColor : "rgba(0,0,255,0.9)",
+							strokeColor : "rgba(0,0,255,0.4)",
+							data :[punteggiBlue[matchNum]]
+							}
+							]
+						}
+					}
+				
+				lastChart=new Chart(ctx).Bar(data, {responsive:true}, {showTooltips:false});
+				});
 
 	

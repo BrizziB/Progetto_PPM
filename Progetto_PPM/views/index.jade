@@ -1,10 +1,12 @@
 extends layout
 
 block content
-  if (!user)
+ div(class='ui-page-theme-b', data-role='page')
+  .ui-content(role='main')
+   if (!user)
     a(href="/login") Login
     br
     a(href="/registrazione") Register
-  if (user)
+   if (user)
     p You are currently logged in as #{user.username}
     a(href="/logout") Logout
