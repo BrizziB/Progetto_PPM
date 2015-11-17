@@ -36,6 +36,7 @@ var registrazione = require('./routes/registrazione');
 //modelli mongoose
 var User = require('./models/User.js');
 
+//TODO: eliminare riferiminti a aggiungiTitolo
 var Utente = function(){
 	this.votato =  false;
 	this.aggiungiTitolo = true;
@@ -168,7 +169,7 @@ function ensureAuthenticated(req, res, next) {
 //XXX:CODICE PER IL TEST
 var noCurrentPage = false;
 app.get('/test',function(req,res,next){
-	res.render('paginaControllo',{title:"Pagina di Controllo per test",noCurrentPage: noCurrentPage});
+	res.render('paginaControllo',{title:"Pagina di Controllo per test", noCurrentPage: noCurrentPage, user: false});
 });
 ///
 app.get('/redirect', function(req, res, next){

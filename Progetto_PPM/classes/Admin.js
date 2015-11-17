@@ -203,6 +203,11 @@ exports.Admin = function(socketio){
 		return currentMatchNum;
 	};
 	
+	var updateMatch = function (){
+		blueTeam.setVotes(0);
+		redTeam.setVotes(0);
+		currentMatchNum++;
+	};
 	
 	this.setWinner = function(){
 		redTeam.setPunteggi(currentMatchNum, redTeam.getVotes() );
@@ -217,6 +222,8 @@ exports.Admin = function(socketio){
 			redTeam.addPoint();
 			blueTeam.addPoint();
 		}
+
+		updateMatch();
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};

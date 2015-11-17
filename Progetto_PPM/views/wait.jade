@@ -1,15 +1,14 @@
 extends layout
 
 block head
-	title=Wait
+
 	script(type='text/javascript' src='http://localhost:3000/socket.io/socket.io.js')
+	script var socket=io(":3000/adminChan");
 	script(type='text/javascript' src='/scripts/custom/redirect.js')
 
-block content
-
-			
-			#messaggioAttendere.ui-grid-a
-				#welcome.ui-block-a.bloccoAttendere
+block content	
+		#messaggioAttendere.ui-grid-a
+			#welcome.ui-block-a.bloccoAttendere
 					h1 Attendere prego!
 					h2 rappresentazione in corso
 					
@@ -48,7 +47,7 @@ block content
 							span.titoloPenalita Numero Penalita': 
 							span.penalita 1
 							
-		script var socket=io(":3000/adminChan");
+		
 		script(type='text/javascript', src='/scripts/custom/wait.js')
 		script(type='text/javascript', src='/scripts/custom/fauls.js')
 

@@ -19,6 +19,7 @@ block content
 			div(id='winDiv' )
 			canvas#myChart()
 			script.
+				
 				Chart.defaults.global.showTooltips = false;
 				var red=0;
 				var blue=0;
@@ -41,7 +42,9 @@ block content
 					]
 				}
 				
-				myChart=new Chart(ctx).Bar(data, {responsive:true});			
+				$(document).on("pageshow",function(){
+				myChart=new Chart(ctx).Bar(data, {responsive:true});
+				});			
 				
 				function voteBlue(myChart, blue){
 					myChart.datasets[1].bars[0].value=blue;
