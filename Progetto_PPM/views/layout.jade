@@ -14,10 +14,10 @@ html
   
   body.ui-overlay-b
     div(class='ui-page-theme-b', data-role='page')
-      div(data-role='header')
-            if (user)
+      if (user) 
+              div(data-role='header')
                  a(href='/logout') Logout
-            if (user.admin && !adminPage) 
-                a(href='/administrator' data-ajax='false') Amministrazione
+                 if (user.admin && !adminPage) 
+                     a(href='/administrator' data-ajax='false') Amministrazione
       .ui-content(role='main')
         block content

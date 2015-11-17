@@ -6,3 +6,16 @@ body {
 a {
   color: #00B7FF;
 }
+
+#logo {
+	display:table;
+    margin:0 auto;   
+    text-align:center;
+    border:none;
+}
+
+img {
+	width:100%;
+	height:auto;
+	border:none;
+}
