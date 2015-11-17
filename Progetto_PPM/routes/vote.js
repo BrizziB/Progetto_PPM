@@ -11,6 +11,7 @@ router.get('*',function(req,res,next){
 		layoutPagina.titoloLista="Ecco i risultati in tempo reale";
 	}
 	layoutPagina.votoAbilitato= req.session.utente.votato?false:true;
+	layoutPagina.titoloScelto = false;
 /* - Parte per il pulsante reset su vote.jade -	
   if (app.get('env') === 'development') {
 		layoutPagina.dev=true;
@@ -27,7 +28,7 @@ router.get('/titolo', function(req, res, next) {
 		layoutPagina.title="Seleziona il titolo!";
 		layoutPagina.titoloLista="Seleziona il titolo dalla lista";
 	}
-	layoutPagina.aggiungiTitolo= req.session.utente.aggiungiTitolo; 
+	layoutPagina.aggiungiTitolo= layoutPagina.votoAbilitato; 
 	res.render('vote',layoutPagina);
 });
 
@@ -36,6 +37,7 @@ router.get('/categoria', function(req, res, next) {
 		layoutPagina.title="Seleziona la categoria!";
 		layoutPagina.titoloLista="Seleziona la categoria dalla lista";
 	}
+	layoutPagina.aggiungiTitolo = false;
 	layoutPagina.aggiungiTitolo= false;
 	var admin = req.app.get('admin');
 	layoutPagina.titoloScelto = admin.getCurrentTitle();
