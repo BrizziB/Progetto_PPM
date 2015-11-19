@@ -10,15 +10,16 @@ router.get('/', function(req, res, next) {
 	titCat.categoria = admin.getCurrentCategory();
 	titCat.titolo = admin.getCurrentTitle();
 	titCat.title='Ecco i Risultati';
+	titCat.user = req.user;
 	
 	console.log('titolo e categoria: ', titCat.categoria, titCat.titolo);
 	switch(req.query.type){
   	case "start": 
-  		res.render('wait',{title: 'Attendere l\'inizio della rappresentazione!'});
+  		res.render('wait',{title: 'Attendere l\'inizio della rappresentazione!',user: req.user});
   		break;
   	
   	case "play":
-  		titCat.title='Rappresentazione in corso'
+  		titCat.title='Rappresentazione in corso';
   		res.render('wait',titCat);
   		break;
   		
@@ -31,7 +32,7 @@ router.get('/', function(req, res, next) {
 		break;
 	
   	case "result": 
-  		res.render('waitResult');
+  		res.render('waitResult',{title: 'Risultati del match', user: req.user});
   		break;
   	
   	default:

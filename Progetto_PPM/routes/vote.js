@@ -9,6 +9,7 @@ router.get('*',function(req,res,next){
 	if (req.session.utente.votato===true){
 		layoutPagina.title="Attendi la fine della votazione...";
 		layoutPagina.titoloLista="Ecco i risultati in tempo reale";
+		layoutPagina.user=req.user;
 	}
 	layoutPagina.votoAbilitato= req.session.utente.votato?false:true;
 	layoutPagina.titoloScelto = false;
