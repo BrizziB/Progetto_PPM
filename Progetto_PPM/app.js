@@ -291,8 +291,7 @@ function disabilitaVotoUtenteNSP(sess,namespace){
 		}
 	}	
 }
-//TODO: i voti devono essere mantenuti dall'admin
-var listaTitoli = new ListaOggettiVoti('Test1','Test2','Test3');
+
 
 whilePlay.on('connection', function(socket){
 	console.log("connessione a whilePlay");
@@ -343,6 +342,8 @@ matchResult.on('connection', function(socket){
 	// ---- Pitti -----
 votoTitoloCategoria.on('connection', function(socket){
 	console.log('Connessione!');
+//XXX: codice poco sicuro...
+	var listaTitoli = admin.getTitlesCats();
 	var listaOggetti = [];
 	var listaOggettiID = [];
 	(function(){
@@ -438,6 +439,7 @@ adminChan.on('connect',function(socket){
 	socket.on('controlloVotazione',function(fase){
 		switch(fase){
 		case 'faseUno':
+			console.log(admin.setTitles);
 			admin.phase1();
 			console.log('inizio fase1');
 			break;

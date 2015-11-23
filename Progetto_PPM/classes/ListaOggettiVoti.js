@@ -11,15 +11,51 @@ var idGenerator= (function(){
 	};
 })();
 
+
+/**
+ * Check whether an object is Array or not
+ * @type Boolean
+ * @param {object} subject is the variable that is
+ * tested for Array identity check
+ */
+var isArray = (function () {
+    // Use compiler's own isArray when available
+    if (Array.isArray) {
+        return Array.isArray;
+    } 
+
+    // Retain references to variables for performance
+    // optimization
+    var objectToStringFn = Object.prototype.toString,
+        arrayToStringResult = objectToStringFn.call([]); 
+
+    return function (subject) {
+        return objectToStringFn.call(subject) === arrayToStringResult;
+    };
+}());
+
 function ListaOggettiVoti(){
 	var id;
 	var contenitoreVoti=new HashMap();
 	var contenitoreOggetti = new HashMap();
 	if (arguments.length!==0){
 		for(var i=0,l=arguments.length;i<l;i++){
-			id=idGenerator();
-			contenitoreOggetti.set(arguments[i],id);
-			contenitoreVoti.set(id,0);
+			if(arguments[i]===undefined || arguments[i] === null || arguments[i] === ''){
+				continue;
+			}
+			if (isArray(arguments[i])){
+				var argArray=arguments[i];
+				for (var k=0,m=argArray.length;k<m;k++){
+					id=idGenerator();
+					contenitoreOggetti.set(argArray[k],id);
+					contenitoreVoti.set(id,0);				
+				}
+			}else
+			{
+				id=idGenerator();
+				contenitoreOggetti.set(arguments[i],id);
+				contenitoreVoti.set(id,0);
+			}
 		}
 	}	
 	this.aggiungiOggetto=function(nomeOggetto,nVoti){
