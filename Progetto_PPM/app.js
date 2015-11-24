@@ -439,9 +439,9 @@ adminChan.on('connect',function(socket){
 	socket.on('controlloVotazione',function(fase){
 		switch(fase){
 		case 'faseUno':
-			console.log(admin.setTitles);
 			admin.phase1();
 			console.log('inizio fase1');
+
 			break;
 		case 'faseDue':
 			admin.phase2();

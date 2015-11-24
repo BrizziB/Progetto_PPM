@@ -83,8 +83,8 @@ exports.Admin = function(socketio){
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
 	var startVote = false;
-	var titles;
-	var categories;
+	var titles= new ListaOggettiVoti('Titolo Test1','Titolo Test2','Titolo Test3');
+	var categories= new ListaOggettiVoti('Categoria Test1','Categoria Test2','Categoria Test3');
 	var isTitleVote= true;
 	var nFoulsBeforePenalty;
 	var titleTimer=10;
@@ -126,37 +126,9 @@ exports.Admin = function(socketio){
 	this.getWinnerTimer=function(){
 		return winnerTimer;
 	};
-//XXX: 3 funzioni poco sicure...	
-	this.getTitlesCats= function(){
-		if (isTitleVote){
-			return titles;
-		}
-		else{
-			return categories;
-		}
-		
-	};
+
 	
-	this.setTitles= function(titles){
-		console.log('setTitles Avviata');
-//		if (typeof titles === typeof ListaOggettiVoti){
-	//		this.titles = titles;
-//		}
-//		else{
-			this.titles=new ListaOggettiVoti(titles);
-		
-//		}
-	};
-	
-	this.setCategories= function(categories){
-		if (typeof titles === typeof ListaOggettiVoti){
-			this.categories = categories;
-		}
-		else{
-			this.categories=new ListaOggettiVoti(categories);
-		
-		}
-	}; 
+	 
 	this.blueTeam=function(){
 		return blueTeam;		
 	};
@@ -252,8 +224,8 @@ exports.Admin = function(socketio){
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};
-//XXX:	
-//-FUNZIONI PROPOSTE DA AGGIUNGERE
+
+
 	var titleWinner = function(){
 		var maxVotes= -1;
 		var maxTitle = '';
@@ -280,26 +252,59 @@ exports.Admin = function(socketio){
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 	};
 	
-	var categoryInit = function(){
-		isTitleVote= false;
-		this.setCategories(['Pippo','Pluto','Topolino','Pitti']);
+	this.getTitlesCats= function(){
+		if (isTitleVote){
+			return titles;
+		}
+		else{
+			return categories;
+		}
+		
+	};
+//XXX:richiede array per il momento	
+	var setTitles= function(newtitles){
+		console.log('fuori if di setTitles',titles.listaOggetti());
+		if (typeof titles === typeof ListaOggettiVoti){
+			titles = newtitles;
+		}
+		else{
+			titles=new ListaOggettiVoti(newtitles);
+			console.log('Dentro l\'else di setTitles:',titles.listaOggetti());
+		}
+	};
+//XXX:richiede array per il momento	
+	var setCategories= function(newcategories){
+		if (typeof newcategories === typeof ListaOggettiVoti){
+			categories = newcategories;
+		}
+		else{
+			categories=new ListaOggettiVoti(newcategories);
+		
+		}
 	};
 	
-	var titleInit= function(){
-		this.setTitles(['Prova1','Prova2','Prova3','Prova4']);
+	this.categoryInit = function(){
+		isTitleVote= false;
+		setCategories(['Pippo','Pluto','Topolino','Minnie']);
+	};
+	
+	this.titleInit= function(){
+		console.log('Dentro titleInit:',setTitles);
+		setTitles(['Prova1','Prova2','Prova3','Prova4']);
 		isTitleVote= true;
 	};
-//-FINE
-//FUNZIONE MODIFICATA	
+
+
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];
 		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=play"  });
 		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner  });
-		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria" ,funct: categoryInit });
+		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria" ,funct: this.categoryInit });
 		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner  });
 		
-		console.log('Categorie e titoli:',typeof this.setTitles,typeof this.setCategories);
-		titleInit();
+		console.log('Categorie e titoli:',typeof setTitles,typeof setCategories);
+		this.titleInit();
+
 		setCurrentPage("/vote/titolo");
 		clientRedirect();
 		theBeast(timerArray);

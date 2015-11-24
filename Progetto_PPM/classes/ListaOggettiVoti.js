@@ -38,6 +38,7 @@ function ListaOggettiVoti(){
 	var id;
 	var contenitoreVoti=new HashMap();
 	var contenitoreOggetti = new HashMap();
+	console.log('creo la lista');
 	if (arguments.length!==0){
 		for(var i=0,l=arguments.length;i<l;i++){
 			if(arguments[i]===undefined || arguments[i] === null || arguments[i] === ''){
@@ -45,6 +46,7 @@ function ListaOggettiVoti(){
 			}
 			if (isArray(arguments[i])){
 				var argArray=arguments[i];
+				console.log('Array:',argArray,'lunghezza:',argArray.length);
 				for (var k=0,m=argArray.length;k<m;k++){
 					id=idGenerator();
 					contenitoreOggetti.set(argArray[k],id);
