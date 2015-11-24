@@ -7,19 +7,26 @@ block head
 	
 
 block content
-			if !votato
-				script var voted=false;
-			else
+			if votato
 				script var voted=true;
-				
+
+			else
+				script var voted=false;
+				div(id= 'vota')
+					p Vota la squadra che hai preferito!
 			div(id='blueButton', class="ui-btn ui-input-btn ui-shadow", ) Vota Blu!
 				input(id='blueB',type="button", data-corners="false", data-enhanced="true", value="Vota Blu!")
 			div(id='redButton', class="ui-btn ui-input-btn ui-shadow", ) Vota Rosso!
 				input(id='redB',type="button", data-corners="false", data-enhanced="true", value="Vota Rosso!")
-			div(id='winDiv' )
-			canvas#myChart()
+			
+			div(id= 'assisti')
+				p Andamento della votazione in tempo reale: 
+			div(id='test')
+				div(id='winDiv' )
+					canvas#myChart()
+			
 			script.
-				
+				Chart.defaults.global.maintainAspectRatio = true;
 				Chart.defaults.global.showTooltips = false;
 				var red=0;
 				var blue=0;
@@ -68,12 +75,14 @@ block content
 					socket.emit('blueClick');
 					$('#blueButton').hide();
 					$('#redButton').hide();
+					$('#vota').hide();
 				});
 			
 				$("#redButton").click(function(){
 					socket.emit('redClick');
 					$('#blueButton').hide();
 					$('#redButton').hide();
+					$('#vota').hide();
 				});
 				
 				socket.on('blueVote', function(blue){

@@ -19,3 +19,15 @@ img {
 	height:auto;
 	border:none;
 }
+
+#test{
+	position: absolute;
+	bottom: 20%;
+		height:auto;
+	width:100%;
+}
+
+#winDiv{
+	position: relative;
+
+}

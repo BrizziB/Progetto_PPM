@@ -7,13 +7,13 @@ block head
 	script(type='text/javascript' src='/scripts/custom/redirect.js')
 
 block content	
-		#messaggioAttendere.ui-grid-a
-			#welcome.ui-block-a.bloccoAttendere
+		#messaggioAttendere
+			#welcome.bloccoAttendere
 					h1 Attendere prego!
 					h2 rappresentazione in corso
 					
-			#titoloCateoria.ui-grid-a
-				#titoloCat.ui-block-a.bloccoTitoloCategoria
+			#titoloCateoria
+				#titoloCat.bloccoTitoloCategoria
 					if(titolo)
 						h4 Titolo della rappresenzatione :
 							p.titolo=titolo
@@ -29,10 +29,10 @@ block content
 							span.titoloPunteggio Punti: 
 							span.punteggio 42
 							br
-							span.titoloFalli Numero Falli: 
+							span.titoloFalli Falli: 
 							span.falli 7
 							br
-							span.titoloPenalita Numero Penalita': 
+							span.titoloPenalita Penalita': 
 							span.penalita 1
 					#blue.ui-block-b.bloccoPuntiFalli
 						p
@@ -41,10 +41,10 @@ block content
 							span.titoloPunteggio Punti:
 							span.punteggio 42
 							br
-							span.titoloFalli Numero Falli: 
+							span.titoloFalli Falli: 
 							span.falli 7
 							br
-							span.titoloPenalita Numero Penalita': 
+							span.titoloPenalita Penalita': 
 							span.penalita 1
 							
 		

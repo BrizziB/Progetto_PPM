@@ -33,7 +33,7 @@
                             socket.emit('nuovoElemento',fields[0].value);
                             $('#CasellaTesto').val('');
                             event.preventDefault();
-                            window.location.assign("#risposta");
+                            //window.location.assign("#risposta");
                         }
                     });
                     socket.on('votato',function(testo){

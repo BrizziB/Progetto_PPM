@@ -25,7 +25,7 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 	};
 	
 	this.setVotes=function(nvotes){
-		votes=votes+nvotes;
+		votes=nvotes;
 	};
 	this.getPunteggi=function(){
 		return punteggi;
@@ -75,7 +75,7 @@ var team=exports.team;
 
 
 exports.Admin = function(socketio){
-	var currentMatchNum=1;
+	var currentMatchNum=0;
 	var currentTitle;
 	var currentCategory;
 	//var currentPage = '/vote/categoria';
@@ -92,6 +92,20 @@ exports.Admin = function(socketio){
 	var waitTimer=10;
 	var winnerTimer=10;
 	var io=socketio;
+	var isPhase1 = true;
+	var isPhase2 = false;
+	
+	this.isPhase = function(){
+		if (isPhase1) {
+			return 'fase1';
+		}
+		if (isPhase2) {
+			return 'fase2';
+		}
+		if (!isPhase1 && !isPhase2) {
+			return 'faseVotazione';
+		}	
+	};
 	
 	this.setNFoulsBeforePenalty=function(num){
 		nFoulsBeforePenalty=num;
@@ -126,8 +140,6 @@ exports.Admin = function(socketio){
 	this.getWinnerTimer=function(){
 		return winnerTimer;
 	};
-
-	
 	 
 	this.blueTeam=function(){
 		return blueTeam;		
@@ -201,12 +213,13 @@ exports.Admin = function(socketio){
 	};
 	
 	var updateMatch = function (){
-		blueTeam.setVotes(0);
-		redTeam.setVotes(0);
+
 		currentMatchNum++;
+		
 	};
 	
 	this.setWinner = function(){
+		console.log('setWinner sta eseguendo ora');
 		redTeam.setPunteggi(currentMatchNum, redTeam.getVotes() );
 		blueTeam.setPunteggi(currentMatchNum, blueTeam.getVotes() );
 		if(blueTeam.getVotes()>redTeam.getVotes()){	
@@ -219,10 +232,11 @@ exports.Admin = function(socketio){
 			redTeam.addPoint();
 			blueTeam.addPoint();
 		}
-
 		updateMatch();
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
-		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
+		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPoints(),blue: blueTeam.getPoints()});
+		isPhase1=true;
+		//io.of('/adminChan').emit('updatePhase', this.isPhase());
 	};
 
 
@@ -250,6 +264,8 @@ exports.Admin = function(socketio){
 		});
 		currentCategory = maxCategory;
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
+		isPhase2=true;
+		//io.of('/adminChan').emit('updatePhase', isPhase());
 	};
 	
 	this.getTitlesCats= function(){
@@ -302,33 +318,43 @@ exports.Admin = function(socketio){
 		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria" ,funct: this.categoryInit });
 		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner  });
 		
+		isPhase1 =false;
+		io.of('/adminChan').emit('updatePhase', this.isPhase());
+		
 		console.log('Categorie e titoli:',typeof setTitles,typeof setCategories);
 		this.titleInit();
-
 		setCurrentPage("/vote/titolo");
 		clientRedirect();
+		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast(timerArray);
 	};
 		
-	
-/*FUNZIONE ORIGINALE
-	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
-		var timerArray = [];		
-		timerArray.push({delay: .getWaitTimer() ,page: "/wait? type=play"  });
-		timerArray.push({delay: .getCategoryTimer() ,page: "/wait? type=category"  });
-		timerArray.push({delay: .getWaitTimer() ,page: "/vote/category"  });
-		timerArray.push({delay: .getTitleTimer() ,page: "/wait? type=title"  });
-		
-		setCurrentPage("/vote/title");
-		theBeast(timerArray);		
-	};
-	*/
+
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
-		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });
+		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });	
+		
+		isPhase2=false;
+		io.of('/adminChan').emit('updatePhase', this.isPhase());
+		
+		blueTeam.setVotes(0);
+		redTeam.setVotes(0);
 		setCurrentPage("/vote/matchwinner");
 		clientRedirect();
+
 		theBeast(timerArray);
+	};
+	
+
+	
+	this.actualPhase = function(){
+		if (isPhase1){
+			this.phase1();
+			
+		}
+		else{
+			this.phase2();
+		}
 	};
 
 };

@@ -334,7 +334,8 @@ winVote.on('connection', function(socket){
 matchResult.on('connection', function(socket){
 	console.log("connessione a matchResult");
 	socket.emit('welcomeResult', admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum());	
-	console.log(admin.blueTeam().getVotes(), admin.redTeam().getVotes(), admin.blueTeam().getPunteggi(), admin.redTeam().getPunteggi(), admin.getCurrentMatchNum());
+	console.log('voti blu: ',admin.blueTeam().getVotes(),'voti rossi: ',  admin.redTeam().getVotes(), 'punteggi blu', admin.blueTeam().getPunteggi(), 'punteggi rossi: ', admin.redTeam().getPunteggi(),'match corrente: ', admin.getCurrentMatchNum());
+
 });
 
 	// ---- Boris -----FINE
@@ -415,7 +416,7 @@ adminChan.on('connect',function(socket){
 	var winnerTimer = admin.getWinnerTimer();
 	var redTeam = admin.redTeam();
 	var blueTeam = admin.blueTeam();
-	socket.emit('refresh',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPoints(),blueTeam.getFouls(),redTeam.getPoints(),redTeam.getFouls(), redTeam.getPenalty(), blueTeam.getPenalty()]);
+	socket.emit('refresh',[titleTimer,catTimer,waitTimer,winnerTimer,blueTeam.getPoints(),blueTeam.getFouls(),redTeam.getPoints(),redTeam.getFouls(), redTeam.getPenalty(), blueTeam.getPenalty()], admin.isPhase());
 	socket.on('changeTimer',function(type,time){
 		switch(type){
 		case 'Titolo':
@@ -447,7 +448,12 @@ adminChan.on('connect',function(socket){
 			admin.phase2();
 			console.log('inizio fase2');
 			break;
+			
+		case 'cambiaFase':
+			admin.actualPhase();
+			break;
 		//XXX: controllo blocco?
+
 		default:
 			console.log('Errore: impossibile controllare la votazione!');
 		}

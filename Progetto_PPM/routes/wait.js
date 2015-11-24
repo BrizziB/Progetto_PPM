@@ -7,7 +7,6 @@ router.get('/', function(req, res, next) {
 	var admin = req.app.get('admin');  		
 	var titCat ={};
 		
-	titCat.categoria = admin.getCurrentCategory();
 	titCat.titolo = admin.getCurrentTitle();
 	titCat.title='Ecco i Risultati';
 	titCat.user = req.user;
@@ -24,10 +23,12 @@ router.get('/', function(req, res, next) {
   		break;
   		
   	case "title":
+  		titCat.categoria = null;
   		res.render('waitTitleCategory',titCat); 	
   		break;
   		
-  	case "category":  		
+  	case "category":  
+  		titCat.categoria = admin.getCurrentCategory();
   		res.render('waitTitleCategory',titCat);
 		break;
 	
