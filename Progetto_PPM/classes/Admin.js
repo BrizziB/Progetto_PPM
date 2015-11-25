@@ -52,6 +52,8 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 		numFouls=(numFouls+1)%nFoulsBeforePenalty;
 		if (numFouls===0){
 			penalties++;
+			var pts=this.getPoints() -1 ;
+			this.setPoints(pts);
 		}
 	};
 	this.removeFouls=function(){
@@ -78,7 +80,6 @@ exports.Admin = function(socketio){
 	var currentMatchNum=0;
 	var currentTitle;
 	var currentCategory;
-	//var currentPage = '/vote/categoria';
 	var currentPage = '/wait?type=start';
 	var blueTeam = new team("blue");
 	var redTeam = new team("red");
@@ -89,7 +90,7 @@ exports.Admin = function(socketio){
 	var nFoulsBeforePenalty;
 	var titleTimer=10;
 	var catTimer=10;
-	var waitTimer=10;
+	var waitTimer=5;
 	var winnerTimer=10;
 	var io=socketio;
 	var isPhase1 = true;
@@ -144,8 +145,7 @@ exports.Admin = function(socketio){
 	};
 	this.getWinnerTimer=function(){
 		return winnerTimer;
-	};
-	 
+	}; 
 	this.blueTeam=function(){
 		return blueTeam;		
 	};
@@ -227,6 +227,7 @@ exports.Admin = function(socketio){
 		console.log('setWinner sta eseguendo ora');
 		redTeam.setPunteggi(currentMatchNum, redTeam.getVotes() );
 		blueTeam.setPunteggi(currentMatchNum, blueTeam.getVotes() );
+		
 		if(blueTeam.getVotes()>redTeam.getVotes()){	
 			blueTeam.addPoint();
 		}		
@@ -337,7 +338,7 @@ exports.Admin = function(socketio){
 
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
-		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=result", funct: this.setWinner  });	
+		timerArray.push({delay: this.getWinnerTimer() ,page: "/wait?type=result", funct: this.setWinner  });	
 		
 		isPhase2=false;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());

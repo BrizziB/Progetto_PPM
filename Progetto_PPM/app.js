@@ -470,11 +470,11 @@ adminChan.on('connect',function(socket){
 			switch(type){
 				case 'rosso':
 					admin.redTeam().addFoul();
-					adminChan.emit('faul', 'red', admin.redTeam().getFouls(), admin.redTeam().getPenalty());
+					adminChan.emit('faul', 'red', admin.redTeam().getFouls(), admin.redTeam().getPenalty(), admin.redTeam().getPoints());
 					break;
 				case 'blu':
 					admin.blueTeam().addFoul();
-					adminChan.emit('faul', 'blue', admin.blueTeam().getFouls(), admin.blueTeam().getPenalty());
+					adminChan.emit('faul', 'blue', admin.blueTeam().getFouls(), admin.blueTeam().getPenalty(), admin.blueTeam().getPoints());
 					break;
 				default:
 					console.log('Errore: impossibile attribuire il fallo');
