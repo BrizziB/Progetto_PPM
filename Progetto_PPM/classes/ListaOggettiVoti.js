@@ -11,7 +11,7 @@ var idGenerator= (function(){
 	};
 })();
 
-
+//Codice funzione successiva ottenuto da http://www.shamasis.net/2011/08/infinite-ways-to-detect-array-in-javascript/
 /**
  * Check whether an object is Array or not
  * @type Boolean
@@ -38,7 +38,6 @@ function ListaOggettiVoti(){
 	var id;
 	var contenitoreVoti=new HashMap();
 	var contenitoreOggetti = new HashMap();
-	console.log('creo la lista');
 	if (arguments.length!==0){
 		for(var i=0,l=arguments.length;i<l;i++){
 			if(arguments[i]===undefined || arguments[i] === null || arguments[i] === ''){
@@ -46,7 +45,6 @@ function ListaOggettiVoti(){
 			}
 			if (isArray(arguments[i])){
 				var argArray=arguments[i];
-				console.log('Array:',argArray,'lunghezza:',argArray.length);
 				for (var k=0,m=argArray.length;k<m;k++){
 					id=idGenerator();
 					contenitoreOggetti.set(argArray[k],id);
@@ -113,7 +111,6 @@ function ListaOggettiVoti(){
 			contenitoreOggetti.set(nomeOggetto,nVoti);
 		}
 		contenitoreVoti.set(id,sostituto);
-		//console.log(nomeOggetto);
 	};
 	
 	this.modificaVoto=function(nomeOggetto,nVoti){

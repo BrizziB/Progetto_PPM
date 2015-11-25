@@ -95,16 +95,21 @@ exports.Admin = function(socketio){
 	var isPhase1 = true;
 	var isPhase2 = false;
 	
-	this.isPhase = function(){
+	
+	var isPhaseInternal = function(){
 		if (isPhase1) {
-			return 'fase1';
+			return 'faseUno';
 		}
 		if (isPhase2) {
-			return 'fase2';
+			return 'faseDue';
 		}
-		if (!isPhase1 && !isPhase2) {
-			return 'faseVotazione';
-		}	
+
+		return 'faseVotazione';
+			
+	};
+	
+	this.isPhase= function(){
+		return isPhaseInternal();
 	};
 	
 	this.setNFoulsBeforePenalty=function(num){
@@ -236,7 +241,7 @@ exports.Admin = function(socketio){
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPoints(),blue: blueTeam.getPoints()});
 		isPhase1=true;
-		//io.of('/adminChan').emit('updatePhase', this.isPhase());
+		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 
 
@@ -265,7 +270,7 @@ exports.Admin = function(socketio){
 		currentCategory = maxCategory;
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		isPhase2=true;
-		//io.of('/adminChan').emit('updatePhase', isPhase());
+		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 	
 	this.getTitlesCats= function(){

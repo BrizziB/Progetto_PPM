@@ -407,6 +407,27 @@ votoTitoloCategoria.on('connection', function(socket){
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
 });
 
+    var selezionaFase = function(fase){
+		switch(fase){
+		case 'faseUno':
+			admin.phase1();
+			console.log('inizio fase1');
+
+			break;
+		case 'faseDue':
+			admin.phase2();
+			console.log('inizio fase2');
+			break;
+			
+		case 'faseVotazione':
+			socket.emit('updatePhase',fase);
+			break;
+		//XXX: controllo blocco?
+
+		default:
+			console.log('Errore: impossibile controllare la votazione!');
+		}
+	};
 
 adminChan.on('connect',function(socket){
 	console.log('Admin connesso!');
@@ -437,27 +458,14 @@ adminChan.on('connect',function(socket){
 		
 	});
 
-	socket.on('controlloVotazione',function(fase){
-		switch(fase){
-		case 'faseUno':
-			admin.phase1();
-			console.log('inizio fase1');
-
-			break;
-		case 'faseDue':
-			admin.phase2();
-			console.log('inizio fase2');
-			break;
-			
-		case 'cambiaFase':
-			admin.actualPhase();
-			break;
-		//XXX: controllo blocco?
-
-		default:
-			console.log('Errore: impossibile controllare la votazione!');
-		}
+	
+	socket.on('controlloVotazione',selezionaFase);
+	
+	socket.on('inizioFase',function(){
+		console.log('sono in inizio fase!');
+		selezionaFase(admin.isPhase());
 	});
+	
 	socket.on('fallo',function(type){		
 			switch(type){
 				case 'rosso':
@@ -494,6 +502,7 @@ io.of("paginaControllo").on('connect',function(socket){
 			
 	});
 	
+	socket.on('controlloVotazione',selezionaFase);
 });
 //  [  ]
 module.exports = app;

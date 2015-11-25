@@ -13,16 +13,12 @@ block content
 							input(type='text', name='Timer'+value, id='valoreTimer'+value)
 						.ui-block-c
 							button(id='bottoneTimer'+value) Invia
-			#bottoniInizio.ui-grid-a
-				#inizioParteUno.ui-block-a
-					input(type='button', value='Inizio fase uno', id='faseUno')
-				#inizioParteDue.ui-block-b
-					input(type='button', value='Inizio fase due', id='faseDue')
 			
-			//-div
-			//-	button#avviaFasi inizio Fase 1
+			.ui-grid-solo
+				.ui-block-a			
+					button#avviaFasi.ui-btn.ui-shadow.ui-corner-all inizio Fase 1
 			
-			#conteggioFalliPunteggio.ui-grid-a
+			#conteggioFalliPunteggio.ui-grid-a.ui-responsive
 				#red.ui-block-a.bloccoPuntiFalli
 					input(type='button', value='Fallo ai Rossi', id='falloRossi')
 					p

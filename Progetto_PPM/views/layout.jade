@@ -16,8 +16,9 @@ html
     div(class='ui-page-theme-b', data-role='page')
       if (user) 
               div(data-role='header')
-                 a(href='/logout') Logout
+                div(data-role="controlgroup" data-type="horizontal" class= "ui-btn-right")
+                 a(href='/logout' class='ui-btn') Logout
                  if (user.admin && !adminPage) 
-                     a(href='/administrator' data-ajax='false') Amministrazione
+                     a(href='/administrator' class='ui-btn' data-ajax='false') Amministrazione
       .ui-content(role='main')
         block content

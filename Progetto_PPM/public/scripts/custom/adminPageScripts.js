@@ -1,4 +1,3 @@
-//var io = socket(:3000/.... da aggiungere nome canale
 
 var gestioneFasi = function(whichPhase){
 	
@@ -6,19 +5,19 @@ var gestioneFasi = function(whichPhase){
 	
 	switch(whichPhase){
 	
-	case 'fase1':
+	case 'faseUno':
 		phaseButton.text('avvia Fase 1');
-		phaseButton.button('enable');
+		phaseButton.prop("disabled", false);
 		break;
 	
-	case 'fase2':
+	case 'faseDue':
 		phaseButton.text('avvia Fase 2');
-		phaseButton.button('enable');
+		phaseButton.prop("disabled", false);
 		break;
 		
 	case 'faseVotazione':
 		phaseButton.text('Votazione in corso');
-		phaseButton.button('disable');
+		phaseButton.prop("disabled", true);
 		break;
 	}
 };
@@ -36,13 +35,18 @@ socket.on('refresh',function(timers, whichPhase){
 	$("#red .penalita").text(timers[8]);
 	$("#blue .penalita").text(timers[9]);
 	
-	//gestioneFasi(whichPhase);
+	gestioneFasi(whichPhase);
 	
 });
 
-/*socket.on('updatePhase',function(whichPhase){
+socket.on('updatePhase',function(whichPhase){
 	gestioneFasi(whichPhase);
-});*/
+});
+
+$('#avviaFasi').click(function(){
+	console.log('sono stato cliccato!');
+	socket.emit('inizioFase');
+});
 
 $('#impostazioniVoto').on('click','button', function(event){
 	var element = event.target;
@@ -62,8 +66,4 @@ $('#falloBlu').click(function(){
 socket.on('updatePoints',function(points){
 	$('#blue .punteggio').text(points.blue);
 	$('#red .punteggio').text(points.red);
-});
-
-$('#faseUno, #faseDue').click(function(event){
-	socket.emit('controlloVotazione', event.target.id);
 });
