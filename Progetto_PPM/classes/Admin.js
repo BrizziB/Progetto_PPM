@@ -225,8 +225,8 @@ exports.Admin = function(socketio){
 				}
 				setCurrentPage(next);
 				clientRedirect();
-				theBeast2(timerArray);
 				clearInterval(timerBeast);
+				theBeast2(timerArray);
 			}
 			else
 			{
@@ -349,15 +349,16 @@ exports.Admin = function(socketio){
 	};
 
 	var timerFunction = function(time){
-		io.of("/timerChan").emit('timer',time);		
+		io.of("/timerChan").emit('timer',time);
+		console.log('Mi eseguo! Tempo:',time);
 	};
 	
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];
 		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=play"  });
-		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner  });
+		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner,timerFunct: timerFunction  });
 		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria" ,funct: this.categoryInit });
-		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner  });
+		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner, timerFunct:timerFunction});
 		
 		isPhase1 =false;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
@@ -367,7 +368,7 @@ exports.Admin = function(socketio){
 		setCurrentPage("/vote/titolo");
 		clientRedirect();
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
-		theBeast(timerArray);
+		theBeast2(timerArray);
 	};
 		
 
