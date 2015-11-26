@@ -96,6 +96,9 @@ exports.Admin = function(socketio){
 	var isPhase1 = true;
 	var isPhase2 = false;
 	
+	var timerBeast=null;
+	var waitBeast=null;
+	
 	
 	var isPhaseInternal = function(){
 		if (isPhase1) {
@@ -186,6 +189,7 @@ exports.Admin = function(socketio){
 		clearTimeout(timer);
 		isStopped=true;
 	};
+
 	//funzione cattiva !
 	var theBeast = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
 		if (timerArray.length===0){
@@ -194,7 +198,7 @@ exports.Admin = function(socketio){
 		var next = element.page;
 		var delay = element.delay;
 		var funct = element.funct;
-		setTimeout(function (){
+		waitBeast=setTimeout(function (){
 			if (funct){
 				funct();
 			}
@@ -204,7 +208,35 @@ exports.Admin = function(socketio){
 			theBeast(timerArray);
 		}, delay*1000);
 	};
-	
+
+	//funzione ancora più cattiva !
+	var theBeast2 = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
+		if (timerArray.length===0){
+			return;}
+		var element = timerArray.pop();
+		var next = element.page;
+		var delay = element.delay;
+		var funct = element.funct;
+		var timerFunct = element.timerFunct;
+		timerBeast=setInterval(function(){
+			if(delay ===0){
+				if (funct){
+					funct();
+				}
+				setCurrentPage(next);
+				clientRedirect();
+				theBeast2(timerArray);
+				clearInterval(timerBeast);
+			}
+			else
+			{
+				if(timerFunct){
+					timerFunct(delay);
+				}
+				delay--;
+			}
+		},1000);
+	};	
 	
 	this.getCurrentTitle=function(){
 		return currentTitle;
@@ -316,7 +348,10 @@ exports.Admin = function(socketio){
 		isTitleVote= true;
 	};
 
-
+	var timerFunction = function(time){
+		io.of("/timerChan").emit('timer',time);		
+	};
+	
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];
 		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=play"  });
