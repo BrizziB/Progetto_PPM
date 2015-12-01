@@ -31,9 +31,12 @@ block content
 					winParag.appendChild(txt1);
 					document.getElementById("text1").appendChild(winParag);
 					
-					var scoreParag=document.createElement('p');
+					var scoreParag = document.createElement('p');
 					var redScore = document.createTextNode("punteggio Rosso: "+numRed+",   ");
 					var blueScore = document.createTextNode("punteggio Blu: "+numBlue);
+					
+					
+					scoreParag.appendChild(document.createTextNode("Risultati del Match corrente !SISTEMAMI! "));
 					
 					scoreParag.appendChild(redScore);
 					scoreParag.appendChild(blueScore);

@@ -4,15 +4,29 @@ block head
 	script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
 	
 block content
-			#impostazioniVoto
-				each value in ['Titolo','Categoria','Attesa','Vincitore']
-					div(id='impostaTimer'+value, class='timer ui-grid-b')
+			form(name='timers')
+				#impostazioniVoto
+					each value in ['Titolo','Categoria','Vincitore']
+						div(id='impostaTimer'+value, class='timer ui-grid-a')
+							.ui-block-a
+								case value
+									when 'Titolo'
+										p='Durata della votazione per il titolo del Match'
+									when 'Categoria'
+										p='Durata della votazione per la categoria del Match'
+									when 'Vincitore'
+										p='Durata della votazione per il vincitore del Match' 
+									default
+										p='Durata della votazione per' + value		
+							.ui-block-b
+								.ui-grid-a
+									.ui-block-a
+										input(type='text', name='Timer'+value, id='valoreTimer'+value)
+									.ui-block-b
+										p="secondi"
+					.ui-grid-solo
 						.ui-block-a
-							p='Imposta timer per ' + value
-						.ui-block-b
-							input(type='text', name='Timer'+value, id='valoreTimer'+value)
-						.ui-block-c
-							button(id='bottoneTimer'+value) Invia
+							input(type='submit', id='salvaTimer', value='Salva Timer') 
 			
 			.ui-grid-solo
 				.ui-block-a			
@@ -25,26 +39,26 @@ block content
 						span.titolo Squadra Rossa
 						br
 						span.titoloPunteggio Punti: 
-						span.punteggio 42
+						span.punteggio 
 						br
 						span.titoloFalli Numero Falli: 
-						span.falli 7
+						span.falli 
 						br
 						span.titoloPenalita Numero Penalita': 
-						span.penalita 1
+						span.penalita 
 				#blue.ui-block-b.bloccoPuntiFalli
 					input(type='button', value='Fallo ai Blu', id='falloBlu')
 					p
 						span.titolo Squadra Blu
 						br
-						span.titoloPunteggio Punti:
-						span.punteggio 42
+						span.titoloPunteggio Punti: 
+						span.punteggio 
 						br
 						span.titoloFalli Numero Falli: 
-						span.falli 7
+						span.falli 
 						br
 						span.titoloPenalita Numero Penalita': 
-						span.penalita 1
+						span.penalita 
 						
 			script var socket=io(":3000/adminChan");
 			script(type='text/javascript', src='/scripts/custom/adminPageScripts.js')

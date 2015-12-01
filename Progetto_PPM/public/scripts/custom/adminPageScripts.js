@@ -1,4 +1,7 @@
 
+
+
+
 var gestioneFasi = function(whichPhase){
 	
 	var phaseButton = $('#avviaFasi');
@@ -26,7 +29,7 @@ var gestioneFasi = function(whichPhase){
 socket.on('refresh',function(timers, whichPhase){
 	$('#valoreTimerTitolo').val(timers[0]);
 	$('#valoreTimerCategoria').val(timers[1]);
-	$('#valoreTimerAttesa').val(timers[2]);
+	//$('#valoreTimerAttesa').val(timers[2]);
 	$('#valoreTimerVincitore').val(timers[3]);
 	$('#blue .punteggio').text(timers[4]);
 	$('#blue .falli').text(timers[5]);
@@ -48,11 +51,27 @@ $('#avviaFasi').click(function(){
 	socket.emit('inizioFase');
 });
 
+$('form').on('submit', function(event){
+	var element;
+	event.preventDefault();
+	var fields =$(this).serializeArray();
+	console.log(fields);
+	$.each(fields, function(i, element){
+		console.log(element);
+		var type = element.name.substring(5);
+		var timer = element.value;
+		socket.emit('changeTimer',type,timer);
+	});
+	
+});
+
+
 $('#impostazioniVoto').on('click','button', function(event){
 	var element = event.target;
 	var type = element.id.substring(12);
 	var timer = $('#valoreTimer'+type).val();
 	socket.emit('changeTimer',type,timer);
+	
 });
 
 $('#falloRossi').on('click',function(){
