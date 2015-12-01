@@ -374,7 +374,7 @@ exports.Admin = function(socketio){
 
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
-		timerArray.push({delay: this.getWinnerTimer() ,page: "/wait?type=result", funct: this.setWinner  });	
+		timerArray.push({delay: this.getWinnerTimer() ,page: "/wait?type=result", funct: this.setWinner, timerFunct: timerFunction  });	
 		
 		isPhase2=false;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
@@ -384,7 +384,7 @@ exports.Admin = function(socketio){
 		setCurrentPage("/vote/matchwinner");
 		clientRedirect();
 
-		theBeast(timerArray);
+		theBeast2(timerArray);
 	};
 	
 

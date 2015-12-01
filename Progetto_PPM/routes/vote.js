@@ -9,9 +9,9 @@ router.get('*',function(req,res,next){
 	if (req.session.utente.votato===true){
 		layoutPagina.title="Attendi la fine della votazione...";
 		layoutPagina.titoloLista="Ecco i risultati in tempo reale";
-		layoutPagina.user=req.user;
-		layoutPagina.timer = true;
 	}
+	layoutPagina.user=req.user;
+	layoutPagina.timer = true;
 	layoutPagina.votoAbilitato= req.session.utente.votato?false:true;
 	layoutPagina.titoloScelto = false;
 /* - Parte per il pulsante reset su vote.jade -	
@@ -43,7 +43,9 @@ router.get('/categoria', function(req, res, next) {
 	layoutPagina.aggiungiTitolo= false;
 	var admin = req.app.get('admin');
 	layoutPagina.titoloScelto = admin.getCurrentTitle();
+	
 
+	
 	res.render('vote',layoutPagina);
 });
 module.exports = router;

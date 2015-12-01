@@ -6,6 +6,7 @@ var app=express();
 router.get('/', function(req, res, next) {
 	var admin = req.app.get('admin');  		
 	var titCat ={};
+	console.log(res.locals);
 		
 	titCat.titolo = admin.getCurrentTitle();
 	titCat.categoria = admin.getCurrentCategory();

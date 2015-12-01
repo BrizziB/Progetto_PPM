@@ -15,13 +15,15 @@ html
   body.ui-overlay-b
     div(class='ui-page-theme-b', data-role='page')
       if (user) 
-              div(data-role='header')
+              div(data-role='header' class ='ui-header')
 
                 div(data-role="controlgroup" data-type="horizontal" class= "ui-btn-right")
                  a(href='/logout' class='ui-btn') Logout
                  if (user.admin && !adminPage) 
                      a(href='/administrator' class='ui-btn' data-ajax='false') Amministrazione
       .ui-content(role='main')
+        if (timer)
+          #timerDiv  
             p!="<span class='minutes'>00</span>:<span class='seconds'>00</span>" 
 
         block content
