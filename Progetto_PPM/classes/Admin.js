@@ -360,8 +360,8 @@ exports.Admin = function(socketio){
 		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria" ,funct: this.categoryInit });
 		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner, timerFunct:timerFunction});
 		
-		isPhase1 =false;
-		io.of('/adminChan').emit('updatePhase', this.isPhase());
+		//isPhase1 =false;
+		//io.of('/adminChan').emit('updatePhase', this.isPhase());
 		
 		console.log('Categorie e titoli:',typeof setTitles,typeof setCategories);
 		this.titleInit();
