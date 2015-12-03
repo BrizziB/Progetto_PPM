@@ -24,6 +24,5 @@ html
       .ui-content(role='main')
         if (timer)
           #timerDiv  
-            p!="<span class='minutes'>00</span>:<span class='seconds'>00</span>" 
-
+            p.timer
         block content

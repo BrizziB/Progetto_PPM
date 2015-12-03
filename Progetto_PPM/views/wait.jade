@@ -3,7 +3,6 @@ extends layout
 block head
 
 	script(type='text/javascript' src='http://localhost:3000/socket.io/socket.io.js')
-	script var socket=io(":3000/adminChan");
 	script(type='text/javascript' src='/scripts/custom/redirect.js')
 
 block content	
@@ -49,5 +48,5 @@ block content
 							
 		
 		script(type='text/javascript', src='/scripts/custom/wait.js')
-		script(type='text/javascript', src='/scripts/custom/fauls.js')
+		//-script(type='text/javascript', src='/scripts/custom/fauls.js')
 

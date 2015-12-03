@@ -1,7 +1,3 @@
-
-
-
-
 var gestioneFasi = function(whichPhase){
 	
 	var phaseButton = $('#avviaFasi');

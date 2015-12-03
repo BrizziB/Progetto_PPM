@@ -1,3 +1,4 @@
+$(document).ready(function(){
 //FIXME: quando aggiorno tramite il browser, i voti spariscono!
 function aggiornaNumeroVoti(listaVoti){
 	var aggiunte = false;
@@ -110,4 +111,5 @@ socket.on('disabilitaVoto',function(){
 
 socket.on('aggiornaVoti',function(listaVoti){
 	aggiornaNumeroVoti(listaVoti);
+});
 });

@@ -1,4 +1,13 @@
+$("document").ready(function(){
+  
+var higherClockHidden=false;
+	
+
+$(".timer").append("<span class='higherClock'><span class='minutes'></span>:</span><span class='seconds'></span>");
+$(".higherClock").hide();
+	
 var timer= io(":3000/timerChan");
+
 
 var checkTime=function(time){
 	if(time<10){
@@ -15,8 +24,23 @@ var overflowTime= function(time){
 timer.on('timer',function(time){
 	console.log('Ricevo l\'evento!');
 	var seconds = time % 60;
-	var minutes = overflowTime(time);
-	console.log($(".seconds"));
 	$(".seconds").text(checkTime(seconds));
-	$(".minutes").text(minutes);
+	if (timer<60){
+		if (higherClockHidden===false){
+			higherClockHidden=true;
+			$(".higherClock").hide();
+			$(".minutes").text(0)
+		}
+	}
+	else
+		{
+			if (higherClockHidden===true){
+				$(".higherClock").show();
+				higherClockHidden=false;
+			}
+			$(".minutes").text(overflowTime(time));
+		}
+
+	});
+
 });
