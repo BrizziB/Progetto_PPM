@@ -222,9 +222,6 @@ exports.Admin = function(socketio){
 		var delay = element.delay;
 		var funct = element.funct;
 		var timerFunct = element.timerFunct;
-
-		var internalInterval=15;
-
 		timerBeast=setInterval(function(){
 			if(delay ===0){
 				if (funct){
@@ -235,32 +232,8 @@ exports.Admin = function(socketio){
 				clearInterval(timerBeast);
 				theBeast2(timerArray);
 			}
-			else
-			{	var emit = false;
-				internalInterval++;
-				if(delay>60){
-					if(internalInterval>=15){
-						emit = true;
-						internalInterval=0;
-					}
-				}else
-				if(delay>20){
-					if(internalInterval>=10){
-						emit = true;
-						internalInterval=0;
-					}
-				}else
-				if(delay>5){
-					if(internalInterval>=5){
-						emit = true;
-						internalInterval=0;
-					}
-				}else{
-					emit=true;
-				}
-
-
-				if(timerFunct && emit === true){
+			else{	
+				if(timerFunct){
 					timerFunct(delay);
 				}
 				delay--;
@@ -384,12 +357,45 @@ exports.Admin = function(socketio){
 		console.log('Mi eseguo! Tempo:',time);
 	};
 	
+	var timerReducedFunction = (function(){
+		var internalInterval=15;
+		return function(time){	
+			var emit = false;
+			internalInterval++;
+			if(time>120){
+				if(internalInterval>=15){
+					emit = true;
+					internalInterval=0;
+				}
+			}else
+			if(time>50){
+				if(internalInterval>=10){
+					emit = true;
+					internalInterval=0;
+				}
+			}else
+			if(time>10){
+				if(internalInterval>=5){
+					emit = true;
+					internalInterval=0;
+				}
+			}else{
+				emit=true;
+			}
+			if(emit === true){
+				io.of("/timerChan").emit('timer',time);
+				console.log('Emesso evento da timerReducedFunction! Tempo:',time);
+			}
+			console.log('interval: ',internalInterval);
+	}
+	})();
+	
 	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];
 		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=play"  });
-		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner,timerFunct: timerFunction  });
+		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner,timerFunct: timerReducedFunction  });
 		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria" ,funct: this.categoryInit });
-		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner, timerFunct:timerFunction});
+		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner, timerFunct:timerReducedFunction});
 		
 		isPhase1 =false;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
@@ -405,7 +411,7 @@ exports.Admin = function(socketio){
 
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
-		timerArray.push({delay: this.getWinnerTimer() ,page: "/wait?type=result", funct: this.setWinner, timerFunct: timerFunction  });	
+		timerArray.push({delay: this.getWinnerTimer() ,page: "/wait?type=result", funct: this.setWinner, timerFunct: timerReducedFunction  });	
 		
 		isPhase2=false;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
