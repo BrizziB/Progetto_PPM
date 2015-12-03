@@ -504,5 +504,10 @@ io.of("paginaControllo").on('connect',function(socket){
 	
 	socket.on('controlloVotazione',selezionaFase);
 });
+
+io.of("timerChan").on('connect',function(socket){
+	console.log('timer admin e\' ',admin.getTimer());
+	socket.emit('timer',admin.getTimer());
+});
 //  [  ]
 module.exports = app;

@@ -98,7 +98,11 @@ exports.Admin = function(socketio){
 	
 	var timerBeast=null;
 	var waitBeast=null;
+	var timerTime=-1;
 	
+	this.getTimer= function(){
+		return timerTime>0?timerTime:0;
+	};
 	
 	var isPhaseInternal = function(){
 		if (isPhase1) {
@@ -218,6 +222,9 @@ exports.Admin = function(socketio){
 		var delay = element.delay;
 		var funct = element.funct;
 		var timerFunct = element.timerFunct;
+
+		var internalInterval=15;
+
 		timerBeast=setInterval(function(){
 			if(delay ===0){
 				if (funct){
@@ -229,11 +236,35 @@ exports.Admin = function(socketio){
 				theBeast2(timerArray);
 			}
 			else
-			{
-				if(timerFunct){
+			{	var emit = false;
+				internalInterval++;
+				if(delay>60){
+					if(internalInterval>=15){
+						emit = true;
+						internalInterval=0;
+					}
+				}else
+				if(delay>20){
+					if(internalInterval>=10){
+						emit = true;
+						internalInterval=0;
+					}
+				}else
+				if(delay>5){
+					if(internalInterval>=5){
+						emit = true;
+						internalInterval=0;
+					}
+				}else{
+					emit=true;
+				}
+
+
+				if(timerFunct && emit === true){
 					timerFunct(delay);
 				}
 				delay--;
+				timerTime=delay;
 			}
 		},1000);
 	};	

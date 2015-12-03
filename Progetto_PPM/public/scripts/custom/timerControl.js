@@ -1,7 +1,8 @@
 $("document").ready(function(){
   
-var higherClockHidden=false;
-	
+var higherClockHidden=true;
+var localTimerHandler=null;
+var localTimerTime;
 
 $(".timer").append("<span class='higherClock'><span class='minutes'></span>:</span><span class='seconds'></span>");
 $(".higherClock").hide();
@@ -20,17 +21,15 @@ var overflowTime= function(time){
 	return Math.floor(time/60);
 };
 
-
-timer.on('timer',function(time){
-	console.log('Ricevo l\'evento!');
+var timerControl=function(time){
 	var seconds = time % 60;
-	$(".seconds").text(checkTime(seconds));
-	if (timer<60){
+	if (time<60){
 		if (higherClockHidden===false){
 			higherClockHidden=true;
 			$(".higherClock").hide();
 			$(".minutes").text(0)
 		}
+		$(".seconds").text(seconds);
 	}
 	else
 		{
@@ -39,8 +38,32 @@ timer.on('timer',function(time){
 				higherClockHidden=false;
 			}
 			$(".minutes").text(overflowTime(time));
-		}
+			$(".seconds").text(checkTime(seconds));
 
+		}
+};
+
+var localTimer=function(time){
+	localTimerTime=time;
+	console.log('timer: ',localTimerTime);
+	if(localTimerHandler===null){
+		localTimerHandler=setInterval(function(){
+			if(localTimerTime<=0){
+				timerControl(0);
+				clearInterval(localTimerHandler);
+				location.reload(true);
+			}
+			else{
+				timerControl(localTimerTime);
+				localTimerTime--;
+			}
+		},1000);
+	}
+};
+
+timer.on('timer',function(time){
+	console.log('Ricevo l\'evento!');
+	localTimer(time);
 	});
 
 });
