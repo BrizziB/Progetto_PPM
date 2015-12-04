@@ -1,7 +1,10 @@
 $(document).ready(function(){
 //FIXME: quando aggiorno tramite il browser, i voti spariscono!
-	
-	socket=io(":3000/votoTitoloCategoria");
+
+var isVisible=false;
+$(".listControl").hide();
+
+socket=io(":3000/votoTitoloCategoria");
 function aggiornaNumeroVoti(listaVoti){
 	var aggiunte = false;
 	console.log(listaVoti);
@@ -57,10 +60,17 @@ socket.on('riceviElementoMancante',function(nomeOggetto, idOggetto, nVoti){
 	}
 });
 
+
+
 socket.on('aggiornaListaVoto',function(lista,listaID,lunghezzaListaServer){
 	if ($("#listaVoti li").length>=lunghezzaListaServer){
 		return;                         
 	}
+	if(isVisible===false && lunghezzaListaServer>0){
+		$(".listControl").show();
+		isVisible=true;
+	}
+	
 	$.each(lista, function(key, value){
 		var openLi = "<li id='" + listaID[key] + "'>";
 		var openA = '<a href="#risposta"  class="ui-btn ui-btn-inline ui-corner-all ui-shadow ui-mini">';

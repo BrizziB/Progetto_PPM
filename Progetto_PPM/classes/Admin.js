@@ -348,7 +348,8 @@ exports.Admin = function(socketio){
 	
 	this.titleInit= function(){
 		console.log('Dentro titleInit:',setTitles);
-		setTitles(['Prova1','Prova2','Prova3','Prova4']);
+		//setTitles(['Prova1','Prova2','Prova3','Prova4']);
+		setTitles('');
 		isTitleVote= true;
 	};
 

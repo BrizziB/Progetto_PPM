@@ -20,13 +20,13 @@ block content
                 #titScelto
                    p Titolo scelto:
                    span#titolo=titoloScelto
-        p#titoloLista= titoloLista
-        ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti' style ='diplay:inline')
-           script(type='text/javascript', src='/scripts/custom/voteLista.js')  
-                        
-        if aggiungiTitolo
+         #contenitoreLista.listControl          
+             p#titoloLista= titoloLista
+             ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti' style ='diplay:inline')
+             script(type='text/javascript', src='/scripts/custom/voteLista.js')  
+         if aggiungiTitolo
             #nuovoTitolo     
-                p Oppure inserisci un nuovo titolo
+                p Inserisci un nuovo titolo
                     form
                         div             
                             label(for='CasellaTesto')
