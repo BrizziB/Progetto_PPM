@@ -93,8 +93,14 @@ exports.Admin = function(socketio){
 	var waitTimer=5;
 	var winnerTimer=10;
 	var io=socketio;
-	var isPhase1 = true;
-	var isPhase2 = false;
+	var phase = {
+		TITLE : 'faseZero',
+		CATEGORY : 'faseUno',
+		PLAY : 'fasePlay',
+		WINNER : 'faseDue',
+		DISABLEBUTTON : 'faseVotazione'
+	};
+	var nextPhase = phase.TITLE;
 	
 	var timerBeast=null;
 	var waitBeast=null;
@@ -105,15 +111,7 @@ exports.Admin = function(socketio){
 	};
 	
 	var isPhaseInternal = function(){
-		if (isPhase1) {
-			return 'faseUno';
-		}
-		if (isPhase2) {
-			return 'faseDue';
-		}
-
-		return 'faseVotazione';
-			
+		return nextPhase;
 	};
 	
 	this.isPhase= function(){
@@ -276,8 +274,8 @@ exports.Admin = function(socketio){
 		}
 		updateMatch();
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
+		nextPhase=phase.TITLE;
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPoints(),blue: blueTeam.getPoints()});
-		isPhase1=true;
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 
@@ -293,6 +291,8 @@ exports.Admin = function(socketio){
 		});
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		currentTitle = maxTitle;
+		nextPhase=phase.CATEGORY;
+		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 
 	var categoryWinner = function(){
@@ -306,7 +306,7 @@ exports.Admin = function(socketio){
 		});
 		currentCategory = maxCategory;
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
-		isPhase2=true;
+		nextPhase=phase.PLAY;
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 	
@@ -359,7 +359,7 @@ exports.Admin = function(socketio){
 	
 	var timerReducedFunction = (function(){
 		var internalInterval=15;
-		return function(time){	
+		return function(time){
 			var emit = false;
 			internalInterval++;
 			if(time>120){
@@ -387,52 +387,76 @@ exports.Admin = function(socketio){
 				console.log('Emesso evento da timerReducedFunction! Tempo:',time);
 			}
 			console.log('interval: ',internalInterval);
-	}
+	};
 	})();
 	
-	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
+	
+	this.phase0 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
 		var timerArray = [];
-		timerArray.push({delay: this.getWaitTimer() ,page: "/wait?type=play"  });
-		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner,timerFunct: timerReducedFunction  });
-		timerArray.push({delay: this.getWaitTimer() ,page: "/vote/categoria" ,funct: this.categoryInit });
 		timerArray.push({delay: this.getTitleTimer() ,page: "/wait?type=title",funct: titleWinner, timerFunct:timerReducedFunction});
 		
-		isPhase1 =false;
-		io.of('/adminChan').emit('updatePhase', this.isPhase());
-		
-		console.log('Categorie e titoli:',typeof setTitles,typeof setCategories);
 		this.titleInit();
 		setCurrentPage("/vote/titolo");
 		clientRedirect();
+		nextPhase=phase.DISABLEBUTTON;
+		io.of('/adminChan').emit('updatePhase', this.isPhase());
+		theBeast2(timerArray);
+
+	};
+	
+	this.phase1 = function(){ //arriva fino alla pagina di attesa durante lo spettacolo
+		var timerArray = [];
+		timerArray.push({delay: this.getCatTimer() ,page: "/wait?type=category", funct: categoryWinner,timerFunct: timerReducedFunction  });		
+		this.categoryInit();
+
+		setCurrentPage("/vote/categoria");
+		clientRedirect();
+		nextPhase=phase.DISABLEBUTTON;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);
 	};
+	
+	this.startPlay=function(){
+		nextPhase=phase.WINNER;
+		setCurrentPage("/wait?type=play");
+		clientRedirect();
+		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		
+	};
 
 	this.phase2 = function(){ //parte facendo caricare la pagina di voteWinner e, al timeout invoca la pagina finale di riepilogo
 		var timerArray = [];
 		timerArray.push({delay: this.getWinnerTimer() ,page: "/wait?type=result", funct: this.setWinner, timerFunct: timerReducedFunction  });	
-		
-		isPhase2=false;
+
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		
 		blueTeam.setVotes(0);
 		redTeam.setVotes(0);
 		setCurrentPage("/vote/matchwinner");
 		clientRedirect();
-
+		nextPhase=phase.DISABLEBUTTON;
+		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);
 	};
-	
 
 	
-	this.actualPhase = function(){
-		if (isPhase1){
-			this.phase1();
+	this.spettacolo=function(){
+		switch(nextPhase){
+		case phase.TITLE:
+			this.phase0();
+			break;
 			
-		}
-		else{
+		case phase.CATEGORY:
+			this.phase1();
+			break;
+			
+		case phase.PLAY:
+			this.startPlay();
+			break;
+			
+		case phase.WINNER:
 			this.phase2();
+			break;
 		}
 	};
 

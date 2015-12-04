@@ -22,6 +22,6 @@ $("#eliminaVoto").click(function(){
 	socket.emit('eliminaVoto',$("#CancellaVoto").text());
 });
 
-$('#faseUno, #faseDue').click(function(event){
+$('#faseUno, #faseDue, #fasePlay, #faseZero').click(function(event){
 	socket.emit('controlloVotazione', event.target.id);
 });

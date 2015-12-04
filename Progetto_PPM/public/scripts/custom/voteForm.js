@@ -14,6 +14,7 @@
                         });
                      return unico;   
                     }
+                    $(document).ready(function(){
                     $("form").on("submit",function(event){
                         //TO DO: Client Side Validation
                         var fields = $(this).serializeArray();
@@ -39,4 +40,5 @@
                     socket.on('votato',function(testo){
                        //-TO DO: aggiungere finestrella carina!
                         alert('Hai votato per '+ testo +'!');
-                    })
+                    });
+                });

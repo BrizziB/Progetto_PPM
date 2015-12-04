@@ -1,16 +1,21 @@
 var gestioneFasi = function(whichPhase){
 	
-	var phaseButton = $('#avviaFasi');
+	var phaseButton = $('#avviaSpettacolo');
 	
 	switch(whichPhase){
 	
+	case 'faseZero':
+		phaseButton.text('Votazione Titolo');
+		phaseButton.prop("disabled", false);
+		break;
+	
 	case 'faseUno':
-		phaseButton.text('avvia Fase 1');
+		phaseButton.text('Votazione Categoria');
 		phaseButton.prop("disabled", false);
 		break;
 	
 	case 'faseDue':
-		phaseButton.text('avvia Fase 2');
+		phaseButton.text('Votazione Vincitore');
 		phaseButton.prop("disabled", false);
 		break;
 		
@@ -18,6 +23,13 @@ var gestioneFasi = function(whichPhase){
 		phaseButton.text('Votazione in corso');
 		phaseButton.prop("disabled", true);
 		break;
+		
+
+	case 'fasePlay':
+		phaseButton.text('Inizio Spettacolo');
+		phaseButton.prop("disabled", false);
+		break;	
+		
 	}
 };
 
@@ -78,7 +90,39 @@ $('#falloBlu').click(function(){
 	socket.emit('fallo','blu');
 });
 
+$('#avviaFase0').click(function(){
+	socket.emit('controlloVotazione', 'faseZero');
+});
+
+$('#avviaFase1').click(function(){
+	socket.emit('controlloVotazione', 'faseUno');
+});
+
+$('#avviaFase2').click(function(){
+	socket.emit('controlloVotazione', 'faseDue');
+});
+
+$('#avviaFasePlay').click(function(){
+	socket.emit('controlloVotazione', 'fasePlay');	
+});
+$('#avviaSpettacolo').click(function(){
+	socket.emit('inizioFase');
+});
+
 socket.on('updatePoints',function(points){
 	$('#blue .punteggio').text(points.blue);
 	$('#red .punteggio').text(points.red);
 });
+
+socket.on('faul', function(name, num, pen, pts){
+	if (name ==='red'){
+		$("#red .punteggio").text(pts);
+		$("#red .falli").text(num);
+		$("#red .penalita").text(pen);
+	}
+	if (name ==='blue'){
+		$("#blue .punteggio").text(pts);
+		$("#blue .falli").text(num);
+		$("#blue .penalita").text(pen);
+	}
+});	

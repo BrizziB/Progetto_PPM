@@ -1,5 +1,7 @@
 $(document).ready(function(){
 //FIXME: quando aggiorno tramite il browser, i voti spariscono!
+	
+	socket=io(":3000/votoTitoloCategoria");
 function aggiornaNumeroVoti(listaVoti){
 	var aggiunte = false;
 	console.log(listaVoti);

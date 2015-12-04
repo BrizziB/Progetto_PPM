@@ -27,10 +27,11 @@ block content
 					.ui-grid-solo
 						.ui-block-a
 							input(type='submit', id='salvaTimer', value='Salva Timer') 
+
+				
+
+			button#avviaSpettacolo.ui-btn.ui-shadow.ui-corner-all votazione Titolo
 			
-			.ui-grid-solo
-				.ui-block-a			
-					button#avviaFasi.ui-btn.ui-shadow.ui-corner-all inizio Fase 1
 			
 			#conteggioFalliPunteggio.ui-grid-a.ui-responsive
 				#red.ui-block-a.bloccoPuntiFalli
@@ -62,5 +63,4 @@ block content
 						
 			script var socket=io(":3000/adminChan");
 			script(type='text/javascript', src='/scripts/custom/adminPageScripts.js')
-			script(type='text/javascript', src='/scripts/custom/fauls.js')
 				

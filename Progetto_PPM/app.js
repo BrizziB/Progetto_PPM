@@ -407,7 +407,7 @@ votoTitoloCategoria.on('connection', function(socket){
 	//FIXME la variabile "votato" dovrà essere posta a false ogni volta che si passa di fase. Sennò il voto in scegli categoria blocca anche il voto in scegli titolo e vote2
 });
 
-    var selezionaFase = function(fase){
+    var selezionaFase = function(fase, socket){
 		switch(fase){
 		case 'faseUno':
 			admin.phase1();
@@ -421,6 +421,15 @@ votoTitoloCategoria.on('connection', function(socket){
 			
 		case 'faseVotazione':
 			socket.emit('updatePhase',fase);
+			break;
+			
+		case 'faseZero':
+			admin.phase0();
+			console.log('inizio fase0');
+			break;
+			
+		case 'fasePlay':
+			admin.startPlay();
 			break;
 		//XXX: controllo blocco?
 
@@ -459,11 +468,11 @@ adminChan.on('connect',function(socket){
 	});
 
 	
-	socket.on('controlloVotazione',selezionaFase);
+	socket.on('controlloVotazione',selezionaFase, socket);
 	
 	socket.on('inizioFase',function(){
 		console.log('sono in inizio fase!');
-		selezionaFase(admin.isPhase());
+		selezionaFase(admin.isPhase(), socket);
 	});
 	
 	socket.on('fallo',function(type){		
@@ -482,7 +491,7 @@ adminChan.on('connect',function(socket){
 			}
 	});
 	
-		//TODO: gestione falli by Boris				
+			
 });
 
 //XXX:CODICE PER IL TEST
