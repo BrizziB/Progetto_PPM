@@ -101,6 +101,7 @@ exports.Admin = function(socketio){
 	var waitTimer=5;
 	var winnerTimer=10;
 	var io=socketio;
+	
 	var phase = {
 		TITLE : 'faseZero',
 		CATEGORY : 'faseUno',
@@ -108,7 +109,16 @@ exports.Admin = function(socketio){
 		WINNER : 'faseDue',
 		DISABLEBUTTON : 'faseVotazione'
 	};
+	
+	var versionEnum = {
+			NONE: 0,
+			TIMERVERSION : 1,
+			INTERVALVERSION : 2
+		};
+
+	var version = versionEnum.NONE;
 	var nextPhase = phase.TITLE;
+	var currentPhase = nextPhase;
 	
 	var timerBeast=null;
 	var waitBeast=null;
@@ -180,8 +190,6 @@ exports.Admin = function(socketio){
 	
 	//invariante: stiamo inviando la pagina corrente dopo la modifica
 	var clientRedirect = function (){
-	//TODO: controllare se io.emit viene emesso ed intercettato
-		//io.of('controlChan').emit('redirect');
 		io.emit('redirect');
 		console.log('redirect a pagina corrente  ', getCurrentPageInternal());
 		
@@ -193,41 +201,64 @@ exports.Admin = function(socketio){
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};
 	
-	var isStopped=false;
-	var timer;
+
+	
 	this.stopVotazione=function(){
-		clearTimeout(timer);
-		isStopped=true;
+		switch(version){
+			case versionEnum.TIMERVERSION:
+				clearTimeout(waitBeast);
+				version=versionEnum.NONE;
+				nextPhase=currentPhase;
+				break;
+			case versionEnum.INTERVALVERSION:
+				clearInterval(timerBeast);
+				version=versionEnum.NONE;
+				nextPhase=currentPhase;
+				break;
+			case versionEnum.NONE:
+				console.log('Nessuna votazione in corso');
+				break;
+			default:
+				console.log('Impossibile determinare lo stato della votazione!');
+				return;
+		}
+		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 
 	//funzione cattiva !
 	var theBeast = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
 		if (timerArray.length===0){
-			return;}
+			return;
+			}
 		var element = timerArray.pop();
 		var next = element.page;
 		var delay = element.delay;
 		var funct = element.funct;
+		version=versionEnum.TIMERVERSION;
+		
 		waitBeast=setTimeout(function (){
 			if (funct){
 				funct();
 			}
 			setCurrentPage(next);
 			clientRedirect();
-			console.log("puoi vedermi!");
 			theBeast(timerArray);
+			version=versionEnum.NONE;
 		}, delay*1000);
 	};
 
 	//funzione ancora più cattiva !
 	var theBeast2 = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
 		if (timerArray.length===0){
-			return;}
+			return;
+			}
 		var element = timerArray.pop();
 		var next = element.page;
 		var delay = element.delay;
 		var funct = element.funct;
 		var timerFunct = element.timerFunct;
+		version=versionEnum.INTERVALVERSION;
+
 		timerBeast=setInterval(function(){
 			if(delay ===0){
 				if (funct){
@@ -237,6 +268,7 @@ exports.Admin = function(socketio){
 				clientRedirect();
 				clearInterval(timerBeast);
 				theBeast2(timerArray);
+				version=versionEnum.NONE;
 			}
 			else{	
 				if(timerFunct){

@@ -464,14 +464,14 @@ adminChan.on('connect',function(socket){
 		default:
 			console.log('Errore: impossibile selezionare il timer da modificare!');
 	}
-		
 	});
 
-	
+	socket.on('stopVoto',function(){
+		admin.stopVotazione();
+	});
 	socket.on('controlloVotazione',selezionaFase, socket);
 	
 	socket.on('inizioFase',function(){
-		console.log('sono in inizio fase!');
 		selezionaFase(admin.isPhase(), socket);
 	});
 	
