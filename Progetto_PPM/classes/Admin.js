@@ -203,19 +203,47 @@ exports.Admin = function(socketio){
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};
 	
+	var newCurrentPage=function(actPhase){
+		console.log('cambio pagina!!!!')
+		switch(actPhase){
+			case phase.START:
+				setCurrentPage('/wait?type=start');
+				break;
+			case phase.TITLE:
+				setCurrentPage('/vote/titolo');
+				break;
+			case phase.INTERVALTITLE:
+				setCurrentPage('/wait?type=title');
+				break;
+				
+			case phase.CATEGORY:
+				setCurrentPage('/vote/category');
+				break;
+			case phase.PLAY:
+				setCurrentPage('/wait?type=play');
+				break;
+			case phase.WINNER:
+				setCurrentPage('/vote/matchwinner');
+				break;	
+		}
+		clientRedirect();
+	};
 
 	
 	this.stopVotazione=function(current,next){
+		console.log('currentPhase: ',currentPhase,' nextPhase: ',nextPhase);
 		switch(version){
 			case versionEnum.TIMERVERSION:
 				clearTimeout(waitBeast);
 				version=versionEnum.NONE;
 				nextPhase=currentPhase;
+				console.log('stop versione Timer');
 				break;
 			case versionEnum.INTERVALVERSION:
 				clearInterval(timerBeast);
 				version=versionEnum.NONE;
 				nextPhase=currentPhase;
+				console.log('stop versione Interval');
 				break;
 			case versionEnum.NONE:
 				console.log('Nessuna votazione in corso');
@@ -226,12 +254,13 @@ exports.Admin = function(socketio){
 		}
 		if (current)
 			{currentPhase = current;
-		};
+		}
 		if (next){
 			nextPhase = next;
-		}	
-			
-		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
+		}
+		console.log('post: currentPhase: ',currentPhase,' nextPhase: ',nextPhase);
+		newCurrentPage(nextPhase);
+		io.of('/adminChan').emit('updatePhase', currentPhase);
 	};
 
 	this.startSpettacolo = function(){
@@ -247,10 +276,6 @@ exports.Admin = function(socketio){
 
 	};
 	
-	this.intervalloTitolo=function(){
-		currentpage='/wait?type=title';
-		currentP
-	};
 
 	//funzione cattiva !
 	var theBeast = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
@@ -469,6 +494,7 @@ exports.Admin = function(socketio){
 		this.titleInit();
 		setCurrentPage("/vote/titolo");
 		clientRedirect();
+		currentPhase=phase.START;
 		nextPhase=phase.DISABLEBUTTON;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);
@@ -482,12 +508,14 @@ exports.Admin = function(socketio){
 
 		setCurrentPage("/vote/categoria");
 		clientRedirect();
+		currentPhase=phase.INTERVALTITLE;
 		nextPhase=phase.DISABLEBUTTON;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);
 	};
 	
 	this.startPlay=function(){
+		currentPhase= phase.PLAY;
 		nextPhase=phase.WINNER;
 		setCurrentPage("/wait?type=play");
 		clientRedirect();
@@ -505,6 +533,7 @@ exports.Admin = function(socketio){
 		redTeam.setVotes(0);
 		setCurrentPage("/vote/matchwinner");
 		clientRedirect();
+		currrentPhase = phase.PLAY;
 		nextPhase=phase.DISABLEBUTTON;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);

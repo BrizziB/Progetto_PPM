@@ -15,12 +15,12 @@ var gestioneFasi = function(whichPhase){
 		var phaseButton = $('#avviaSpettacolo');
 
 		switch(whichPhase){
-		
+		case 'inizioSpettacolo':
 		case 'faseZero':
 			phaseButton.text('Votazione Titolo');
 			bindButton();
 			break;
-		
+		case 'faseIntervallo':
 		case 'faseUno':
 			phaseButton.text('Votazione Categoria');
 			bindButton();
@@ -39,7 +39,6 @@ var gestioneFasi = function(whichPhase){
 			});
 			break;
 			
-	
 		case 'fasePlay':
 			phaseButton.text('Inizio Spettacolo');
 			bindButton();
