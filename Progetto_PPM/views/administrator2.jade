@@ -4,38 +4,41 @@ block head
 	script(type='text/javascript', src='http://localhost:3000/socket.io/socket.io.js')
 	
 block content
-			form(name='timers')
-				#impostazioniVoto
-					each value in ['Titolo','Categoria','Vincitore']
-						div(id='impostaTimer'+value, class='timer ui-grid-a')
-							.ui-block-a
-								case value
-									when 'Titolo'
-										p='Durata della votazione per il titolo del Match'
-									when 'Categoria'
-										p='Durata della votazione per la categoria del Match'
-									when 'Vincitore'
-										p='Durata della votazione per il vincitore del Match' 
-									default
-										p='Durata della votazione per' + value		
-							.ui-block-b
-								.ui-grid-a
-									.ui-block-a
-										input(type='text', name='Timer'+value, id='valoreTimer'+value)
-									.ui-block-b
-										p="secondi"
+			.wrapper(data-role="collapsible")
+				h3 imposta i Timer
+				form(name='timers')
+					#impostazioniVoto
+						each value in ['Titolo','Categoria','Vincitore']
+							div(id='impostaTimer'+value, class='timer ui-grid-a')
+								.ui-block-a
+									case value
+										when 'Titolo'
+											p='Durata della votazione per il titolo del Match'
+										when 'Categoria'
+											p='Durata della votazione per la categoria del Match'
+										when 'Vincitore'
+											p='Durata della votazione per il vincitore del Match' 
+										default
+											p='Durata della votazione per' + value		
+								.ui-block-b
+									.ui-grid-a
+										.ui-block-a
+											input(type='text', name='Timer'+value, id='valoreTimer'+value)
+										.ui-block-b
+											p="secondi"
 					.ui-grid-solo
 						.ui-block-a
 							input(type='submit', id='salvaTimer', value='Salva Timer') 
 
 				
-
-			button#avviaSpettacolo.ui-btn.ui-shadow.ui-corner-all votazione Titolo
+			#divFase.ui-grid-a.ui-responsive
+				button#avviaSpettacolo.ui-btn.ui-shadow.ui-corner-all votazione Titolo
 			
 			
 			#conteggioFalliPunteggio.ui-grid-a.ui-responsive
 				#red.ui-block-a.bloccoPuntiFalli
-					input(type='button', value='Fallo ai Rossi', id='falloRossi')
+					input(type='button', value='Assegna Fallo ai Rossi', id='falloRossi')
+					input(type='button', value='Rimuovi fallo ai Rossi', id='togliRossi')
 					p
 						span.titolo Squadra Rossa
 						br
@@ -48,7 +51,8 @@ block content
 						span.titoloPenalita Numero Penalita': 
 						span.penalita 
 				#blue.ui-block-b.bloccoPuntiFalli
-					input(type='button', value='Fallo ai Blu', id='falloBlu')
+					input(type='button', value='Assegna Fallo ai Blu', id='falloBlu')
+					input(type='button', value='Rimuovi fallo ai Blu', id='togliBlu')
 					p
 						span.titolo Squadra Blu
 						br

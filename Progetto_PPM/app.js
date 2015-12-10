@@ -491,6 +491,22 @@ adminChan.on('connect',function(socket){
 			}
 	});
 	
+	socket.on('rimuovi',function(type){		
+		switch(type){
+			case 'rosso':
+				admin.redTeam().removeFouls();
+				adminChan.emit('remove', 'red', admin.redTeam().getFouls(), admin.redTeam().getPenalty(), admin.redTeam().getPoints());
+				break;
+			case 'blu':
+				admin.blueTeam().removeFouls();
+				adminChan.emit('remove', 'blue', admin.blueTeam().getFouls(), admin.blueTeam().getPenalty(), admin.blueTeam().getPoints());
+				break;
+			default:
+				console.log('Errore: impossibile rimuovere il fallo');
+		
+		}
+});
+	
 			
 });
 

@@ -57,11 +57,19 @@ exports.team = function (teamName, nFoulsBeforePenalty){
 		}
 	};
 	this.removeFouls=function(){
-		numFouls=(numFouls-1+nFoulsBeforePenalty)%nFoulsBeforePenalty;
-		if (numFouls===0){
+		if (numFouls==0 && penalties>0){
+			numFouls=nFoulsBeforePenalty;
 			penalties--;
+			points++;
+			}
+		if(numFouls > 0){
+			numFouls--;
+		}
+		if(numFouls == 0 && penalties==0){
+			return;
 		}
 	};
+	
 	this.setPoints=function(nPoints){
 		points=nPoints;
 	};
@@ -343,7 +351,7 @@ exports.Admin = function(socketio){
 	
 	this.categoryInit = function(){
 		isTitleVote= false;
-		setCategories(['Pippo','Pluto','Topolino','Minnie']);
+		setCategories(['Libero','Cantato','In rima','Senza parole', 'Stile soap-opera']);
 	};
 	
 	this.titleInit= function(){

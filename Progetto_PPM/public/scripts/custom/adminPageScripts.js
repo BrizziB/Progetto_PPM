@@ -90,6 +90,14 @@ $('#falloBlu').click(function(){
 	socket.emit('fallo','blu');
 });
 
+$('#togliRossi').on('click',function(){
+	socket.emit('rimuovi','rosso');
+});
+
+$('#togliBlu').click(function(){
+	socket.emit('rimuovi','blu');
+});
+
 $('#avviaFase0').click(function(){
 	socket.emit('controlloVotazione', 'faseZero');
 });
@@ -115,6 +123,19 @@ socket.on('updatePoints',function(points){
 });
 
 socket.on('faul', function(name, num, pen, pts){
+	if (name ==='red'){
+		$("#red .punteggio").text(pts);
+		$("#red .falli").text(num);
+		$("#red .penalita").text(pen);
+	}
+	if (name ==='blue'){
+		$("#blue .punteggio").text(pts);
+		$("#blue .falli").text(num);
+		$("#blue .penalita").text(pen);
+	}
+});	
+
+socket.on('remove', function(name, num, pen, pts){
 	if (name ==='red'){
 		$("#red .punteggio").text(pts);
 		$("#red .falli").text(num);

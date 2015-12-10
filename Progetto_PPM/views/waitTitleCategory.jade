@@ -6,10 +6,14 @@ block head
 
 block content
     #testoTitolo
-        p.testoPre Titolo dell'improvvisazione :
-        p.testoTitCat=titolo
+        h2.testoPre Il Titolo dell'improvvisazione sara' :
+        h3.testoTitCat=titolo
+        if(!categoria)    
+            p.attesa Attendi per la votazione della categoria
     if(categoria)
         br
         #testoCategoria
-            p.testoPre Categoria dell'improvvisazione :
-            p.testoTitCat=categoria
+            h2.testoPre La Categoria dell'improvvisazione sara' :
+            h3.testoTitCat=categoria
+            p.attesa A breve avra' inizio il match
+   
