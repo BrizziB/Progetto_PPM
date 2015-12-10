@@ -103,7 +103,9 @@ exports.Admin = function(socketio){
 	var io=socketio;
 	
 	var phase = {
+		START: 'inizioSpettacolo',
 		TITLE : 'faseZero',
+		INTERVALTITLE: 'faseIntervallo',
 		CATEGORY : 'faseUno',
 		PLAY : 'fasePlay',
 		WINNER : 'faseDue',
@@ -118,7 +120,7 @@ exports.Admin = function(socketio){
 
 	var version = versionEnum.NONE;
 	var nextPhase = phase.TITLE;
-	var currentPhase = nextPhase;
+	var currentPhase = phase.START;
 	
 	var timerBeast=null;
 	var waitBeast=null;
@@ -203,7 +205,7 @@ exports.Admin = function(socketio){
 	
 
 	
-	this.stopVotazione=function(){
+	this.stopVotazione=function(current,next){
 		switch(version){
 			case versionEnum.TIMERVERSION:
 				clearTimeout(waitBeast);
@@ -222,7 +224,32 @@ exports.Admin = function(socketio){
 				console.log('Impossibile determinare lo stato della votazione!');
 				return;
 		}
+		if (current)
+			{currentPhase = current;
+		};
+		if (next){
+			nextPhase = next;
+		}	
+			
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
+	};
+
+	this.startSpettacolo = function(){
+		nextPhase = phase.TITLE;
+		currentPhase = phase.START;
+		currentPage = '/wait?type=start';
+		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
+	};
+	
+	this.resetSpettacolo = function(){
+		currentPage = '/wait?type=start';
+		this.stopVotazione(phase.START,phase.TITLE);
+
+	};
+	
+	this.intervalloTitolo=function(){
+		currentpage='/wait?type=title';
+		currentP
 	};
 
 	//funzione cattiva !
@@ -315,6 +342,7 @@ exports.Admin = function(socketio){
 		updateMatch();
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		nextPhase=phase.TITLE;
+		currentPhase=phase.START;
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPoints(),blue: blueTeam.getPoints()});
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
@@ -331,6 +359,7 @@ exports.Admin = function(socketio){
 		});
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		currentTitle = maxTitle;
+		currentPhase = phase.INTERVALTITLE; 
 		nextPhase=phase.CATEGORY;
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
@@ -346,7 +375,8 @@ exports.Admin = function(socketio){
 		});
 		currentCategory = maxCategory;
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
-		nextPhase=phase.PLAY;
+		nextPhase = phase.PLAY;
+		currentPhase = phase.PLAY;
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 	

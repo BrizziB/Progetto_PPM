@@ -431,7 +431,9 @@ votoTitoloCategoria.on('connection', function(socket){
 		case 'fasePlay':
 			admin.startPlay();
 			break;
-		//XXX: controllo blocco?
+		case 'faseIntervallo':
+			socket.emit('updatePhase',fase);
+			break;
 
 		default:
 			console.log('Errore: impossibile controllare la votazione!');
@@ -473,6 +475,10 @@ adminChan.on('connect',function(socket){
 	
 	socket.on('inizioFase',function(){
 		selezionaFase(admin.isPhase(), socket);
+	});
+	
+	socket.on('reset',function(){
+		admin.resetVotazione();
 	});
 	
 	socket.on('fallo',function(type){		

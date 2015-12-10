@@ -1,27 +1,34 @@
-var gestioneFasi = (function(){
-	var boundPhaseButton = false;
-	return	function(whichPhase){
-	
-		var phaseButton = $('#avviaSpettacolo');
+var boundPhaseButton=false;
+
+var bindButton=function(){
 		if (boundPhaseButton===false){
-			phaseButton.one('click',function(){
+			$('#avviaSpettacolo').one('click',function(){
 				socket.emit('inizioFase');
+				boundPhaseButton= false;
 			});
 			boundPhaseButton=true;
 		}
-		
+};
+
+var gestioneFasi = function(whichPhase){
+	
+		var phaseButton = $('#avviaSpettacolo');
+
 		switch(whichPhase){
 		
 		case 'faseZero':
 			phaseButton.text('Votazione Titolo');
+			bindButton();
 			break;
 		
 		case 'faseUno':
 			phaseButton.text('Votazione Categoria');
+			bindButton();
 			break;
 		
 		case 'faseDue':
 			phaseButton.text('Votazione Vincitore');
+			bindButton();
 			break;
 			
 		case 'faseVotazione':
@@ -35,10 +42,11 @@ var gestioneFasi = (function(){
 	
 		case 'fasePlay':
 			phaseButton.text('Inizio Spettacolo');
+			bindButton();
 			break;	
 		}
 	};
-})();
+
 
 
 socket.on('refresh',function(timers, whichPhase){
@@ -61,10 +69,18 @@ socket.on('updatePhase',function(whichPhase){
 	gestioneFasi(whichPhase);
 });
 
+<<<<<<< HEAD
 $('#avviaFasi').click(function(){
 	console.log('sono stato cliccato!');
 	socket.emit('inizioFase');
 });
+=======
+//$('#avviaFasi').click(function(){
+//	socket.emit('inizioFase');
+//});
+
+
+>>>>>>> Aggiunte a reset
 
 $('form').on('submit', function(event){
 	var element;
@@ -105,10 +121,14 @@ $('#togliBlu').click(function(){
 	socket.emit('rimuovi','blu');
 });
 
+<<<<<<< HEAD
 $('#avviaFase0').click(function(){
 	socket.emit('controlloVotazione', 'faseZero');
 });
 
+=======
+/*
+>>>>>>> Aggiunte a reset
 $('#avviaFase1').click(function(){
 	socket.emit('controlloVotazione', 'faseUno');
 });
@@ -119,9 +139,14 @@ $('#avviaFase2').click(function(){
 
 $('#avviaFasePlay').click(function(){
 	socket.emit('controlloVotazione', 'fasePlay');	
-});
-$('#avviaSpettacolo').click(function(){
+});*/
+
+/*$('#avviaSpettacolo').click(function(){
 	socket.emit('inizioFase');
+});*/
+
+('#avviaSpettacolo').click(function(){
+	socket.emit('reset');
 });
 
 socket.on('updatePoints',function(points){
