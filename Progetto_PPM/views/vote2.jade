@@ -22,7 +22,6 @@ block content
 			
 			div(id= 'assisti')
 				p Andamento della votazione in tempo reale: 
-			div(id='test')
 				div(id='winDiv' )
 					canvas#myChart()
 			
@@ -97,8 +96,14 @@ block content
 					voted=true;
 					$('#blueButton').hide();
 					$('#redButton').hide();
+					location.reload();
 					
 				});
+				if (voted === false){
+					$('#assisti').hide();
+				}
+				else {$('#assisti').show();}
+				
 
 
 	
