@@ -23,5 +23,8 @@
     "passport-local-mongoose":"*",
     "passport-facebook":"*",
     "passport-google":"*"
+  },
+  "engines": {
+    "node": "4.1.1"
   }
 }
