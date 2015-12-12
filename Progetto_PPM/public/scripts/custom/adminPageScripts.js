@@ -1,10 +1,13 @@
 var boundPhaseButton=false;
 
 var bindButton=function(){
+		
 		if (boundPhaseButton===false){
+			console.log('bindButton eseguito!');
 			$('#avviaSpettacolo').one('click',function(){
 				socket.emit('inizioFase');
 				boundPhaseButton= false;
+				console.log('inizio Fase');
 			});
 			boundPhaseButton=true;
 		}
@@ -13,7 +16,9 @@ var bindButton=function(){
 var gestioneFasi = function(whichPhase){
 	
 		var phaseButton = $('#avviaSpettacolo');
-
+		
+		console.log('Fase: ',whichPhase,'boundButton: ', boundPhaseButton);
+		
 		switch(whichPhase){
 		case 'inizioSpettacolo':
 		case 'faseZero':
@@ -33,9 +38,11 @@ var gestioneFasi = function(whichPhase){
 			
 		case 'faseVotazione':
 			phaseButton.text('Ferma la Votazione');
+			phaseButton.off('click');
 			phaseButton.one('click',function(){
 				socket.emit('stopVoto');
 				boundPhaseButton= false;
+				bindButton();
 			});
 			break;
 			
@@ -144,8 +151,9 @@ $('#avviaFasePlay').click(function(){
 	socket.emit('inizioFase');
 });*/
 
-('#avviaSpettacolo').click(function(){
+$('#avviaSpettacolo').click(function(){
 	socket.emit('reset');
+	boundPhaseButton=false;
 });
 
 socket.on('updatePoints',function(points){

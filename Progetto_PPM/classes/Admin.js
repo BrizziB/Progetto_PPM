@@ -208,22 +208,28 @@ exports.Admin = function(socketio){
 		switch(actPhase){
 			case phase.START:
 				setCurrentPage('/wait?type=start');
+				nextPhase=phase.TITLE;
 				break;
 			case phase.TITLE:
 				setCurrentPage('/vote/titolo');
+				nextPhase=phase.INTERVALTITLE;
 				break;
 			case phase.INTERVALTITLE:
 				setCurrentPage('/wait?type=title');
+				nextPhase=phase.CATEGORY;
 				break;
 				
 			case phase.CATEGORY:
 				setCurrentPage('/vote/category');
+				nextPhase=phase.PLAY;
 				break;
 			case phase.PLAY:
 				setCurrentPage('/wait?type=play');
+				nextPhase=phase.WINNER;
 				break;
 			case phase.WINNER:
 				setCurrentPage('/vote/matchwinner');
+				nextPhase=phase.START;
 				break;	
 		}
 		clientRedirect();
@@ -236,13 +242,13 @@ exports.Admin = function(socketio){
 			case versionEnum.TIMERVERSION:
 				clearTimeout(waitBeast);
 				version=versionEnum.NONE;
-				nextPhase=currentPhase;
+				//nextPhase=currentPhase;
 				console.log('stop versione Timer');
 				break;
 			case versionEnum.INTERVALVERSION:
 				clearInterval(timerBeast);
 				version=versionEnum.NONE;
-				nextPhase=currentPhase;
+				//nextPhase=currentPhase;
 				console.log('stop versione Interval');
 				break;
 			case versionEnum.NONE:
@@ -258,8 +264,9 @@ exports.Admin = function(socketio){
 		if (next){
 			nextPhase = next;
 		}
+//TODO: reset dei voti
+		newCurrentPage(currentPhase);
 		console.log('post: currentPhase: ',currentPhase,' nextPhase: ',nextPhase);
-		newCurrentPage(nextPhase);
 		io.of('/adminChan').emit('updatePhase', currentPhase);
 	};
 
@@ -267,11 +274,11 @@ exports.Admin = function(socketio){
 		nextPhase = phase.TITLE;
 		currentPhase = phase.START;
 		currentPage = '/wait?type=start';
+		clientRedirect();
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 	
 	this.resetSpettacolo = function(){
-		currentPage = '/wait?type=start';
 		this.stopVotazione(phase.START,phase.TITLE);
 
 	};
