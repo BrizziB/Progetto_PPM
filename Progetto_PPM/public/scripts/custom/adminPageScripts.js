@@ -1,23 +1,21 @@
-var boundPhaseButton=false;
 
 var bindButton=function(){
-		
-		if (boundPhaseButton===false){
-			console.log('bindButton eseguito!');
-			$('#avviaSpettacolo').one('click',function(){
-				socket.emit('inizioFase');
-				boundPhaseButton= false;
-				console.log('inizio Fase');
-			});
-			boundPhaseButton=true;
-		}
+				console.log('bindButton eseguito!');
+		$('#avviaSpettacolo').one('click',function(){
+			socket.emit('inizioFase');
+			boundPhaseButton= false;
+			console.log('inizio Fase');
+		});
+
 };
 
 var gestioneFasi = function(whichPhase){
 	
 		var phaseButton = $('#avviaSpettacolo');
 		
-		console.log('Fase: ',whichPhase,'boundButton: ', boundPhaseButton);
+		console.log('Fase: ',whichPhase);
+		phaseButton.off('click');
+
 		
 		switch(whichPhase){
 		case 'inizioSpettacolo':
@@ -38,7 +36,6 @@ var gestioneFasi = function(whichPhase){
 			
 		case 'faseVotazione':
 			phaseButton.text('Ferma la Votazione');
-			phaseButton.off('click');
 			phaseButton.one('click',function(){
 				socket.emit('stopVoto');
 				boundPhaseButton= false;
@@ -75,18 +72,13 @@ socket.on('updatePhase',function(whichPhase){
 	gestioneFasi(whichPhase);
 });
 
-<<<<<<< HEAD
-$('#avviaFasi').click(function(){
-	console.log('sono stato cliccato!');
-	socket.emit('inizioFase');
+$('#resetSpettacolo').click(function(){
+	socket.emit('reset');
 });
-=======
+
 //$('#avviaFasi').click(function(){
 //	socket.emit('inizioFase');
 //});
-
-
->>>>>>> Aggiunte a reset
 
 $('form').on('submit', function(event){
 	var element;
@@ -127,14 +119,7 @@ $('#togliBlu').click(function(){
 	socket.emit('rimuovi','blu');
 });
 
-<<<<<<< HEAD
-$('#avviaFase0').click(function(){
-	socket.emit('controlloVotazione', 'faseZero');
-});
-
-=======
 /*
->>>>>>> Aggiunte a reset
 $('#avviaFase1').click(function(){
 	socket.emit('controlloVotazione', 'faseUno');
 });
@@ -149,13 +134,13 @@ $('#avviaFasePlay').click(function(){
 
 /*$('#avviaSpettacolo').click(function(){
 	socket.emit('inizioFase');
-});*/
+});
 
 $('#avviaSpettacolo').click(function(){
 	socket.emit('reset');
 	boundPhaseButton=false;
 });
-
+*/
 socket.on('updatePoints',function(points){
 	$('#blue .punteggio').text(points.blue);
 	$('#red .punteggio').text(points.red);

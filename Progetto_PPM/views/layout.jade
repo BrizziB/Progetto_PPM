@@ -16,7 +16,6 @@ html
     div(class='ui-page-theme-b', data-role='page')
       if (user) 
               div(data-role='header' class ='ui-header')
-
                 div(data-role="controlgroup" data-type="horizontal" class= "ui-btn-right")
                  a(href='/logout' class='ui-btn') Logout
                  if (user.admin && !adminPage) 

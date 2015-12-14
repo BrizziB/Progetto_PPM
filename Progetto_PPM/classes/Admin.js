@@ -242,13 +242,13 @@ exports.Admin = function(socketio){
 			case versionEnum.TIMERVERSION:
 				clearTimeout(waitBeast);
 				version=versionEnum.NONE;
-				//nextPhase=currentPhase;
+				User.update({},{$set:{votato:false}},{multi:true}).exec();
 				console.log('stop versione Timer');
 				break;
 			case versionEnum.INTERVALVERSION:
 				clearInterval(timerBeast);
 				version=versionEnum.NONE;
-				//nextPhase=currentPhase;
+				User.update({},{$set:{votato:false}},{multi:true}).exec();
 				console.log('stop versione Interval');
 				break;
 			case versionEnum.NONE:
@@ -264,7 +264,6 @@ exports.Admin = function(socketio){
 		if (next){
 			nextPhase = next;
 		}
-//TODO: reset dei voti
 		newCurrentPage(currentPhase);
 		console.log('post: currentPhase: ',currentPhase,' nextPhase: ',nextPhase);
 		io.of('/adminChan').emit('updatePhase', currentPhase);
@@ -280,7 +279,6 @@ exports.Admin = function(socketio){
 	
 	this.resetSpettacolo = function(){
 		this.stopVotazione(phase.START,phase.TITLE);
-
 	};
 	
 
@@ -423,13 +421,11 @@ exports.Admin = function(socketio){
 	};
 //XXX:richiede array per il momento	
 	var setTitles= function(newtitles){
-		console.log('fuori if di setTitles',titles.listaOggetti());
 		if (typeof titles === typeof ListaOggettiVoti){
 			titles = newtitles;
 		}
 		else{
 			titles=new ListaOggettiVoti(newtitles);
-			console.log('Dentro l\'else di setTitles:',titles.listaOggetti());
 		}
 	};
 //XXX:richiede array per il momento	
@@ -449,15 +445,12 @@ exports.Admin = function(socketio){
 	};
 	
 	this.titleInit= function(){
-		console.log('Dentro titleInit:',setTitles);
-		//setTitles(['Prova1','Prova2','Prova3','Prova4']);
 		setTitles('');
 		isTitleVote= true;
 	};
 
 	var timerFunction = function(time){
 		io.of("/timerChan").emit('timer',time);
-		console.log('Mi eseguo! Tempo:',time);
 	};
 	
 	var timerReducedFunction = (function(){
@@ -487,9 +480,7 @@ exports.Admin = function(socketio){
 			}
 			if(emit === true){
 				io.of("/timerChan").emit('timer',time);
-				console.log('Emesso evento da timerReducedFunction! Tempo:',time);
 			}
-			console.log('interval: ',internalInterval);
 	};
 	})();
 	
@@ -526,7 +517,8 @@ exports.Admin = function(socketio){
 		nextPhase=phase.WINNER;
 		setCurrentPage("/wait?type=play");
 		clientRedirect();
-		io.of('/adminChan').emit('updatePhase', this.isPhase());
+		console.log('startPlay eseguito!')
+		io.of('/adminChan').emit('updatePhase', nextPhase);
 		
 	};
 

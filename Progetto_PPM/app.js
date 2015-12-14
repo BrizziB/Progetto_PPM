@@ -431,6 +431,7 @@ votoTitoloCategoria.on('connection', function(socket){
 			break;
 			
 		case 'fasePlay':
+			console.log('faseplay da admin');
 			admin.startPlay();
 			break;
 		case 'inizioSpettacolo':
