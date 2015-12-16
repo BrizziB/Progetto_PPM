@@ -5,15 +5,15 @@ block head
     script(type='text/javascript' src='/scripts/custom/redirect.js')
 
 block content
-    #testoTitolo
-        h2.testoPre Il Titolo dell'improvvisazione sara' :
+    #testoTitolo(class = 'centered')
+        h2.testoPre Il Titolo dell'improvvisazione sara':
         h3.testoTitCat=titolo
-        if(!categoria)    
+        if(!categoria)
             p.attesa Attendi per la votazione della categoria
     if(categoria)
         br
-        #testoCategoria
-            h2.testoPre La Categoria dell'improvvisazione sara' :
+        #testoCategoria(class = 'centered')
+            h2.testoPre La Categoria dell'improvvisazione sara':
             h3.testoTitCat=categoria
             p.attesa A breve avra' inizio il match
    

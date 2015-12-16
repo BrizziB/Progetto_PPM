@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
   		res.render('waitTitleCategory',titCat); 	
   		break;
   		
-  	case "category":  
+  	case "category":
   		res.render('waitTitleCategory',titCat);
 		break;
 	

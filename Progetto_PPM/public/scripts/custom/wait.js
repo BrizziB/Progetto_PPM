@@ -8,7 +8,7 @@ socket.on('refresh',function(timers){
 	$('#red .falli').text(timers[7]);
 	$("#red .penalita").text(timers[8]);
 	$("#blue .penalita").text(timers[9]);
-	
+});
 socket.on('faul', function(name, num, pen, pts){
 		if (name ==='red'){
 			$("#red .punteggio").text(pts);
@@ -21,6 +21,26 @@ socket.on('faul', function(name, num, pen, pts){
 			$("#blue .penalita").text(pen);
 		}
 });	
-	
+
+$('#togliRossi').on('click',function(){
+	socket.emit('rimuovi','rosso');
 });
+
+$('#togliBlu').click(function(){
+	socket.emit('rimuovi','blu');
+});
+	
+socket.on('remove', function(name, num, pen, pts){
+	if (name ==='red'){
+		$("#red .punteggio").text(pts);
+		$("#red .falli").text(num);
+		$("#red .penalita").text(pen);
+	}
+	if (name ==='blue'){
+		$("#blue .punteggio").text(pts);
+		$("#blue .falli").text(num);
+		$("#blue .penalita").text(pen);
+	}
+});	
+
 });

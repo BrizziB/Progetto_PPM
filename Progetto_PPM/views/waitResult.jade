@@ -7,9 +7,9 @@ block head
 	
 	
 block content
-			div(id="text1")
-			div(id="text2") Attendi inizio della nuova improvvisazione
-			div(id="score")
+			div(id="text1", class = 'centered')
+			div(id="text2", class = 'centered') Attendi inizio della nuova improvvisazione
+			div(id="score", class = 'centered')
 			canvas#lastChart()
 			script.
 				Chart.defaults.global.showTooltips = false;
@@ -26,25 +26,27 @@ block content
 						var txt1=document.createTextNode("Vince l'improvvisazione la squadra ROSSA");
 					}
 					if(numBlue==numRed){
-						var txt1=document.createTextNode("l'improvvisazione finisce in PAREGGIO");
+						var txt1=document.createTextNode("L'improvvisazione finisce in PAREGGIO");
 					}
 					winParag.appendChild(txt1);
 					document.getElementById("text1").appendChild(winParag);
+
 					
 					var scoreParag = document.createElement('p');
-					var redScore = document.createTextNode("punteggio Rosso: "+numRed+",   ");
-					var blueScore = document.createTextNode("punteggio Blu: "+numBlue);
+					var blueParag = document.createElement('p');
+					var redParag = document.createElement('p');
+									
+					scoreParag.appendChild(document.createTextNode("Risultati del Match corrente: "));
+					redParag.appendChild(document.createTextNode("voti dei Rossi: "+numRed));
+					blueParag.appendChild(document.createTextNode("voti dei Blu: "+numBlue));
 					
-					
-					scoreParag.appendChild(document.createTextNode("Risultati del Match corrente "));
-					
-					scoreParag.appendChild(redScore);
-					scoreParag.appendChild(blueScore);
 					document.getElementById("score").appendChild(scoreParag);
+					document.getElementById("score").appendChild(redParag);
+					document.getElementById("score").appendChild(blueParag);
 					
 					if(matchNum>=4){
 						var data= {
-						labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2),"impro "+ (matchNum-3), "impro "+(matchNum-4)],
+						labels : ["match "+ (matchNum),"match "+ (matchNum-1),"match "+ (matchNum-2), "match "+(matchNum-3)],
 						datasets : [
 						{
 							fillColor : "rgba(255,0,0,0.9)",
@@ -62,7 +64,7 @@ block content
 					
 					if(matchNum==3){
 						var data= {
-						labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2),"impro "+ (matchNum-3)],
+						labels : ["match "+ (matchNum),"match "+ (matchNum-1),"match "+ (matchNum-2)],
 						datasets : [
 						{
 							fillColor : "rgba(255,0,0,0.9)",
@@ -79,7 +81,7 @@ block content
 					}
 					if(matchNum==2){
 						var data= {
-						labels : ["impro "+ (matchNum-1),"impro "+ (matchNum-2)],
+						labels : ["match "+ (matchNum),"match "+ (matchNum-1)],
 						datasets : [
 						{
 							fillColor : "rgba(255,0,0,0.9)",
@@ -96,7 +98,7 @@ block content
 					}
 					if(matchNum==1){
 						var data= {
-						labels : ["impro "+ (matchNum-1)],
+						labels : ["match "+ (matchNum)],
 						datasets : [
 						{
 							fillColor : "rgba(255,0,0,0.9)",
