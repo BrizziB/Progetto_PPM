@@ -31,3 +31,11 @@ img {
 	position: relative;
 
 }
+
+.clearfix {
+	overflow:auto;
+}
+
+.bottoneVoto {
+	float:right;
+}
