@@ -285,9 +285,7 @@ function disabilitaVotoUtenteNSP(sess,namespace){
 	//console.log(sockAttuali);
 	for(var i in sockAttuali){
 		if (sessID===sockAttuali[i].request.session.utente.sessionID){
-			//console.log(sockAttuali[i]);
 			sockAttuali[i].emit('disabilitaVoto');
-			console.log('DisabilitaVoto inviato!');
 		}
 	}	
 }
@@ -545,8 +543,9 @@ io.of("paginaControllo").on('connect',function(socket){
 });
 
 io.of("timerChan").on('connect',function(socket){
-	console.log('timer admin e\' ',admin.getTimer());
-	socket.emit('timer',admin.getTimer());
+	if(noCurrentPage === false){
+		socket.emit('timer',admin.getTimer());
+	}
 });
 //  [  ]
 module.exports = app;

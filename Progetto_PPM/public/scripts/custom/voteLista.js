@@ -7,7 +7,6 @@ $(".listControl").hide();
 socket=io(":3000/votoTitoloCategoria");
 function aggiornaNumeroVoti(listaVoti){
 	var aggiunte = false;
-	console.log(listaVoti);
 	var listaNumeroVoti = new HashMap();
 	if (typeof listaVoti === HashMap){
 		listaNumeroVoti.copy(listaVoti)
@@ -18,7 +17,6 @@ function aggiornaNumeroVoti(listaVoti){
 			listaNumeroVoti.set(oggetto.ID,oggetto.Voti)
 		}
 	}
-	console.log(listaNumeroVoti);
 	var listaAggiunte = new HashMap();
 	listaNumeroVoti.forEach(function(value,key){
 		var elem = $("#listaVoti").find("[id='" + key + "']");
@@ -29,8 +27,6 @@ function aggiornaNumeroVoti(listaVoti){
 			return;
 		}else{
 			elem.find(".contatoreVoto").text(value);
-			console.log(elem.text());
-			console.log(elem.find(".contatoreVoto").text());
 		}		
 	})
 	if (aggiunte===true){
@@ -73,7 +69,7 @@ socket.on('aggiornaListaVoto',function(lista,listaID,lunghezzaListaServer){
 	
 	$.each(lista, function(key, value){
 		var openLi = "<li id='" + listaID[key] + "'>";
-		var openA = '<a href="#risposta"  class="ui-btn ui-btn-inline ui-corner-all ui-shadow ui-mini">';
+		var openA = '<a href="#risposta"  class="ui-btn ui-btn-inline ui-corner-all ui-shadow ui-mini bottoneVoto">';
 		var htmlTesto = "<span class=\"testo\">" + value + "</span>";
 		var htmlConta = "<span class=\"ui-li-count contatoreVoto\">"+key+"</span>";
 		var htmlTestoBottone ="<span class =\"testoBottone\">Vota!<\span>"
@@ -87,7 +83,7 @@ socket.on('aggiornaListaVoto',function(lista,listaID,lunghezzaListaServer){
 		else{
 			html = openLi +  htmlTesto + htmlConta + openA + htmlTestoBottone + closeA + closeLi;
 		}
-		$(html).appendTo("#listaVoti").hide();
+		$(html).appendTo("#listaVoti").hide().css('overflow','auto');
 	});
 	if (!votato){
 		$(".contatoreVoto").hide();

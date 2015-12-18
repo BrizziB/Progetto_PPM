@@ -45,8 +45,7 @@ var timerControl=function(time){
 
 var localTimer=function(time){
 	localTimerTime=time;
-	console.log('timer: ',localTimerTime);
-	if(localTimerHandler===null){
+	if(localTimerHandler===null && time !== undefined && time !==null){
 		localTimerHandler=setInterval(function(){
 			if(localTimerTime<=0){
 				timerControl(0);
@@ -62,7 +61,6 @@ var localTimer=function(time){
 };
 
 timer.on('timer',function(time){
-	console.log('Ricevo l\'evento!');
 	localTimer(time);
 	});
 
