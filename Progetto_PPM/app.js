@@ -408,6 +408,8 @@ votoTitoloCategoria.on('connection', function(socket){
 });
 
     var selezionaFase = function(fase, socket){
+		console.log('fase: ',fase);
+
 		switch(fase){
 		case 'faseUno':
 			admin.phase1();
@@ -429,9 +431,16 @@ votoTitoloCategoria.on('connection', function(socket){
 			break;
 			
 		case 'fasePlay':
+			console.log('faseplay da admin');
 			admin.startPlay();
 			break;
-		//XXX: controllo blocco?
+		case 'inizioSpettacolo':
+			admin.startSpettacolo();
+			break;
+		case 'faseIntervallo':
+			socket.emit('updatePhase',fase);
+			break;
+		
 
 		default:
 			console.log('Errore: impossibile controllare la votazione!');
@@ -464,15 +473,20 @@ adminChan.on('connect',function(socket){
 		default:
 			console.log('Errore: impossibile selezionare il timer da modificare!');
 	}
-		
 	});
 
-	
+	socket.on('stopVoto',function(){
+		admin.stopVotazione();
+	});
 	socket.on('controlloVotazione',selezionaFase, socket);
 	
 	socket.on('inizioFase',function(){
-		console.log('sono in inizio fase!');
+		console.log('fase ricevuta da app.js: ',admin.isPhase())
 		selezionaFase(admin.isPhase(), socket);
+	});
+	
+	socket.on('reset',function(){
+		admin.resetSpettacolo();
 	});
 	
 	socket.on('fallo',function(type){		

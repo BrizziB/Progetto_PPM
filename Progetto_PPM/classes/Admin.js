@@ -101,14 +101,26 @@ exports.Admin = function(socketio){
 	var waitTimer=5;
 	var winnerTimer=10;
 	var io=socketio;
+	
 	var phase = {
+		START: 'inizioSpettacolo',
 		TITLE : 'faseZero',
+		INTERVALTITLE: 'faseIntervallo',
 		CATEGORY : 'faseUno',
 		PLAY : 'fasePlay',
 		WINNER : 'faseDue',
 		DISABLEBUTTON : 'faseVotazione'
 	};
+	
+	var versionEnum = {
+			NONE: 0,
+			TIMERVERSION : 1,
+			INTERVALVERSION : 2
+		};
+
+	var version = versionEnum.NONE;
 	var nextPhase = phase.TITLE;
+	var currentPhase = phase.START;
 	
 	var timerBeast=null;
 	var waitBeast=null;
@@ -180,8 +192,6 @@ exports.Admin = function(socketio){
 	
 	//invariante: stiamo inviando la pagina corrente dopo la modifica
 	var clientRedirect = function (){
-	//TODO: controllare se io.emit viene emesso ed intercettato
-		//io.of('controlChan').emit('redirect');
 		io.emit('redirect');
 		console.log('redirect a pagina corrente  ', getCurrentPageInternal());
 		
@@ -193,41 +203,119 @@ exports.Admin = function(socketio){
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPunteggi(),blue: blueTeam.getPunteggi()});
 	};
 	
-	var isStopped=false;
-	var timer;
-	this.stopVotazione=function(){
-		clearTimeout(timer);
-		isStopped=true;
+	var newCurrentPage=function(actPhase){
+		console.log('cambio pagina!!!!')
+		switch(actPhase){
+			case phase.START:
+				setCurrentPage('/wait?type=start');
+				nextPhase=phase.TITLE;
+				break;
+			case phase.TITLE:
+				setCurrentPage('/vote/titolo');
+				nextPhase=phase.INTERVALTITLE;
+				break;
+			case phase.INTERVALTITLE:
+				setCurrentPage('/wait?type=title');
+				nextPhase=phase.CATEGORY;
+				break;
+				
+			case phase.CATEGORY:
+				setCurrentPage('/vote/category');
+				nextPhase=phase.PLAY;
+				break;
+			case phase.PLAY:
+				setCurrentPage('/wait?type=play');
+				nextPhase=phase.WINNER;
+				break;
+			case phase.WINNER:
+				setCurrentPage('/vote/matchwinner');
+				nextPhase=phase.START;
+				break;	
+		}
+		clientRedirect();
 	};
+
+	
+	this.stopVotazione=function(current,next){
+		console.log('currentPhase: ',currentPhase,' nextPhase: ',nextPhase);
+		switch(version){
+			case versionEnum.TIMERVERSION:
+				clearTimeout(waitBeast);
+				version=versionEnum.NONE;
+				User.update({},{$set:{votato:false}},{multi:true}).exec();
+				console.log('stop versione Timer');
+				break;
+			case versionEnum.INTERVALVERSION:
+				clearInterval(timerBeast);
+				version=versionEnum.NONE;
+				User.update({},{$set:{votato:false}},{multi:true}).exec();
+				console.log('stop versione Interval');
+				break;
+			case versionEnum.NONE:
+				console.log('Nessuna votazione in corso');
+				break;
+			default:
+				console.log('Impossibile determinare lo stato della votazione!');
+				return;
+		}
+		if (current)
+			{currentPhase = current;
+		}
+		if (next){
+			nextPhase = next;
+		}
+		newCurrentPage(currentPhase);
+		console.log('post: currentPhase: ',currentPhase,' nextPhase: ',nextPhase);
+		io.of('/adminChan').emit('updatePhase', currentPhase);
+	};
+
+	this.startSpettacolo = function(){
+		nextPhase = phase.TITLE;
+		currentPhase = phase.START;
+		currentPage = '/wait?type=start';
+		clientRedirect();
+		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
+	};
+	
+	this.resetSpettacolo = function(){
+		this.stopVotazione(phase.START,phase.TITLE);
+	};
+	
 
 	//funzione cattiva !
 	var theBeast = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
 		if (timerArray.length===0){
-			return;}
+			return;
+			}
 		var element = timerArray.pop();
 		var next = element.page;
 		var delay = element.delay;
 		var funct = element.funct;
+		version=versionEnum.TIMERVERSION;
+		
 		waitBeast=setTimeout(function (){
 			if (funct){
 				funct();
 			}
 			setCurrentPage(next);
 			clientRedirect();
-			console.log("puoi vedermi!");
 			theBeast(timerArray);
+			version=versionEnum.NONE;
 		}, delay*1000);
 	};
 
 	//funzione ancora più cattiva !
 	var theBeast2 = function(timerArray){ //gli elementi di timerArray sono inseriti partendo dall'ultimo perchè torna bene col pop()
 		if (timerArray.length===0){
-			return;}
+			return;
+			}
 		var element = timerArray.pop();
 		var next = element.page;
 		var delay = element.delay;
 		var funct = element.funct;
 		var timerFunct = element.timerFunct;
+		version=versionEnum.INTERVALVERSION;
+
 		timerBeast=setInterval(function(){
 			if(delay ===0){
 				if (funct){
@@ -237,6 +325,7 @@ exports.Admin = function(socketio){
 				clientRedirect();
 				clearInterval(timerBeast);
 				theBeast2(timerArray);
+				version=versionEnum.NONE;
 			}
 			else{	
 				if(timerFunct){
@@ -283,6 +372,7 @@ exports.Admin = function(socketio){
 		updateMatch();
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		nextPhase=phase.TITLE;
+		currentPhase=phase.START;
 		io.of('/adminChan').emit('updatePoints',{red: redTeam.getPoints(),blue: blueTeam.getPoints()});
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
@@ -299,6 +389,7 @@ exports.Admin = function(socketio){
 		});
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
 		currentTitle = maxTitle;
+		currentPhase = phase.INTERVALTITLE; 
 		nextPhase=phase.CATEGORY;
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
@@ -314,7 +405,8 @@ exports.Admin = function(socketio){
 		});
 		currentCategory = maxCategory;
 		User.update({},{$set:{votato:false}},{multi:true}).exec();
-		nextPhase=phase.PLAY;
+		nextPhase = phase.PLAY;
+		currentPhase = phase.PLAY;
 		io.of('/adminChan').emit('updatePhase', isPhaseInternal());
 	};
 	
@@ -329,13 +421,11 @@ exports.Admin = function(socketio){
 	};
 //XXX:richiede array per il momento	
 	var setTitles= function(newtitles){
-		console.log('fuori if di setTitles',titles.listaOggetti());
 		if (typeof titles === typeof ListaOggettiVoti){
 			titles = newtitles;
 		}
 		else{
 			titles=new ListaOggettiVoti(newtitles);
-			console.log('Dentro l\'else di setTitles:',titles.listaOggetti());
 		}
 	};
 //XXX:richiede array per il momento	
@@ -355,15 +445,12 @@ exports.Admin = function(socketio){
 	};
 	
 	this.titleInit= function(){
-		console.log('Dentro titleInit:',setTitles);
-		//setTitles(['Prova1','Prova2','Prova3','Prova4']);
 		setTitles('');
 		isTitleVote= true;
 	};
 
 	var timerFunction = function(time){
 		io.of("/timerChan").emit('timer',time);
-		console.log('Mi eseguo! Tempo:',time);
 	};
 	
 	var timerReducedFunction = (function(){
@@ -393,9 +480,7 @@ exports.Admin = function(socketio){
 			}
 			if(emit === true){
 				io.of("/timerChan").emit('timer',time);
-				console.log('Emesso evento da timerReducedFunction! Tempo:',time);
 			}
-			console.log('interval: ',internalInterval);
 	};
 	})();
 	
@@ -407,6 +492,7 @@ exports.Admin = function(socketio){
 		this.titleInit();
 		setCurrentPage("/vote/titolo");
 		clientRedirect();
+		currentPhase=phase.START;
 		nextPhase=phase.DISABLEBUTTON;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);
@@ -420,16 +506,19 @@ exports.Admin = function(socketio){
 
 		setCurrentPage("/vote/categoria");
 		clientRedirect();
+		currentPhase=phase.INTERVALTITLE;
 		nextPhase=phase.DISABLEBUTTON;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);
 	};
 	
 	this.startPlay=function(){
+		currentPhase= phase.PLAY;
 		nextPhase=phase.WINNER;
 		setCurrentPage("/wait?type=play");
 		clientRedirect();
-		io.of('/adminChan').emit('updatePhase', this.isPhase());
+		console.log('startPlay eseguito!')
+		io.of('/adminChan').emit('updatePhase', nextPhase);
 		
 	};
 
@@ -443,6 +532,7 @@ exports.Admin = function(socketio){
 		redTeam.setVotes(0);
 		setCurrentPage("/vote/matchwinner");
 		clientRedirect();
+		currrentPhase = phase.PLAY;
 		nextPhase=phase.DISABLEBUTTON;
 		io.of('/adminChan').emit('updatePhase', this.isPhase());
 		theBeast2(timerArray);

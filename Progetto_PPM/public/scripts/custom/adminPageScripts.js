@@ -1,37 +1,55 @@
+
+var bindButton=function(){
+				console.log('bindButton eseguito!');
+		$('#avviaSpettacolo').one('click',function(){
+			socket.emit('inizioFase');
+			boundPhaseButton= false;
+			console.log('inizio Fase');
+		});
+
+};
+
 var gestioneFasi = function(whichPhase){
 	
-	var phaseButton = $('#avviaSpettacolo');
-	
-	switch(whichPhase){
-	
-	case 'faseZero':
-		phaseButton.text('Votazione Titolo');
-		phaseButton.prop("disabled", false);
-		break;
-	
-	case 'faseUno':
-		phaseButton.text('Votazione Categoria');
-		phaseButton.prop("disabled", false);
-		break;
-	
-	case 'faseDue':
-		phaseButton.text('Votazione Vincitore');
-		phaseButton.prop("disabled", false);
-		break;
+		var phaseButton = $('#avviaSpettacolo');
 		
-	case 'faseVotazione':
-		phaseButton.text('Votazione in corso');
-		phaseButton.prop("disabled", true);
-		break;
-		
+		console.log('Fase: ',whichPhase);
+		phaseButton.off('click');
 
-	case 'fasePlay':
-		phaseButton.text('Inizio Spettacolo');
-		phaseButton.prop("disabled", false);
-		break;	
 		
-	}
-};
+		switch(whichPhase){
+		case 'inizioSpettacolo':
+		case 'faseZero':
+			phaseButton.text('Votazione Titolo');
+			bindButton();
+			break;
+		case 'faseIntervallo':
+		case 'faseUno':
+			phaseButton.text('Votazione Categoria');
+			bindButton();
+			break;
+		
+		case 'faseDue':
+			phaseButton.text('Votazione Vincitore');
+			bindButton();
+			break;
+			
+		case 'faseVotazione':
+			phaseButton.text('Ferma la Votazione');
+			phaseButton.one('click',function(){
+				socket.emit('stopVoto');
+				boundPhaseButton= false;
+				bindButton();
+			});
+			break;
+			
+		case 'fasePlay':
+			phaseButton.text('Inizio Spettacolo');
+			bindButton();
+			break;	
+		}
+	};
+
 
 
 socket.on('refresh',function(timers, whichPhase){
@@ -54,10 +72,13 @@ socket.on('updatePhase',function(whichPhase){
 	gestioneFasi(whichPhase);
 });
 
-$('#avviaFasi').click(function(){
-	console.log('sono stato cliccato!');
-	socket.emit('inizioFase');
+$('#resetSpettacolo').click(function(){
+	socket.emit('reset');
 });
+
+//$('#avviaFasi').click(function(){
+//	socket.emit('inizioFase');
+//});
 
 $('form').on('submit', function(event){
 	var element;
@@ -98,10 +119,7 @@ $('#togliBlu').click(function(){
 	socket.emit('rimuovi','blu');
 });
 
-$('#avviaFase0').click(function(){
-	socket.emit('controlloVotazione', 'faseZero');
-});
-
+/*
 $('#avviaFase1').click(function(){
 	socket.emit('controlloVotazione', 'faseUno');
 });
@@ -112,11 +130,17 @@ $('#avviaFase2').click(function(){
 
 $('#avviaFasePlay').click(function(){
 	socket.emit('controlloVotazione', 'fasePlay');	
-});
-$('#avviaSpettacolo').click(function(){
+});*/
+
+/*$('#avviaSpettacolo').click(function(){
 	socket.emit('inizioFase');
 });
 
+$('#avviaSpettacolo').click(function(){
+	socket.emit('reset');
+	boundPhaseButton=false;
+});
+*/
 socket.on('updatePoints',function(points){
 	$('#blue .punteggio').text(points.blue);
 	$('#red .punteggio').text(points.red);
