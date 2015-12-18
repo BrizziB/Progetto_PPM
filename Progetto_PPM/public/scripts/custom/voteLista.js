@@ -68,7 +68,7 @@ socket.on('aggiornaListaVoto',function(lista,listaID,lunghezzaListaServer){
 	}
 	
 	$.each(lista, function(key, value){
-		var openLi = "<li id='" + listaID[key] + "'>";
+		var openLi = "<li class='liVoto', id='" + listaID[key] + "'>";
 		var openA = '<a href="#risposta"  class="ui-btn ui-btn-inline ui-corner-all ui-shadow ui-mini bottoneVoto">';
 		var htmlTesto = "<span class=\"testo\">" + value + "</span>";
 		var htmlConta = "<span class=\"ui-li-count contatoreVoto\">"+key+"</span>";
@@ -83,12 +83,15 @@ socket.on('aggiornaListaVoto',function(lista,listaID,lunghezzaListaServer){
 		else{
 			html = openLi +  htmlTesto + htmlConta + openA + htmlTestoBottone + closeA + closeLi;
 		}
-		$(html).appendTo("#listaVoti").hide().css('overflow','auto');
+		$(html).appendTo("#listaVoti").hide().css({'overflow':'auto' });
 	});
 	if (!votato){
 		$(".contatoreVoto").hide();
 	}
 	$("#listaVoti").listview("refresh");
+	$('testo').css({'paddin':'0.3em'});
+
+
 	var elementiNascosti = $("#listaVoti li:hidden");
 	elementiNascosti.slideDown(1000);
 	//TODO: aggiungere la funzione per controllare il numero di voti?

@@ -23,13 +23,21 @@ img {
 #test{
 	position: absolute;
 	bottom: 20%;
-		height:auto;
+	height:auto;
 	width:100%;
 }
 
 #winDiv{
 	position: relative;
 
+}
+
+#headPanel{
+    margin-bottom: 25px;
+}
+
+div.centered{
+	text-align: center;
 }
 
 .clearfix {

@@ -6,12 +6,12 @@ block head
 	script(type='text/javascript' src='/scripts/custom/redirect.js')
 
 block content	
-		#messaggioAttendere
+		#messaggioAttendere(class = 'centered')
 			#welcome.bloccoAttendere
 					h1 Attendere prego!
 					h2=title
 					
-			#titoloCategoria
+			#titoloCategoria(class = 'centered')
 				#titoloCat.bloccoTitoloCategoria
 					if(titolo)
 						h4 Titolo della rappresentazione :
@@ -20,7 +20,7 @@ block content
 						h4 Categoria :
 							p.categoria=categoria
 
-			#conteggioFalliPunteggio.ui-grid-a
+			#conteggioFalliPunteggio.ui-grid-a(class = 'centered')
 					#red.ui-block-a.bloccoPuntiFalli
 						p
 							span.titolo Squadra Rossa
