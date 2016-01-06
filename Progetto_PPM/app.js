@@ -166,11 +166,12 @@ function ensureAuthenticated(req, res, next) {
 	  if (req.isAuthenticated()) { return next(); }
 	  res.redirect('/login');
 	}
+
 //XXX:CODICE PER IL TEST
 var noCurrentPage = false;
-app.get('/test',function(req,res,next){
+/*app.get('/test',function(req,res,next){
 	res.render('paginaControllo',{title:"Pagina di Controllo per test", noCurrentPage: noCurrentPage, user: false});
-});
+}); */
 ///
 app.get('/redirect', function(req, res, next){
 	res.render('redirect', {title: 'redirect in corso'});
@@ -185,9 +186,16 @@ app.get('/logout', function(req, res) {
 app.get('/redirectPage', function(req, res, next){
 	res.redirect('/');
 });
+app.use('/administrator',function(req,res,next){
+	if(req.isAuthenticated() === true && req.user.admin===true){
+		return next();
+	}else{
+		res.redirect('/');
+	}
+}, administrator);
 
-app.use('/administrator', administrator);
 app.all('*',function(req, res, next){
+	console.log('utente:',req.user);
 	if(req.isAuthenticated() === true && req.originalUrl!==admin.getCurrentPage()){
 		if(noCurrentPage === true){
 			return next();
@@ -198,13 +206,14 @@ app.all('*',function(req, res, next){
 		return next();
 	}
 });
+
 app.use('/',routes);
 app.use('/login',login);
 app.use('/registrazione', registrazione);
 
 app.all('*', function(req,res,next){
+	
 	if(req.isAuthenticated() === true){
-		//console.log(req.user);
 		if (req.session.utente === null || req.session.utente === undefined){
 			req.session.utente=new Utente();
 		}
@@ -215,6 +224,7 @@ app.all('*', function(req,res,next){
 	else{
 		res.redirect('/');
 		}
+
 });
 app.use('/users', users);
 app.use('/wait', wait);
