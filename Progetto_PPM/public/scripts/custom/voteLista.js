@@ -36,7 +36,7 @@ function aggiornaNumeroVoti(listaVoti){
 
 socket.on('riceviElementoMancante',function(nomeOggetto, idOggetto, nVoti){
 	var openLi = "<li id='" + idOggetto + "'>";
-	var openA = '<a href="#risposta" data-rel="dialog" class="ui-btn ui-btn-inline ui-corner-all ui-shadow ui-mini">';
+	var openA = '<a href="#risposta" data-rel="dialog" class="ui-btn ui-btn-inline ui-mini">';
 	var htmlTesto = "<span class=\"testo\">" + nomeOggetto + "</span>";
 	var htmlConta = "<span class=\"ui-li-count contatoreVoto\">"+nVoti+"</span>";
 	var htmlTestoBottone ="<span class =\"testoBottone\">Vota!<\span>"

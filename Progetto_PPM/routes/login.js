@@ -4,11 +4,17 @@ var Account = require('../models/User');
 var router = express.Router();
 
 router.get('/', function(req, res) {
-    res.render('login');
+	var failure=false;
+	if (req.query.failure=== 'true'){
+		failure=true;
+		
+	}
+	
+    res.render('login', {title: 'Login', failLogin: failure});
 });
 
-router.post('/', passport.authenticate('local'), function(req, res) {
-    console.log('sono autenticato eh!');
+router.post('/', passport.authenticate('local', {failureRedirect: '/login?failure=true'}), function(req, res, next) {
+    console.log('sono autenticato');
 	var admin=req.app.get('admin');
 	//console.log('redirect di wait', admin.getCurrentPage());
 	//admin.clientRedirect();

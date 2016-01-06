@@ -17,11 +17,11 @@ block content
         script var votato = true;
     div     
         if titoloScelto
-                #titScelto
+                #titScelto.centered
                    p Titolo scelto:
                    span#titolo=titoloScelto
          #contenitoreLista.listControl          
-             p#titoloLista= titoloLista
+             p#titoloLista.centered= titoloLista
              ul(data-role='listview', data-inset='false', data-filter = 'true', data-filter-placeholder='filtra per nome', id ='listaVoti' style ='diplay:inline')
              script(type='text/javascript', src='/scripts/custom/voteLista.js')  
          if aggiungiTitolo

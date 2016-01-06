@@ -1,4 +1,8 @@
-
+$(document).ready(function(){
+	$("body").removeClass("ui-overlay-b");
+	$(".ui-page").removeClass("ui-page-theme-b");
+});
+	
 var bindButton=function(){
 				console.log('bindButton eseguito!');
 		$('#avviaSpettacolo').one('click',function(){

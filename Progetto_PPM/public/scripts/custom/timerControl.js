@@ -50,6 +50,7 @@ var localTimer=function(time){
 			if(localTimerTime<=0){
 				timerControl(0);
 				clearInterval(localTimerHandler);
+				localTimeHandler=null;
 				location.reload(true);
 			}
 			else{
@@ -63,5 +64,12 @@ var localTimer=function(time){
 timer.on('timer',function(time){
 	localTimer(time);
 	});
+
+$(window).on('beforeunload', function(){
+	if(localTimerHandler!==null){
+		clearInterval(localTimerHandler);
+		localTimerHandler=null;
+	}
+});
 
 });
