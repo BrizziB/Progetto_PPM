@@ -14,7 +14,7 @@ router.post('/', function(req, res) {
         }
 
         passport.authenticate('local')(req, res, function () {
-            res.redirect('/');
+        	res.redirect('/redirect');
         });
     });
 });
